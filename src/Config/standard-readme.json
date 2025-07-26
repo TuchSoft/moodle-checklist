@@ -1,0 +1,9 @@
+{
+  "plugins" : [
+  "standard-readme-preset",
+  [
+    "remark-lint-appropriate-heading",
+    false
+  ]
+]
+}

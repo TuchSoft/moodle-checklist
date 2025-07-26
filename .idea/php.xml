@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MessDetector">
+    <phpmd_settings>
+      <MessDetectorConfiguration tool_path="$PROJECT_DIR$/vendor/bin/phpmd" />
+    </phpmd_settings>
+  </component>
+  <component name="MessDetectorOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PHPCSFixerOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PHPCodeSnifferOptionsConfiguration">
+    <option name="highlightLevel" value="WARNING" />
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PhpCodeSniffer">
+    <phpcs_settings>
+      <PhpCSConfiguration beautifier_path="$PROJECT_DIR$/vendor/bin/phpcbf" tool_path="$PROJECT_DIR$/vendor/bin/phpcs" />
+    </phpcs_settings>
+  </component>
+  <component name="PhpIncludePathManager">
+    <include_path>
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/phpcpd" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/complexity" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/object-reflector" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/code-unit-reverse-lookup" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/lines-of-code" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/type" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/code-unit" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/cli-parser" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/squizlabs/php_codesniffer" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/sebastian/resource-operations" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/netresearch/jsonmapper" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/felixfbecker/language-server-protocol" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/dealerdirect/phpcodesniffer-composer-installer" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/friendsofphp/php-cs-fixer" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/felixfbecker/advanced-json-rpc" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/laravel-zero/phar-updater" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phpcsstandards/phpcsutils" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phpcsstandards/phpcsextra" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/php-parallel-lint/php-parallel-lint" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phpcompatibility/php-compatibility" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/php-parallel-lint/php-console-highlighter" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/php-parallel-lint/php-console-color" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/composer" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/psr/event-dispatcher" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/clue/ndjson-react" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/amphp/amp" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/amphp/byte-stream" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/marcj/topsort" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/fidry/cpu-core-counter" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phpmd/phpmd" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/react/cache" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/react/event-loop" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/react/promise" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/react/stream" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/react/socket" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/react/dns" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/vimeo/psalm" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/react/child-process" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/dnoegel/php-xdg-base-dir" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/spatie/array-to-xml" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/mockery/mockery" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phar-io/manifest" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/pdepend/pdepend" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phpstan/phpdoc-parser" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phar-io/version" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/phpunit/php-invoker" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/dotenv" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/config" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/polyfill-php81" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/filesystem" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/polyfill-intl-normalizer" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/options-resolver" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/event-dispatcher-contracts" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/yaml" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/stopwatch" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/string" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/dependency-injection" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/polyfill-intl-grapheme" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/doctrine/deprecations" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/moodlehq/moodle-local_ci" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/hamcrest/hamcrest-php" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/moodlehq/moodle-local_moodlecheck" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/moodlehq/moodle-cs" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/evenement/evenement" />
+      <path value="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/mustache/mustache" />
+      <path value="$PROJECT_DIR$/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/vendor/opis/string" />
+      <path value="$PROJECT_DIR$/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/vendor/opis/json-schema" />
+      <path value="$PROJECT_DIR$/vendor/opis/uri" />
+      <path value="$PROJECT_DIR$/vendor/seld/jsonlint" />
+      <path value="$PROJECT_DIR$/vendor/seld/phar-utils" />
+      <path value="$PROJECT_DIR$/vendor/seld/signal-handler" />
+      <path value="$PROJECT_DIR$/vendor/jasny/phpdoc-parser" />
+      <path value="$PROJECT_DIR$/vendor/jasny/php-functions" />
+      <path value="$PROJECT_DIR$/vendor/react/promise" />
+      <path value="$PROJECT_DIR$/vendor/phpmd/phpmd" />
+      <path value="$PROJECT_DIR$/vendor/ramsey/conventional-commits" />
+      <path value="$PROJECT_DIR$/vendor/jawira/case-converter" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/vendor/pdepend/pdepend" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/vendor/symfony/config" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php81" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-normalizer" />
+      <path value="$PROJECT_DIR$/vendor/symfony/filesystem" />
+      <path value="$PROJECT_DIR$/vendor/symfony/string" />
+      <path value="$PROJECT_DIR$/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/dependency-injection" />
+      <path value="$PROJECT_DIR$/vendor/symfony/var-exporter" />
+      <path value="$PROJECT_DIR$/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-grapheme" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/marc-mabe/php-enum" />
+      <path value="$PROJECT_DIR$/vendor/schlessera/markdown-escape" />
+      <path value="$PROJECT_DIR$/vendor/squizlabs/php_codesniffer" />
+      <path value="$PROJECT_DIR$/vendor/php-parallel-lint/php-parallel-lint" />
+      <path value="$PROJECT_DIR$/vendor/justinrainbow/json-schema" />
+    </include_path>
+  </component>
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.3">
+    <option name="suggestChangeDefaultLanguageLevel" value="false" />
+  </component>
+  <component name="PhpStanOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/xvendor/moodle-plugin-ci/vendor/autoload.php" />
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" />
+    </phpunit_settings>
+  </component>
+  <component name="PsalmOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+</project>
