@@ -4,8 +4,6 @@ namespace Tuchsoft\MoodleChecklist\Action;
 
 
 use Jasny\PhpdocParser\PhpdocParser;
-use Jasny\PhpdocParser\Set\PhpDocumentor;
-
 use Jasny\PhpdocParser\Tag\RegExpTag;
 use Jasny\PhpdocParser\TagSet;
 use RecursiveDirectoryIterator;
@@ -43,7 +41,7 @@ class DocblockParser extends AbstractAction
         $this->checkForError();
 
         if (!is_dir($this->directoryPath)) {
-            $this->lastError = "Directory not found: " . $this->directoryPath;
+            $this->lastError = 'Directory not found: ' . $this->directoryPath;
             return [];
         }
 
@@ -73,13 +71,12 @@ class DocblockParser extends AbstractAction
                             $cr = $parsed['copyright'];
                             $authors[$cr[0]]  = [
                                 'full' => $cr[0],
-                                'year' => isset($cr['year']) ? $cr['year'] : '',
-                                'name' => isset($cr['name']) ? $cr['name'] : '',
-                                'email' => isset($cr['email']) ? $cr['email'] : '',
+                                'year' => $cr['year'] ?? '',
+                                'name' => $cr['name'] ?? '',
+                                'email' => $cr['email'] ?? '',
 
                             ];
                         }
-
                     }
                 }
             }

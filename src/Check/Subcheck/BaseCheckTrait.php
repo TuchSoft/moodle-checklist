@@ -5,9 +5,7 @@ namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
 
 use Tuchsoft\MoodleChecklist\Plugin;
-use Tuchsoft\MoodleChecklist\Report\Issue;
 use Tuchsoft\MoodleChecklist\Report\Report;
-use Tuchsoft\MoodleChecklist\Settings;
 
 trait BaseCheckTrait
 {

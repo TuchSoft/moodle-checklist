@@ -2,8 +2,7 @@
 
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
-use Tuchsoft\MoodleChecklist\Report\Report;
-use Tuchsoft\MoodleChecklist\Check\Subcheck\BaseCheckTrait;
+use finfo;
 
 trait CheckFileMimeType
 {
@@ -25,8 +24,8 @@ trait CheckFileMimeType
 
         $filename = basename($filePath);
 
-        if (class_exists(\finfo::class)) {
-            $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        if (class_exists(finfo::class)) {
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
             $mimeType = $finfo->file($filePath);
             if ($mimeType === false) {
                 $this->addWarning(

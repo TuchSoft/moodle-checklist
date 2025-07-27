@@ -2,6 +2,7 @@
 
 namespace Tuchsoft\MoodleChecklist\Report;
 
+use Exception;
 use phpDocumentor\Reflection\Types\Scalar;
 
 class Issue
@@ -74,13 +75,13 @@ class Issue
     /**
      * Throws an exception if the issue has already been reported.
      *
-     * @throws \Exception If the issue has already been reported.
+     * @throws Exception If the issue has already been reported.
      */
     private function ensureNotReported(): void
     {
         if ($this->reported) {
-            var_dump((new \Exception())->getTrace());
-            throw new \Exception("The issue has already been reported and cannot be modified.");
+            var_dump((new Exception())->getTrace());
+            throw new Exception('The issue has already been reported and cannot be modified.');
         }
     }
 
@@ -99,7 +100,7 @@ class Issue
      *
      * @param string $code
      * @return self
-     * @throws \Exception If the issue has already been reported.
+     * @throws Exception If the issue has already been reported.
      */
     public function setCode(string $code): self
     {
@@ -123,7 +124,7 @@ class Issue
      *
      * @param int $severity
      * @return self
-     * @throws \Exception If the issue has already been reported.
+     * @throws Exception If the issue has already been reported.
      */
     public function setSeverity(int $severity): self
     {
@@ -147,7 +148,7 @@ class Issue
      *
      * @param string $message
      * @return self
-     * @throws \Exception If the issue has already been reported.
+     * @throws Exception If the issue has already been reported.
      */
     public function setMessage(string $message): self
     {
@@ -171,7 +172,7 @@ class Issue
      *
      * @param string $path
      * @return self
-     * @throws \Exception If the issue has already been reported.
+     * @throws Exception If the issue has already been reported.
      */
     public function setPath(string $path): self
     {
@@ -195,7 +196,7 @@ class Issue
      *
      * @param int $line
      * @return self
-     * @throws \Exception If the issue has already been reported.
+     * @throws Exception If the issue has already been reported.
      */
     public function setLine(int $line): self
     {
@@ -219,7 +220,7 @@ class Issue
      *
      * @param string $ref
      * @return self
-     * @throws \Exception If the issue has already been reported.
+     * @throws Exception If the issue has already been reported.
      */
     public function setRef(string $ref): self
     {
@@ -243,7 +244,7 @@ class Issue
      *
      * @param string $help
      * @return self
-     * @throws \Exception If the issue has already been reported.
+     * @throws Exception If the issue has already been reported.
      */
     public function setHelp(string $help): self
     {
@@ -267,7 +268,7 @@ class Issue
      *
      * @param array $messageData
      * @return self
-     * @throws \Exception If the issue has already been reported.
+     * @throws Exception If the issue has already been reported.
      */
     public function setMessageData(array $messageData): self
     {
@@ -282,7 +283,7 @@ class Issue
      * @param string $key
      * @param scalar $value
      * @return self
-     * @throws \Exception If the issue has already been reported.
+     * @throws Exception If the issue has already been reported.
      */
     public function addMessageData(string $key, scalar $value): self
     {
@@ -320,7 +321,7 @@ class Issue
      *
      * @param string $codePrefix
      * @return self
-     * @throws \Exception If the issue has already been reported.
+     * @throws Exception If the issue has already been reported.
      */
     public function addCode(string $codePrefix): self
     {
@@ -336,7 +337,7 @@ class Issue
      * @param string $key The key of the data to be replaced in the message
      * @param string $value The value of the data to be replaced in the message
      * @return self
-     * @throws \Exception If the issue has already been reported.
+     * @throws Exception If the issue has already been reported.
      */
     public function addMessage(string $key, string $value): self
     {

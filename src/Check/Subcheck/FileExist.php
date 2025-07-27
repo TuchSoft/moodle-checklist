@@ -3,10 +3,6 @@
 
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
-use Tuchsoft\MoodleChecklist\Action\AbstractAction;
-use Tuchsoft\MoodleChecklist\Action\LangParser;
-use \Tuchsoft\MoodleChecklist\Action\TokenFinder;
-use Tuchsoft\MoodleChecklist\Plugin;
 use Tuchsoft\MoodleChecklist\Report\Report;
 
 

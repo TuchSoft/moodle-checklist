@@ -2,12 +2,10 @@
 
 namespace Tuchsoft\MoodleChecklist\Check;
 
-use Tuchsoft\MoodleChecklist\Check\Subcheck\FileExist;
-use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckFileSize;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckFileEncoding;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckFileMimeType;
-use Tuchsoft\MoodleChecklist\Plugin;
-use Tuchsoft\MoodleChecklist\Report\Report;
+use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckFileSize;
+use Tuchsoft\MoodleChecklist\Check\Subcheck\FileExist;
 use Tuchsoft\MoodleChecklist\Settings;
 
 
@@ -20,15 +18,14 @@ abstract class AbstractSingleFileCheck extends AbstractCheck
 
     protected string $filename;
     protected array $mimeType = [];
-    protected string $encoding = "UTF-8";
+    protected string $encoding = 'UTF-8';
     protected int $minAllowedSize = 0;
     protected int $maxAllowedSize = PHP_INT_MAX;
 
     /**
      * AbstractSingleFileCheck constructor.
      *
-     * @param Plugin $plugin The plugin instance.
-     * @param string $filePath The full path to the file this check applies to.
+     * @param Settings $settings settings class
      */
     public function __construct(protected Settings $settings)
     {

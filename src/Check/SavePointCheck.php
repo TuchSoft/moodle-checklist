@@ -6,7 +6,6 @@ namespace Tuchsoft\MoodleChecklist\Check;
 
 
 use Tuchsoft\MoodleChecklist\Process\MoodleCISavepointProcess;
-use Tuchsoft\MoodleChecklist\Process\MoodlePluginCiProcess;
 
 class SavePointCheck extends AbstractMoodleCiCheck
 {

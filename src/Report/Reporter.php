@@ -5,9 +5,9 @@ namespace Tuchsoft\MoodleChecklist\Report;
 
 
 
+use Exception;
 use PHP_CodeSniffer\Autoload;
 use PHP_CodeSniffer\Reports\Report as PhpcsReportInterface;
-use PHP_CodeSniffer\Util\Common;
 use Tuchsoft\MoodleChecklist\Settings;
 
 class Reporter
@@ -27,11 +27,11 @@ class Reporter
 
         static::$startTime = microtime(true);
         // Define PHP_CODESNIFFER_VERBOSITY and PHP_CODESNIFFER_CBF if they aren't already
-        if (!defined("PHP_CODESNIFFER_VERBOSITY")) {
-            define("PHP_CODESNIFFER_VERBOSITY", 0);
+        if (!defined('PHP_CODESNIFFER_VERBOSITY')) {
+            define('PHP_CODESNIFFER_VERBOSITY', 0);
         }
-        if (!defined("PHP_CODESNIFFER_CBF")) {
-            define("PHP_CODESNIFFER_CBF", false);
+        if (!defined('PHP_CODESNIFFER_CBF')) {
+            define('PHP_CODESNIFFER_CBF', false);
         }
         foreach ($setting->reports as $type => $output) {
             if ($output === null) {
@@ -39,15 +39,15 @@ class Reporter
             }
             if ($type == static::RAW_REPORT) {
                 $this->reports[$type] = [
-                    "output" => $output,
-                    "class" => null,
+                    'output' => $output,
+                    'class' => null,
                 ];
             } else {
-                $reportClassName = "";
-                if (strpos($type, ".") !== false) {
+                $reportClassName = '';
+                if (str_contains($type, '.')) {
                     $filename = realpath($type);
                     if ($filename === false) {
-                        throw new \Exception(
+                        throw new Exception(
                             "ERROR: Custom report \"$type\" not found",
                         );
                     }
@@ -63,7 +63,7 @@ class Reporter
                     $registeredNamespaces = Autoload::getSearchPaths();
                     $trimmedType = ltrim($type, "\\");
                     foreach ($registeredNamespaces as $nsPrefix) {
-                        if ($nsPrefix === "") {
+                        if ($nsPrefix === '') {
                             continue;
                         }
                         if (
@@ -74,25 +74,25 @@ class Reporter
                         }
                     }
                 }
-                if ($reportClassName === "") {
-                    throw new \Exception(
+                if ($reportClassName === '') {
+                    throw new Exception(
                         "ERROR: Class file for report \"$type\" not found"
                     );
                 }
                 $reportClass = new $reportClassName();
                 if ($reportClass instanceof PhpcsReportInterface === false) {
-                    throw new \Exception(
+                    throw new Exception(
                         "Class '$reportClassName' must implement the 'PHP_CodeSniffer\Reports\Report' interface."
                     );
                 }
                 $this->reports[$type] = [
-                    "output" => $output,
-                    "class" => $reportClass,
+                    'output' => $output,
+                    'class' => $reportClass,
                 ];
             }
 
             if ($output !== null) {
-                file_put_contents($output, "");
+                file_put_contents($output, '');
             }
         }
 
@@ -114,8 +114,6 @@ class Reporter
                 $messages = [];
                 /** @var Issue $issue */
                 foreach ($issues as $issue) {
-
-                    $messageType = '';
                     if ($issue->getSeverity() === Report::SEVERITY_ERROR) {
                         $messageType = 'ERROR';
                         $errorsCount++;
@@ -170,7 +168,7 @@ class Reporter
     {
         $toScreen = false;
         foreach ($this->reports as $type => $report) {
-            if ($report["output"] === null) {
+            if ($report['output'] === null) {
                 $toScreen = true;
             }
             $this->printReport($type);
@@ -199,7 +197,7 @@ class Reporter
     public function printReport(string $reportType): void
     {
 
-        $reportFile = $this->reports[$reportType]["output"];
+        $reportFile = $this->reports[$reportType]['output'];
 
         $filename = null;
         $toScreen = true;
@@ -214,8 +212,8 @@ class Reporter
         if ($reportType == static::RAW_REPORT) {
             $generatedReport = json_encode($this->report->getIssues(true), JSON_PRETTY_PRINT);
         } else {
-            $reportClass = $this->reports[$reportType]["class"];
-            $rawReport = "";
+            $reportClass = $this->reports[$reportType]['class'];
+            $rawReport = '';
             foreach ($this->reportData as $path => $data) {
                 $rawReport .= $this->getPartial($reportClass, $path, $data);
             }

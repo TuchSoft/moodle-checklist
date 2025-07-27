@@ -3,8 +3,6 @@
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
 use Tuchsoft\MoodleChecklist\Action\ConventionalCommitValidator;
-use Tuchsoft\MoodleChecklist\Report\Report;
-use Tuchsoft\MoodleChecklist\Check\Subcheck\BaseCheckTrait;
 
 trait CheckConventionalCommits
 {
@@ -26,8 +24,6 @@ trait CheckConventionalCommits
         }
 
         $validator = new ConventionalCommitValidator();
-
-        $conventionalCommitRegex = '/^(feat|fix|docs|style|refactor|test|chore|ci|build): .*$/';
         $validCommits = 0;
 
         foreach ($commits as $commit) {
@@ -44,7 +40,7 @@ trait CheckConventionalCommits
         if ($adherence < $threshold) {
             $this->addWarning(
                 $code,
-                "Only " . round($adherence * 100) . "% of recent commits follow the `Conventional Commits` standard. Autmatic CHANGELOG generation will be difficult"
+                'Only ' . round($adherence * 100) . '% of recent commits follow the `Conventional Commits` standard. Automatic CHANGELOG generation will be difficult'
             );
         }
     }

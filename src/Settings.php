@@ -6,7 +6,9 @@ namespace Tuchsoft\MoodleChecklist;
 
 
 
-class Settings extends \PHP_CodeSniffer\Config
+use PHP_CodeSniffer\Config;
+
+class Settings extends Config
 {
     public Plugin $plugin;
 

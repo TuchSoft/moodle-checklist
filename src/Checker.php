@@ -3,12 +3,15 @@
 namespace Tuchsoft\MoodleChecklist;
 
 
+use Exception;
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ReflectionClass;
+use Throwable;
 use Tuchsoft\MoodleChecklist\Check\AbstractCheck;
-
 use Tuchsoft\MoodleChecklist\Report\Report;
 use Tuchsoft\MoodleChecklist\Report\Reporter;
-use Tuchsoft\MoodleChecklist\Action\VersionParser;
-use ReflectionClass;
 
 class Checker
 {
@@ -22,7 +25,7 @@ class Checker
         // Populate the Plugin object within the Settings
         if ($this->settings->plugin->hasError()) {
             // Handle error, e.g., throw an exception or log
-            throw new \Exception("Failed to parse plugin info: " . $this->settings->plugin->getErrorMessage());
+            throw new Exception('Failed to parse plugin info: ' . $this->settings->plugin->getErrorMessage());
         }
 
         $this->discoverChecks();
@@ -66,13 +69,13 @@ class Checker
             $error = error_get_last();
             if ($error && in_array($error['type'], [E_ERROR, E_PARSE, E_COMPILE_ERROR, E_CORE_ERROR, E_RECOVERABLE_ERROR])) {
                 // A fatal error occurred
-                $message = "FATAL ERROR: " . $error['message'] . " in " . $error['file'] . " on line " . $error['line'];
+                $message = 'FATAL ERROR: ' . $error['message'] . ' in ' . $error['file'] . ' on line ' . $error['line'];
                 error_log($message);
 
                 // You can add logic to send an email, display a user-friendly error page, etc.
                 // For now, we'll just throw an exception to be caught by the calling code if possible,
                 // and exit with a non-zero status code.
-                throw new \Exception($message);
+                throw new Exception($message);
             }
         });
     }
@@ -85,8 +88,8 @@ class Checker
 
     private function loadChecksFromDirectory(string $directory): void
     {
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS)
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS)
         );
 
         // The try-catch block here is now more effective because the shutdown function
@@ -97,9 +100,9 @@ class Checker
                     require_once $file->getPathname();
                 }
             }
-        } catch (\Throwable $t) {
+        } catch (Throwable $t) {
             // Now you can catch the exceptions thrown by the shutdown function
-            throw new \Exception("Cannot load file '{$file->getPathname()}': ".$t->getMessage());
+            throw new Exception("Cannot load file '{$file->getPathname()}': ".$t->getMessage());
         }
 
         foreach (get_declared_classes() as $class) {
@@ -126,7 +129,7 @@ class Checker
         $reports = [];
 
 
-        foreach ($this->checks as $checkName => $checkInstance) {
+        foreach ($this->checks as $checkInstance) {
             /** @var AbstractCheck $checkInstance */
             $checkInstance->execute(); // Execute populates its internal Report object
             $reports[] = $checkInstance->getReport(); // Retrieve the populated Report

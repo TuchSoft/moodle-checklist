@@ -72,7 +72,7 @@ class RemarkProcess extends AbstractProcess
             $this->issues = json_decode($stderr, true, 512, JSON_THROW_ON_ERROR);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
-                $this->error = ($this->error ? $this->error . "\n" : '') . "Unknown error: " . json_last_error_msg();
+                $this->error = ($this->error ? $this->error . "\n" : '') . 'Unknown error: ' . json_last_error_msg();
                 return false;
             }
         } else {
@@ -88,7 +88,7 @@ class RemarkProcess extends AbstractProcess
 
                 $this->tree = json_decode($stdout, true, 512, JSON_THROW_ON_ERROR);
                 if (json_last_error() !== JSON_ERROR_NONE) {
-                    $this->error = ($this->error ? $this->error . "\n" : '') . "Unknown error: " . json_last_error_msg();
+                    $this->error = ($this->error ? $this->error . "\n" : '') . 'Unknown error: ' . json_last_error_msg();
                     return false;
                 }
                 file_put_contents('/var/www/html/ast.json', $stdout);
@@ -129,7 +129,7 @@ class RemarkProcess extends AbstractProcess
             ($issue['fatal'] ? $severity_high : $severity_low),
             $issue['reason'],
             $this->file,
-            isset($issue['line']) ? $issue['line'] : null
+            $issue['line'] ?? null
         ), $this->issues[0]['messages']  );
     }
 

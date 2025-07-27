@@ -2,8 +2,6 @@
 
 namespace Tuchsoft\MoodleChecklist\Action;
 
-use Exception;
-
 abstract class AbstractAction
 {
 

@@ -3,7 +3,6 @@
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
 use Tuchsoft\MoodleChecklist\Action\GitHubApi;
-use Tuchsoft\MoodleChecklist\Check\Subcheck\BaseCheckTrait;
 
 trait GitData
 {
@@ -58,19 +57,19 @@ trait GitData
         $this->repoInfo = $github->getRepoInfo($repoUrl);
 
         if (!$this->repoInfo) {
-            $this->runtimeError("Failed to fetch repository information: " . $github->getLastError());
+            $this->runtimeError('Failed to fetch repository information: ' . $github->getLastError());
             $this->gitDataFailed = true;
             return;
         }
 
         $this->repoTags = $github->getRepoTags($repoUrl);
         if (!$this->repoTags) {
-            $this->runtimeError("Failed to fetch repository tags: " . $github->getLastError());
+            $this->runtimeError('Failed to fetch repository tags: ' . $github->getLastError());
         }
 
         $this->repoCommits = $github->getRepoCommits($repoUrl);
         if (!$this->repoCommits) {
-            $this->runtimeError("Failed to fetch repository commits: " . $github->getLastError());
+            $this->runtimeError('Failed to fetch repository commits: ' . $github->getLastError());
         }
 
         $this->repoTopics = $github->getRepoTopics($repoUrl);

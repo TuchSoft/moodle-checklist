@@ -2,9 +2,10 @@
 
 namespace Tuchsoft\MoodleChecklist\Check;
 
+use Exception;
 use PHPMD\PHPMD;
-use PHPMD\Report as PhpmdReport;
 use PHPMD\Renderer\JSONRenderer;
+use PHPMD\Report as PhpmdReport;
 use PHPMD\RuleSetFactory;
 use PHPMD\Writer\StreamWriter;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\GetAllFile;
@@ -24,13 +25,13 @@ class PhpMessDetectorCheck extends AbstractMoodleCiCheck
 
             $rules = realpath(__DIR__ . '/../../xvendor/moodle-plugin-ci/res/config/phpmd.xml');
             if ($rules === false || !file_exists($rules)) {
-                $this->runtimeError("PHPMD ruleset not found. Expected at: " . __DIR__ . '/../../xvendor/moodle-plugin-ci/res/config/phpmd.xml');
+                $this->runtimeError('PHPMD ruleset not found. Expected at: ' . __DIR__ . '/../../xvendor/moodle-plugin-ci/res/config/phpmd.xml');
                 return;
             }
 
             $stream = fopen('php://memory', 'r+');
             if ($stream === false) {
-                $this->runtimeError("Failed to open memory stream for PHPMD");
+                $this->runtimeError('Failed to open memory stream for PHPMD');
                 return;
             }
 
@@ -55,17 +56,17 @@ class PhpMessDetectorCheck extends AbstractMoodleCiCheck
                 rewind($stream);
                 $jsonOutput = stream_get_contents($stream);
                 fclose($stream);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 if (is_resource($stream)) {
                     fclose($stream);
                 }
-                $this->runtimeError("Failed to run PHPMD: " . $e->getMessage());
+                $this->runtimeError('Failed to run PHPMD: ' . $e->getMessage());
                 return;
             }
 
             $result = json_decode($jsonOutput, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                $this->runtimeError("Failed to decode PHPMD JSON output: " . json_last_error_msg() . ". Output was: " . $jsonOutput);
+                $this->runtimeError('Failed to decode PHPMD JSON output: ' . json_last_error_msg() . '. Output was: ' . $jsonOutput);
                 return;
             }
 

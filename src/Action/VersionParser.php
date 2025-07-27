@@ -4,9 +4,11 @@ namespace Tuchsoft\MoodleChecklist\Action;
 
 
 
+use stdClass;
+use Throwable;
+
 class VersionParser extends AbstractAction
 {
-    private string $pluginTypesJsonUrl;
     private array $pluginTypePaths;
 
     public function __construct()
@@ -112,7 +114,7 @@ class VersionParser extends AbstractAction
 
     private function parseVersionFile(string $versionFilePath): ?array
     {
-        $plugin = new \stdClass(); // Temporary object to capture variables
+        $plugin = new stdClass(); // Temporary object to capture variables
 
         // Temporarily suppress errors to avoid polluting output if file is malformed.
         $oldErrorLevel = error_reporting(0);
@@ -124,7 +126,7 @@ class VersionParser extends AbstractAction
         define('ANY_VERSION', 'any');
         try {
             include $versionFilePath;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->lastError = "Error parsing version.php for plugin {$versionFilePath}: " . $e->getMessage();
             error_reporting($oldErrorLevel);
             return null;

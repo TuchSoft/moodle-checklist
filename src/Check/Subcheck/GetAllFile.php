@@ -2,6 +2,7 @@
 
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
+use Exception;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -41,7 +42,7 @@ trait GetAllFile
                     $files[] = $item->getPathname();
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->runtimeError("Error scanning directory '{$directory}': " . $e->getMessage());
             return [];
         }

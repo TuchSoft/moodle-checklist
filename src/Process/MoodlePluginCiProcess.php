@@ -2,8 +2,6 @@
 
 namespace Tuchsoft\MoodleChecklist\Process;
 
-use Tuchsoft\MoodleChecklist\Process\AbstractProcess;
-
 class MoodlePluginCiProcess extends AbstractProcess
 {
 

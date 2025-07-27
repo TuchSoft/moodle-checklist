@@ -2,9 +2,11 @@
 
 namespace Tuchsoft\MoodleChecklist\Process;
 
+use Exception;
 use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use SimpleXMLElement;
-
 use Tuchsoft\MoodleChecklist\Report\Issue;
 use Tuchsoft\MoodleChecklist\Report\Report;
 
@@ -20,7 +22,6 @@ use Tuchsoft\MoodleChecklist\Report\Report;
 class MoodleCIDocblockProcess extends AbstractProcess
 {
     private const string PLUGIN_SOURCE_DIR = __DIR__ . '/../../xvendor/moodle-local_moodlecheck';
-    private const string MOODLECHECK = 'local/moodlecheck';
 
     private string $moodleRoot;
     private string $pluginRoot;
@@ -63,7 +64,7 @@ class MoodleCIDocblockProcess extends AbstractProcess
         $pluginDestDir =  "{$this->moodleRoot}/local/moodlecheck";
 
         if (!is_dir(self::PLUGIN_SOURCE_DIR)) {
-            $this->error = "Could not find moodlecheck plugin source at: " . self::PLUGIN_SOURCE_DIR;
+            $this->error = 'Could not find moodlecheck plugin source at: ' . self::PLUGIN_SOURCE_DIR;
             return false;
         }
         if (!class_exists('SimpleXMLElement')) {
@@ -82,7 +83,7 @@ class MoodleCIDocblockProcess extends AbstractProcess
                 // 2. Install the plugin by running Moodle upgrade.
                 $upgradeProcess = new MoodleUpgradeProcess($this->moodleRoot);
                 if (!$upgradeProcess->execute()) {
-                    $this->error = "Failed to install moodlecheck plugin. " . $upgradeProcess->getError();
+                    $this->error = 'Failed to install moodlecheck plugin. ' . $upgradeProcess->getError();
                     return false;
                 }
             }
@@ -124,15 +125,15 @@ class MoodleCIDocblockProcess extends AbstractProcess
 
         $xmlStart = strpos($output, '<?xml');
         if ($xmlStart === false) {
-            $this->error = "No XML output found from moodlecheck script. Stderr: " . $this->getStderr();
+            $this->error = 'No XML output found from moodlecheck script. Stderr: ' . $this->getStderr();
             return;
         }
         $xmlString = substr($output, $xmlStart);
 
         try {
             $xml = new SimpleXMLElement($xmlString);
-        } catch (\Exception $e) {
-            $this->error = "Failed to parse XML output from moodlecheck: " . $e->getMessage();
+        } catch (Exception $e) {
+            $this->error = 'Failed to parse XML output from moodlecheck: ' . $e->getMessage();
             return;
         }
 
@@ -165,6 +166,7 @@ class MoodleCIDocblockProcess extends AbstractProcess
 
     /**
      * Recursively copies a directory.
+     * @noinspection PhpSameParameterValueInspection
      */
     private function recursiveCopy(string $source, string $dest): bool
     {
@@ -172,9 +174,9 @@ class MoodleCIDocblockProcess extends AbstractProcess
             mkdir($dest, 0755, true);
         }
 
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($source, FilesystemIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::SELF_FIRST
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($source, FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST
         );
 
         foreach ($iterator as $item) {
@@ -199,9 +201,9 @@ class MoodleCIDocblockProcess extends AbstractProcess
             return;
         }
 
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::CHILD_FIRST
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
         );
 
         foreach ($iterator as $item) {

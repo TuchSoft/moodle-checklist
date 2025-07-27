@@ -4,7 +4,6 @@ namespace Tuchsoft\MoodleChecklist\Report;
 
 
 use PHP_CodeSniffer\Util\Common;
-use Tuchsoft\MoodleChecklist\Check\AbstractCheck;
 use Tuchsoft\MoodleChecklist\Settings;
 
 class Report

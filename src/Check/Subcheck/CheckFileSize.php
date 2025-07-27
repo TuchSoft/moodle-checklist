@@ -2,9 +2,6 @@
 
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
-use Tuchsoft\MoodleChecklist\Report\Report;
-use Tuchsoft\MoodleChecklist\Check\Subcheck\BaseCheckTrait;
-
 trait CheckFileSize
 {
     use BaseCheckTrait;

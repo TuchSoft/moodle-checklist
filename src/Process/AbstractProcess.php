@@ -3,9 +3,9 @@
 
 namespace Tuchsoft\MoodleChecklist\Process;
 
+use Exception;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Exception\ProcessTimedOutException;
+
 
 /**
  * AbstractProcess provides a base for executing external commands using Symfony Process.
@@ -46,7 +46,7 @@ abstract class AbstractProcess
         $this->process = new Process($this->getCommand());
         $this->process->setTimeout($timeout);
         $this->process->setEnv([
-            'NODE_PATH' => __DIR__."/../../node_modules",
+            'NODE_PATH' => __DIR__. '/../../node_modules',
             'XDEBUG_SESSION' => NULL
         ]);
         if ($this->cwd) {
@@ -65,20 +65,8 @@ abstract class AbstractProcess
                 return false;
             }
 
-        } catch (ProcessFailedException $e) {
-            $this->error = "Process execution failed: " . $e->getMessage();
-            $this->stdout = $e->getProcess()->getOutput();
-            $this->stderr = $e->getProcess()->getErrorOutput();
-            $this->exitCode = $e->getProcess()->getExitCode();
-            return false;
-        } catch (ProcessTimedOutException $e) {
-            $this->error = "Process timed out: " . $e->getMessage();
-            $this->stdout = $e->getProcess()->getOutput();
-            $this->stderr = $e->getProcess()->getErrorOutput();
-            $this->exitCode = $e->getProcess()->getExitCode();
-            return false;
-        } catch (\Exception $e) {
-            $this->error = "An unexpected error occurred during process execution: " . $e->getMessage();
+        } catch (Exception $e) {
+            $this->error = 'An unexpected error occurred during process execution: ' . $e->getMessage();
             return false;
         } finally {
             $this->removeTmpFiles();

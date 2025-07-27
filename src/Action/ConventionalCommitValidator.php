@@ -1,7 +1,8 @@
 <?php
 
-namespace Tuchsoft\MoodleChecklist\Actio;
+namespace Tuchsoft\MoodleChecklist\Action;
 
+use Exception;
 use Ramsey\ConventionalCommits\Configuration\Configuration;
 use Ramsey\ConventionalCommits\Configuration\DefaultConfiguration;
 use Ramsey\ConventionalCommits\Parser;
@@ -21,9 +22,9 @@ class ConventionalCommitValidator extends AbstractAction {
 
     public function validate($msg): bool {
         try {
-            $parsed = $this->parser->parse($msg);
+            $this->parser->parse($msg);
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->lastError = "{$e->getMessage()}: ($msg)";
             return false;
         }

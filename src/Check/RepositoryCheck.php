@@ -2,13 +2,11 @@
 
 namespace Tuchsoft\MoodleChecklist\Check;
 
-use Tuchsoft\MoodleChecklist\Action\LangParser;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckConventionalCommits;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckSemanticVersioning;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\GitData;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\LoadLangString;
 use Tuchsoft\MoodleChecklist\Plugin;
-use Tuchsoft\MoodleChecklist\Report\Report;
 use Tuchsoft\MoodleChecklist\Settings;
 
 class RepositoryCheck extends AbstractCheck
@@ -25,7 +23,7 @@ class RepositoryCheck extends AbstractCheck
      */
     public function __construct(Settings $settings)
     {
-        $this->path = "Git Repository";
+        $this->path = 'Git Repository';
         parent::__construct($settings);
     }
 
@@ -45,13 +43,13 @@ class RepositoryCheck extends AbstractCheck
             if ($this->repoInfo['private'] === true) {
                 $this->addError(
                     $code,
-                    "The repository is private. Moodle plugins should be hosted in a public repository.",
+                    'The repository is private. Moodle plugins should be hosted in a public repository.',
                 );
             }
         }
 
         if ($this->isActive(($code = 'correct-repo-name'))) {
-            $expectedName = "moodle-" . $this->plugin->component;
+            $expectedName = 'moodle-' . $this->plugin->component;
             if ($this->repoInfo['name'] !== $expectedName) {
                 $this->addWarning(
                     $code,
@@ -87,7 +85,7 @@ class RepositoryCheck extends AbstractCheck
             } else {
                 $this->report->addTip(
                     $code,
-                    "No tags found. It is recommended to create tags for releases following Semantic Versioning."
+                    'No tags found. It is recommended to create tags for releases following Semantic Versioning.'
                 );
             }
         }
@@ -98,7 +96,7 @@ class RepositoryCheck extends AbstractCheck
             } else {
                 $this->addTip(
                     $code,
-                    "No commits found. A well-maintained repository should use clear commit messages.",
+                    'No commits found. A well-maintained repository should use clear commit messages.',
                 );
             }
         }

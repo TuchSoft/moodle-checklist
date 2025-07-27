@@ -2,7 +2,6 @@
 
 namespace Tuchsoft\MoodleChecklist\Process;
 
-use Tuchsoft\MoodleChecklist\Process\AbstractProcess;
 use Tuchsoft\MoodleChecklist\Report\Issue;
 use Tuchsoft\MoodleChecklist\Report\Report;
 
@@ -36,7 +35,7 @@ class MoodleCISavepointProcess extends AbstractProcess
     {
         // This tool is expected to be run from the Moodle project root.
         if (!file_exists(self::SCRIPT_SOURCE_PATH)) {
-            $this->error = "Could not find check_upgrade_savepoints.php script at: " . self::SCRIPT_SOURCE_PATH;
+            $this->error = 'Could not find check_upgrade_savepoints.php script at: ' . self::SCRIPT_SOURCE_PATH;
             return false;
         }
 
@@ -81,7 +80,6 @@ class MoodleCISavepointProcess extends AbstractProcess
         }
 
         $lines = explode("\n", $output);
-        $issues = [];
 
         foreach ($lines as $line) {
             $line = trim(ltrim($line, " \n\r\t\v\0+-"));
@@ -106,9 +104,9 @@ class MoodleCISavepointProcess extends AbstractProcess
        foreach ($this->messages as $severity => $messages) {
            foreach ($messages as $message) {
                $severity = match($severity) {
-                   "ERROR" => Report::SEVERITY_ERROR,
-                   "WARN" => Report::SEVERITY_WARNING,
-                   "NOTE" => Report::SEVERITY_TIP
+                   'ERROR' => Report::SEVERITY_ERROR,
+                   'WARN' => Report::SEVERITY_WARNING,
+                   'NOTE' => Report::SEVERITY_TIP
                };
                $issues[] = new Issue(
                    $code,

@@ -7,7 +7,6 @@ namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 use Tuchsoft\MoodleChecklist\Action\DocblockParser;
 
 
-
 trait LoadAuthors
 {
     use BaseCheckTrait;
@@ -22,7 +21,7 @@ trait LoadAuthors
             $parser = new DocblockParser($this->plugin->fullpath);
             $this->authors = $parser->parse();
             if ($parser->getLastError()) {
-                $this->runtimeError("Cannot parse authors: ". $parser->getLastError());
+                $this->runtimeError('Cannot parse authors: ' . $parser->getLastError());
                 $this->authorsFailed = true;
             }
         }

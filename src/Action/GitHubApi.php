@@ -2,8 +2,6 @@
 
 namespace Tuchsoft\MoodleChecklist\Action;
 
-use Exception;
-
 class GitHubApi extends AbstractAction
 {
     /**

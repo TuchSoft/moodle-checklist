@@ -3,8 +3,6 @@
 namespace Tuchsoft\MoodleChecklist\Check;
 
 use Tuchsoft\MoodleChecklist\Check\Subcheck\BaseCheckTrait;
-use Tuchsoft\MoodleChecklist\Plugin;
-use Tuchsoft\MoodleChecklist\Report\Issue;
 use Tuchsoft\MoodleChecklist\Report\Report;
 use Tuchsoft\MoodleChecklist\Settings;
 

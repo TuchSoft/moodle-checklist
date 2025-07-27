@@ -3,7 +3,6 @@
 
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
-use \Tuchsoft\MoodleChecklist\Action\TokenFinder;
 use Tuchsoft\MoodleChecklist\Report\Report;
 
 

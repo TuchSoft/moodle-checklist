@@ -2,8 +2,6 @@
 
 namespace Tuchsoft\MoodleChecklist\Process;
 
-use Tuchsoft\MoodleChecklist\Process\AbstractProcess;
-
 /**
  * MoodleUpgradeProcess runs the Moodle CLI upgrade script.
  * This is typically used to install or uninstall plugins.

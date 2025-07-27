@@ -3,10 +3,9 @@
 namespace Tuchsoft\MoodleChecklist\Check;
 
 
-use JakubOnderka\PhpParallelLint\Error;
+use Exception;
 use JakubOnderka\PhpParallelLint\Manager;
 use JakubOnderka\PhpParallelLint\Settings;
-
 use Tuchsoft\MoodleChecklist\Check\Subcheck\GetAllFile;
 
 class PhpLintCheck extends AbstractMoodleCiCheck
@@ -26,17 +25,17 @@ class PhpLintCheck extends AbstractMoodleCiCheck
             $settings->addPaths($this->getAllFile(ext: ['php']));
             $settings->showDeprecated = true;
 
+            $result = null;
             try {
                 ob_start();
                 $result = $manager->run($settings);
                 ob_end_clean();
-            } catch (\Exception $e) {
-                $this->runtimeError("Failed to run PHP Lint: " . $e->getMessage());
+            } catch (Exception $e) {
+                $this->runtimeError('Failed to run PHP Lint: ' . $e->getMessage());
             }
 
 
             if ($result) {
-                /** @var Error $error */
                 foreach ($result->getErrors() as $error) {
                     $this->addError(
                         $code,

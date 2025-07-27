@@ -6,8 +6,6 @@ use Exception;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use SplFileInfo;
-use Tuchsoft\MoodleChecklist\Plugin;
 
 class TokenFinder extends AbstractAction
 {
@@ -36,7 +34,7 @@ class TokenFinder extends AbstractAction
         $this->checkForError(); // Call base class error checker if needed
 
         if (empty($regex)) {
-            $this->lastError = "No regex token provided for search.";
+            $this->lastError = 'No regex token provided for search.';
             return null;
         }
 
@@ -73,7 +71,7 @@ class TokenFinder extends AbstractAction
                 }
             }
         } catch (Exception $e) {
-            $this->lastError = "Error during file system iteration: " . $e->getMessage();
+            $this->lastError = 'Error during file system iteration: ' . $e->getMessage();
             return null;
         }
 

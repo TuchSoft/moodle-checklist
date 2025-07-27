@@ -2,17 +2,11 @@
 
 namespace Tuchsoft\MoodleChecklist\Check;
 
-use Exception;
-use Tuchsoft\MoodleChecklist\Check\Subcheck\FileExist;
-use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckFileSize;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckFileEncoding;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckFileMimeType;
+use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckFileSize;
+use Tuchsoft\MoodleChecklist\Check\Subcheck\FileExist;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\GetAllFile;
-use Tuchsoft\MoodleChecklist\Plugin;
-use Tuchsoft\MoodleChecklist\Report\Report;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use FilesystemIterator;
 
 class FileStructureCheck extends AbstractCheck
 {
@@ -99,46 +93,45 @@ class FileStructureCheck extends AbstractCheck
         // --- Forbidden presence checks (Error if present) ---
         $forbiddenItems = [
             'dir' => [
-                'node_modules' => "Node dependencies",
-                'vendor' => "Composer dependencies",
-                '.venv' => "Python virtual environment",
-                'env' => "Python virtual environment",
-                'bundle' => "Ruby gems",
-                'pkg/mod' => "Go module cache",
-                'target' => "Build artifacts",
-                'build' => "Gradle build artifacts",
-                'bin' => ".NET build output",
-                'obj' => ".NET intermediate build output",
+                'node_modules' => 'Node dependencies',
+                'vendor' => 'Composer dependencies',
+                '.venv' => 'Python virtual environment',
+                'env' => 'Python virtual environment',
+                'bundle' => 'Ruby gems',
+                'pkg/mod' => 'Go module cache',
+                'target' => 'Build artifacts',
+                'build' => 'Gradle build artifacts',
+                'bin' => '.NET build output',
+                'obj' => '.NET intermediate build output',
             ],
             'file' => [
-                'package.json' => "Frontend package manager files",
-                'package-lock.json' => "NPM lock file",
-                'yarn.lock' => "Yarn lock file",
-                'composer.json' => "Composer project files",
-                'composer.lock' => "Composer lock file",
-                'Pipfile' => "Pipenv project file",
-                'Pipfile.lock' => "Pipenv lock file",
-                'poetry.lock' => "Poetry lock file",
-                'pyproject.toml' => "Python project configuration",
-                'Gemfile.lock' => "Bundler lock file",
-                'go.mod' => "Go module file",
-                'go.sum' => "Go checksum file",
-                'Cargo.toml' => "Cargo project file",
-                'Cargo.lock' => "Cargo lock file",
-                'pom.xml' => "Maven project file",
-                'build.gradle' => "Gradle build file",
-                'gradle.lockfile' => "Gradle lock file",
-                'packages.config' => "NuGet package references",
-                'obj/project.assets.json' => "NuGet dependency graph file",
-                'packages.lock.json' => "NuGet lock file",
+                'package.json' => 'Frontend package manager files',
+                'package-lock.json' => 'NPM lock file',
+                'yarn.lock' => 'Yarn lock file',
+                'composer.json' => 'Composer project files',
+                'composer.lock' => 'Composer lock file',
+                'Pipfile' => 'Pipenv project file',
+                'Pipfile.lock' => 'Pipenv lock file',
+                'poetry.lock' => 'Poetry lock file',
+                'pyproject.toml' => 'Python project configuration',
+                'Gemfile.lock' => 'Bundler lock file',
+                'go.mod' => 'Go module file',
+                'go.sum' => 'Go checksum file',
+                'Cargo.toml' => 'Cargo project file',
+                'Cargo.lock' => 'Cargo lock file',
+                'pom.xml' => 'Maven project file',
+                'build.gradle' => 'Gradle build file',
+                'gradle.lockfile' => 'Gradle lock file',
+                'packages.config' => 'NuGet package references',
+                'obj/project.assets.json' => 'NuGet dependency graph file',
+                'packages.lock.json' => 'NuGet lock file',
             ],
         ];
 
         foreach ($forbiddenItems as $type => $items) {
             foreach ($items as $itemPath => $customMessage) {
-                $sanitizedItemPath = preg_replace('/[^a-zA-Z0-9]/', '', $itemPath);
                 $code = 'forbidden-' . $type;
-                $message = "Forbidden {$type} '{$itemPath}' found. " . $customMessage . "  should not be part of the plugin (@see https://moodledev.io/general/community/plugincontribution/checklist#dependencies)";
+                $message = "Forbidden {$type} '{$itemPath}' found. " . $customMessage . '  should not be part of the plugin (@see https://moodledev.io/general/community/plugincontribution/checklist#dependencies)';
 
                 $fullPath = $pluginRoot . '/' . $itemPath;
 

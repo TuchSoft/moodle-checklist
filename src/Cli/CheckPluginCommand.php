@@ -2,15 +2,16 @@
 
 namespace Tuchsoft\MoodleChecklist\Cli;
 
+use Exception;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Command\Command; // Explicitly import Command for constants
 use Tuchsoft\MoodleChecklist\Checker;
 use Tuchsoft\MoodleChecklist\Report\Reporter;
 use Tuchsoft\MoodleChecklist\Settings;
-use Exception;
+
+// Explicitly import Command for constants
 
 class CheckPluginCommand extends AbstractCommand
 {
@@ -106,11 +107,11 @@ class CheckPluginCommand extends AbstractCommand
 
             $reporter = new Reporter($settings, $report);
 
-            $this->text("Done, generating report...");
+            $this->text('Done, generating report...');
             $reporter->printReports();
 
             // Using SymfonyStyle's section for a title-like output
-            $this->io->section("The following checks had run (* has issue)");
+            $this->io->section('The following checks had run (* has issue)');
 
             $wIssue = $report->getReportWithIssue();
             $woIssue =  $report->getReportWithoutIssue();
@@ -122,10 +123,10 @@ class CheckPluginCommand extends AbstractCommand
             $this->printList($executed);
 
             if ($reporter->totalErrors > 0 || $reporter->totalWarnings > 0) {
-                $this->warning("All checks done but something is not shiny yet, check the report!");
+                $this->warning('All checks done but something is not shiny yet, check the report!');
                 return Command::FAILURE;
             } else {
-                $this->success("All checks passed! Ready to release!");
+                $this->success('All checks passed! Ready to release!');
                 return Command::SUCCESS;
             }
 

@@ -3,10 +3,6 @@
 
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
-use Tuchsoft\MoodleChecklist\Action\AbstractAction;
-use Tuchsoft\MoodleChecklist\Action\LangParser;
-use \Tuchsoft\MoodleChecklist\Action\TokenFinder;
-use Tuchsoft\MoodleChecklist\Plugin;
 use Tuchsoft\MoodleChecklist\Process\RemarkProcess;
 use Tuchsoft\MoodleChecklist\Report\Report;
 
@@ -22,7 +18,7 @@ trait LintMarkdown
         if ($process->execute()) {
             $this->report->addIssues(...$process->getIssues($severity_low, $severity_high));
         } else {
-            $this->runtimeError("Cannot process file: " . $process->getError(), $file);
+            $this->runtimeError('Cannot process file: ' . $process->getError(), $file);
         }
 
     }

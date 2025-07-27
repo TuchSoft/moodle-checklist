@@ -3,8 +3,6 @@
 namespace Tuchsoft\MoodleChecklist\Report;
 
 use PHP_CodeSniffer\Files\File as PhpCodeSnifferFile;
-use PHP_CodeSniffer\Ruleset;
-use PHP_CodeSniffer\Config;
 use Tuchsoft\MoodleChecklist\Settings;
 
 class File extends PhpCodeSnifferFile
@@ -20,6 +18,7 @@ class File extends PhpCodeSnifferFile
      *
      * @param string $path The absolute path to the file.
      * @param Settings $settings An instance of your Settings class (not directly used by parent, but passed for consistency).
+     * @noinspection PhpMissingParentConstructorInspection
      */
     public function __construct(string $path, Settings $config)
     {

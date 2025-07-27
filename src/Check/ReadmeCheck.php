@@ -5,14 +5,10 @@ namespace Tuchsoft\MoodleChecklist\Check;
 
 
 use Markdown\Escape\MarkdownEscape;
-use Tuchsoft\MoodleChecklist\Action\TokenFinder;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckLangStringInFile;
-
 use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckStringInFile;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\LintMarkdown;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\LoadAuthors;
-use Tuchsoft\MoodleChecklist\Plugin;
-use Tuchsoft\MoodleChecklist\Process\RemarkProcess;
 use Tuchsoft\MoodleChecklist\Report\Report;
 use Tuchsoft\MoodleChecklist\Settings;
 
@@ -31,7 +27,7 @@ class ReadmeCheck extends AbstractSingleFileCheck
     {
         parent::__construct($settings);
         $this->path = "{$this->plugin->fullpath}/README.md";
-        $this->mimeType = ["text/markdown", "text/html"];
+        $this->mimeType = ['text/markdown', 'text/html'];
 
         $this->escape = MarkdownEscape::gfm();
     }
@@ -72,7 +68,7 @@ class ReadmeCheck extends AbstractSingleFileCheck
             $this->loadLangString();
             $token = "# {$this->langStrings['pluginname']} _(moodle-" .
                 $this->escape->escapeContent($this->plugin->component) .
-                ")_";
+                ')_';
             $this->checkStringInFile(
                 $token,
                 'README.md',

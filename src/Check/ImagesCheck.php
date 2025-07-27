@@ -5,8 +5,6 @@ namespace Tuchsoft\MoodleChecklist\Check;
 
 
 use Tuchsoft\MoodleChecklist\Check\Subcheck\FileExist;
-use Tuchsoft\MoodleChecklist\Plugin;
-use Tuchsoft\MoodleChecklist\Report\Report;
 
 class ImagesCheck extends AbstractCheck
 {
@@ -43,7 +41,7 @@ class ImagesCheck extends AbstractCheck
             if (!is_dir($screenshotdir)) {
                 $this->addError(
                     $code,
-                    "The `.moodleplugin/screenshots` directory is missing"
+                    'The `.moodleplugin/screenshots` directory is missing'
                 );
             }
         }
@@ -55,7 +53,7 @@ class ImagesCheck extends AbstractCheck
             if (empty($screenshots)) {
                 $this->addError(
                     $code,
-                    "No screenshots were found in `.moodleplugin/screenshots` (must be jpeg\png)"
+                    'No screenshots were found in `.moodleplugin/screenshots` (must be jpeg\png)'
                 );
             }
         }

@@ -2,9 +2,6 @@
 
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
-use Tuchsoft\MoodleChecklist\Report\Report;
-use Tuchsoft\MoodleChecklist\Check\Subcheck\BaseCheckTrait;
-
 trait CheckFileEncoding
 {
     use BaseCheckTrait;
@@ -17,7 +14,7 @@ trait CheckFileEncoding
      * @param string $expectedEncoding The expected encoding (e.g., 'UTF-8').
      * @return void
      */
-    public function checkFileEncoding(string $filePath, string $code, string $expectedEncoding = "UTF-8"): void
+    public function checkFileEncoding(string $filePath, string $code, string $expectedEncoding = 'UTF-8'): void
     {
         $filename = basename($filePath);
         $content = @file_get_contents($filePath);

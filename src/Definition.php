@@ -26,6 +26,8 @@ Each node can contain both chldren and info
  */
 
 
+use Exception;
+
 class Definition
 {
     public static array $definition = [];
@@ -52,21 +54,21 @@ class Definition
         $definitions = [];
         foreach ($files as $file) {
             if (!is_string($file)) {
-                throw new \Exception("Input path must be string");
+                throw new Exception('Input path must be string');
             }
 
             if (!is_file($file)) {
-                throw new \Exception("Definition file '{$file}' does not exist");
+                throw new Exception("Definition file '{$file}' does not exist");
             }
 
             $jsonContent = @file_get_contents($file);
             if (!$jsonContent) {
-                throw new \Exception("Could not read definition file '{$file}'");
+                throw new Exception("Could not read definition file '{$file}'");
             }
 
             $data = json_decode($jsonContent, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new \Exception("Error decoding definition file '{$file}': " . json_last_error_msg());
+                throw new Exception("Error decoding definition file '{$file}': " . json_last_error_msg());
             }
             $definitions = array_merge_recursive($definitions, $data);
         }
@@ -102,11 +104,11 @@ class Definition
 
 
             if (!is_string($key)) {
-                throw new \Exception("All key in the definition must be strings ($key)");
+                throw new Exception("All key in the definition must be strings ($key)");
             }
 
             if (empty($key)) {
-                throw new \Exception("Empty key are not allowed in the deinftion");
+                throw new Exception('Empty key are not allowed in the deinftion');
             }
 
             if ($value === []) {
@@ -121,6 +123,7 @@ class Definition
 
                 foreach ($parts as $part) {
                     // Controlla se la parte corrente contiene caratteri glob
+                    /** @noinspection DuplicatedCode */
                     if (preg_match(self::GLOB_REGEX, $part)) {
                         $glob = true;
                         if (!isset($temp[self::GLOB_KEY])) {
@@ -128,7 +131,6 @@ class Definition
                         }
                         $temp = &$temp[self::GLOB_KEY];
                     }
-
                     if (!isset($temp[$part])) {
                         $temp[$part] = [];
                     }
@@ -136,8 +138,6 @@ class Definition
 
                 }
 
-                // Se il valore finale è un array, lo fondiamo ricorsivamente.
-                // Altrimenti, assegniamo il valore.
                 if (is_array($value)) {
                     $temp = array_replace_recursive($temp, $value);
                 } else {
@@ -154,6 +154,7 @@ class Definition
                 $target_node = &$output;
 
                 // Se la chiave stessa è un glob (es. '*' come chiave diretta)
+                /** @noinspection DuplicatedCode */
                 if (preg_match(self::GLOB_REGEX, $key)) {
                     $glob = true;
                     if (!isset($target_node[self::GLOB_KEY])) {

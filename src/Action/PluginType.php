@@ -2,8 +2,6 @@
 
 namespace Tuchsoft\MoodleChecklist\Action;
 
-use Exception;
-
 class PluginType extends AbstractAction
 {
     private static array $pluginTypesCache = []; // Static property for caching
@@ -30,7 +28,7 @@ class PluginType extends AbstractAction
         $data = json_decode($jsonContent, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            $this->lastError = "Error decoding plugin type definitions: " . json_last_error_msg();
+            $this->lastError = 'Error decoding plugin type definitions: ' . json_last_error_msg();
             return;
         }
 
@@ -41,7 +39,7 @@ class PluginType extends AbstractAction
         }
 
         if (empty(self::$pluginTypesCache)) {
-            $this->lastError = "No valid plugin type paths found in the JSON data.";
+            $this->lastError = 'No valid plugin type paths found in the JSON data.';
         } else {
             self::$loaded = true; // Mark as loaded
         }
