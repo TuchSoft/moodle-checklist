@@ -1,6 +1,6 @@
 <?php
 
-namespace Tuchsoft\MoodleChecklist\Action;
+namespace Tuchsoft\MoodleChecklist\Utils;
 
 
 use Jasny\PhpdocParser\PhpdocParser;
@@ -13,8 +13,10 @@ use SplFileInfo;
 /**
  * Parses a directory to extract all authors and licenses from docblock comments in PHP files.
  */
-class DocblockParser extends AbstractAction
+class DocblockParser extends AbstractUtils
 {
+
+    private const COPYRIGHT_REGEX = "/^(?:(?<year>\d{4})\s*)?(?:.*?onwards\s*)?(?:(?<name>(?:\s(?=\p{L})|(?:\p{L}))+)\s*)?(?:[\<\(](?<email>[^\>\)]+)[\>\)])?/u";
     /**
      * The directory to parse.
      * @var string
@@ -46,7 +48,7 @@ class DocblockParser extends AbstractAction
         }
 
         $parser = new PhpdocParser(new TagSet([
-            new RegExpTag('copyright', '/^(?:(?<year>\d{4})\s*)?(?:(?<name>(?:[^\<\(]\S*\s+)*[^\<\(]\S*)?\s*)?(?:[\<\(](?<email>[^\>\)]+)[\>\)])?/'),
+            new RegExpTag('copyright', static::COPYRIGHT_REGEX),
         ]));
         $authors = [];
 

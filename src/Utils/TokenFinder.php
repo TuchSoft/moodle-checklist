@@ -1,13 +1,13 @@
 <?php
 
-namespace Tuchsoft\MoodleChecklist\Action;
+namespace Tuchsoft\MoodleChecklist\Utils;
 
 use Exception;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
-class TokenFinder extends AbstractAction
+class TokenFinder extends AbstractUtils
 {
 
     /**

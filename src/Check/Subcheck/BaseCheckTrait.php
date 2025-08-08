@@ -14,8 +14,8 @@ trait BaseCheckTrait
     protected Plugin $plugin;
     protected string $path = '.';
 
-    abstract public function getName(): string;
-    abstract protected function isActive(string $code): bool;
+    abstract public static function getName(): string;
+    abstract protected function isActive(?string $code = null): bool;
 
     public function getReport(): Report
     {
@@ -87,9 +87,6 @@ trait BaseCheckTrait
      */
     public function addIssue(string $code, int $severity, string $message, ?string $path = null, ?int $line = null): void
     {
-        if (!$this->isActive($code)) {
-            return;
-        }
         if (!$path) {
             $path = $this->path;
         }

@@ -19,13 +19,12 @@ use Tuchsoft\MoodleChecklist\Report\Report;
  * 3. Parse the XML output.
  * 4. Uninstall the 'local_moodlecheck' plugin to clean up.
  */
-class MoodleCIDocblockProcess extends AbstractProcess
+class MoodleCIDocblockProcess extends AbstractIssuesProcess
 {
-    private const string PLUGIN_SOURCE_DIR = __DIR__ . '/../../xvendor/moodle-local_moodlecheck';
+    private const PLUGIN_SOURCE_DIR = __DIR__ . '/../../vendor/moodlehq/moodle-local_moodlecheck';
 
     private string $moodleRoot;
     private string $pluginRoot;
-    private array $issues = [];
 
     /**
      * @param string $moodleRoot The absolute path to the Moodle project's root directory.
@@ -90,12 +89,9 @@ class MoodleCIDocblockProcess extends AbstractProcess
 
             // 3. Execute the check script.
             if (!parent::execute($timeout)) {
-                // Error is already set by the parent class.
                 return false;
             }
 
-            // 4. Parse the XML output.
-            $this->parseOutput();
 
         } finally {
             // 5. Cleanup: remove files and run upgrade to uninstall.
@@ -115,18 +111,18 @@ class MoodleCIDocblockProcess extends AbstractProcess
     /**
      * Parses the XML output from the script into Issue objects.
      */
-    private function parseOutput(): void
+    protected function parseOutput(): bool
     {
         $output = $this->getStdout();
         if (empty(trim($output))) {
             $this->issues = [];
-            return;
+            return true;
         }
 
         $xmlStart = strpos($output, '<?xml');
         if ($xmlStart === false) {
             $this->error = 'No XML output found from moodlecheck script. Stderr: ' . $this->getStderr();
-            return;
+            return false;
         }
         $xmlString = substr($output, $xmlStart);
 
@@ -134,7 +130,7 @@ class MoodleCIDocblockProcess extends AbstractProcess
             $xml = new SimpleXMLElement($xmlString);
         } catch (Exception $e) {
             $this->error = 'Failed to parse XML output from moodlecheck: ' . $e->getMessage();
-            return;
+            return false;
         }
 
         foreach ($xml->file as $fileElement) {
@@ -148,6 +144,7 @@ class MoodleCIDocblockProcess extends AbstractProcess
                 );
             }
         }
+        return true;
     }
 
     /**
@@ -156,8 +153,11 @@ class MoodleCIDocblockProcess extends AbstractProcess
      * @param string $code A code to prepend to the issue's specific code.
      * @return Issue[]
      */
-    public function getIssues(string $code): array
+    public function getIssues(?string $code): array
     {
+        if (!$code) {
+            throw new \Exception("Parameter 'code' must be defined");
+        }
         foreach ($this->issues as $issue) {
             $issue->addCode($code);
         }

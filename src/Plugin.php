@@ -2,24 +2,24 @@
 
 namespace Tuchsoft\MoodleChecklist;
 
-use Tuchsoft\MoodleChecklist\Action\VersionParser;
+use Tuchsoft\MoodleChecklist\Utils\VersionParser;
+use MoodlePluginCI\PluginValidate\Plugin as MoodleCiPlugin;
 
-class Plugin {
-    public ?string $path;
-    public string $fullpath;
-    public string $component;
-    public string $type;
-    public string $name;
-    public string $fullname;
-    public int $version;
-    public string $requires;
-    public ?string $release = null;
-    public ?int $maturity = null;
-    public array $dependencies = [];
-    public array $supported = [];
-    public string $moodleroot;
+class Plugin extends MoodleCiPlugin {
+    public ?string $path; //ES. local/myplugin
+    public string $fullpath; // Es. /var/www/html/moodle/local/myplugin
+    public string $component; //ES. local_myplugin
+    public string $type; //Es. local
+    public string $name; //ES. myplugin
+    public int $version; // Es 2025072700
+    public string $requires; // Es. 2035030900
+    public ?string $release = null; // Es. 1.2.3
+    public ?int $maturity = null; // Cojnatnt from moodle (ES MATURIRY_STABLE)
+    public array $dependencies = []; //Other plugin dependency
+    public array $supported = []; //Moodle supported branch, min - max
+    public string $moodleroot; //Moodle root directory
 
-    private ?string $errorMessage = null;
+    private ?string $errorMessage = null; //Any error message that arise during the execution
 
     public function __construct(string $pluginFullPath)
     {
@@ -39,6 +39,8 @@ class Plugin {
                 $this->$key = $value;
             }
         }
+
+        parent::__construct($this->component, $this->type, $this->name, $this->fullpath);
     }
 
     public function hasError(): bool

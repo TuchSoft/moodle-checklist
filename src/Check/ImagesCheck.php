@@ -11,7 +11,7 @@ class ImagesCheck extends AbstractCheck
 
     use FileExist;
 
-    protected function _execute(): void
+    protected function execute(): void
     {
         $moodleplugindir = $this->plugin->fullpath . '/.moodleplugin';
 

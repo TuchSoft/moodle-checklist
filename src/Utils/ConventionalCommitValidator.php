@@ -1,13 +1,13 @@
 <?php
 
-namespace Tuchsoft\MoodleChecklist\Action;
+namespace Tuchsoft\MoodleChecklist\Utils;
 
 use Exception;
 use Ramsey\ConventionalCommits\Configuration\Configuration;
 use Ramsey\ConventionalCommits\Configuration\DefaultConfiguration;
 use Ramsey\ConventionalCommits\Parser;
 
-class ConventionalCommitValidator extends AbstractAction {
+class ConventionalCommitValidator extends AbstractUtils {
 
     private Configuration $configuration;
     private Parser $parser;

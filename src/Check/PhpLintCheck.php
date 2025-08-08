@@ -13,12 +13,11 @@ class PhpLintCheck extends AbstractMoodleCiCheck
 
     use GetAllFile;
 
-    protected function _execute(): void
+    protected function execute(): void
     {
-        if ($this->isActive(($code = 'php-lint'))) {
+
             $settings = new Settings();
             $manager = new Manager();
-
 
             $settings->format = Settings::FORMAT_JSON;
             $settings->colors = Settings::DISABLED;
@@ -45,5 +44,5 @@ class PhpLintCheck extends AbstractMoodleCiCheck
                 }
             }
         }
-    }
+
 }

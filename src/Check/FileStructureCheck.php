@@ -2,11 +2,15 @@
 
 namespace Tuchsoft\MoodleChecklist\Check;
 
+use MoodlePluginCI\PluginValidate\Plugin;
+use MoodlePluginCI\PluginValidate\PluginValidate;
+use MoodlePluginCI\PluginValidate\Requirements\RequirementsResolver;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckFileEncoding;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckFileMimeType;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckFileSize;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\FileExist;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\GetAllFile;
+use Tuchsoft\MoodleChecklist\Report\Report;
 
 class FileStructureCheck extends AbstractCheck
 {
@@ -23,7 +27,7 @@ class FileStructureCheck extends AbstractCheck
      *
      * @return void
      */
-    protected function _execute(): void
+    protected function execute(): void
     {
         $pluginRoot = $this->plugin->fullpath;
 
@@ -137,9 +141,9 @@ class FileStructureCheck extends AbstractCheck
 
                 if ($this->isActive($code)) {
                     if ($type === 'dir') {
-                        $this->dirNotExist($fullPath, $code, $message);
+                        $this->dirNotExist($fullPath, $code, $message, Report::SEVERITY_WARNING);
                     } else {
-                        $this->fileNotExist($fullPath, $code, $message);
+                        $this->fileNotExist($fullPath, $code, $message, Report::SEVERITY_WARNING);
                     }
                 }
             }
@@ -184,5 +188,20 @@ class FileStructureCheck extends AbstractCheck
                 );
             }
         }
+
+        if ($this->isActive(($code = 'moodle-plugin-ci.validate'))) {
+            $plugin = $this->settings->plugin;
+            $resolver     = new RequirementsResolver();
+            $requirements = $resolver->resolveRequirements($plugin, $this->settings->moodle->getBranch());
+
+            $validate = new PluginValidate($plugin, $requirements);
+            $validate->verifyRequirements();
+            foreach($validate->messages as $message) {
+                if (str_starts_with($message, ($start = '<fg=red>X '))) {
+                    $this->addError($code, substr($message, strlen($start), -3));
+                }
+            }
+        }
+
     }
 }

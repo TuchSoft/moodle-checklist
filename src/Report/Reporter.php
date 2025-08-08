@@ -12,9 +12,7 @@ use Tuchsoft\MoodleChecklist\Settings;
 
 class Reporter
 {
-    public const string RAW_REPORT = 'raw';
-
-    private array $tmpFiles = [];
+    public const RAW_REPORT = 'raw';
     private array $reports = [];
     public static float $startTime;
     private array $reportData = [];
@@ -22,7 +20,7 @@ class Reporter
     public int $totalErrors = 0;
     public int $totalWarnings = 0;
 
-    public function __construct(private Settings $setting, private readonly Report $report)
+    public function __construct(private Settings $setting, private Report $report)
     {
 
         static::$startTime = microtime(true);
@@ -199,18 +197,8 @@ class Reporter
 
         $reportFile = $this->reports[$reportType]['output'];
 
-        $filename = null;
-        $toScreen = true;
-
-        if ($reportFile !== null) {
-            $filename = $reportFile;
-            $toScreen = false;
-        } elseif (isset($this->tmpFiles[$reportType]) === true) {
-            $filename = $this->tmpFiles[$reportType];
-        }
-
         if ($reportType == static::RAW_REPORT) {
-            $generatedReport = json_encode($this->report->getIssues(true), JSON_PRETTY_PRINT);
+            $generatedReport = json_encode($this->report);
         } else {
             $reportClass = $this->reports[$reportType]['class'];
             $rawReport = '';
@@ -228,23 +216,14 @@ class Reporter
                 false,
                 $this->setting->reportWidth,
                 false,
-                $toScreen
+                true
             );
             $generatedReport = ob_get_contents();
             ob_end_clean();
         }
 
+        file_put_contents($reportFile, $generatedReport . PHP_EOL);
 
-
-        if ($reportFile !== null) {
-            file_put_contents($reportFile, $generatedReport . PHP_EOL);
-        } else {
-            echo $generatedReport;
-            if ($filename !== null && file_exists($filename) === true) {
-                unlink($filename);
-                unset($this->tmpFiles[$reportType]);
-            }
-        }
     }
 
 }

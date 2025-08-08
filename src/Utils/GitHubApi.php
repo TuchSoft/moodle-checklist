@@ -1,8 +1,8 @@
 <?php
 
-namespace Tuchsoft\MoodleChecklist\Action;
+namespace Tuchsoft\MoodleChecklist\Utils;
 
-class GitHubApi extends AbstractAction
+class GitHubApi extends AbstractUtils
 {
     /**
      * @var string|null The GitHub personal access token.

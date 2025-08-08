@@ -1,8 +1,8 @@
 <?php
 
-namespace Tuchsoft\MoodleChecklist\Action;
+namespace Tuchsoft\MoodleChecklist\Utils;
 
-class PluginType extends AbstractAction
+class PluginType extends AbstractUtils
 {
     private static array $pluginTypesCache = []; // Static property for caching
     private static bool $loaded = false; // To track if it has been loaded

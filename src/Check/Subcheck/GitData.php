@@ -2,7 +2,7 @@
 
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
-use Tuchsoft\MoodleChecklist\Action\GitHubApi;
+use Tuchsoft\MoodleChecklist\Utils\GitHubApi;
 
 trait GitData
 {
@@ -26,19 +26,25 @@ trait GitData
             return;
         }
 
-        $this->dirExist(
+        if (!$this->dirExist(
             "{$this->plugin->fullpath}/.git/",
             'missing_repository',
             "The '.git' directory is missing",
-        );
+        )) {
+            $this->failed();
+            return;
+        }
 
         $configFilePath = "{$this->plugin->fullpath}/.git/config";
 
-        $this->fileExist(
+        if (!$this->fileExist(
             $configFilePath,
             'missing_repository',
             "The '.git/config' file is missing, repository is corrupted"
-        );
+        )) {
+            $this->failed();
+            return;
+        }
 
         $config = parse_ini_file($configFilePath, true);
 
@@ -47,6 +53,7 @@ trait GitData
                 'missing_origin',
                 "Missing 'remote `origin`', either is not configured or the name is different",
             );
+            $this->failed();
             return;
         }
 
@@ -58,7 +65,7 @@ trait GitData
 
         if (!$this->repoInfo) {
             $this->runtimeError('Failed to fetch repository information: ' . $github->getLastError());
-            $this->gitDataFailed = true;
+            $this->failed();
             return;
         }
 
@@ -75,5 +82,9 @@ trait GitData
         $this->repoTopics = $github->getRepoTopics($repoUrl);
 
 
+    }
+
+    private function failed(): void {
+        $this->gitDataFailed = true;
     }
 }

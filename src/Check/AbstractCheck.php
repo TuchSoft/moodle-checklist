@@ -13,7 +13,7 @@ abstract class AbstractCheck
 
     use BaseCheckTrait;
 
-    abstract protected function _execute(): void;
+    abstract protected function execute(): void;
 
     public function __construct(protected Settings $settings)
     {
@@ -22,17 +22,21 @@ abstract class AbstractCheck
     }
 
 
-    public function execute(): void {
-        $this->_execute();
-        $this->report->setCompleted();
+    public function run(): void {
+        if (!$this->isActive()) return;
+        $this->report->start();
+        $this->execute();
+        $this->report->complete();
     }
-    public function getName(): string
+
+    public static function getName(): string
     {
-        $classname = explode('\\', get_class($this));
+        $classname = explode('\\', static::class);
         return strtolower(str_replace('Check', '', array_pop($classname)));
     }
 
-    protected function isActive(string $code): bool {
+    public function isActive(?string $code = null): bool {
+        $code = $code ? ($this->getName().'.'.$code) : $this->getName();
         return $this->report->isIssueActive($code);
     }
 

@@ -4,7 +4,7 @@
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
 
-use Tuchsoft\MoodleChecklist\Action\DocblockParser;
+use Tuchsoft\MoodleChecklist\Utils\DocblockParser;
 
 
 trait LoadAuthors

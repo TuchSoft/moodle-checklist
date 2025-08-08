@@ -5,7 +5,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="Tuchsoft\MoodleChecklist\" />
       <sourceFolder url="file://$MODULE_DIR$/vendor/squizlabs/php_codesniffer/src" isTestSource="false" packagePrefix="PHP_CodeSniffer\" />
       <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/xvendor/moodle-plugin-ci/vendor/marcj/topsort/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/xvendor/moodle-plugin-ci/src" isTestSource="false" packagePrefix="MoodlePluginCI\" />
       <sourceFolder url="file://$MODULE_DIR$/xvendor/moodle-plugin-ci/tests" isTestSource="true" packagePrefix="MoodlePluginCI\Tests\" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/log" />
@@ -140,11 +139,34 @@
       <excludeFolder url="file://$MODULE_DIR$/xvendor/moodle-plugin-ci/vendor/theseer/tokenizer" />
       <excludeFolder url="file://$MODULE_DIR$/xvendor/moodle-plugin-ci/vendor/vimeo/psalm" />
       <excludeFolder url="file://$MODULE_DIR$/xvendor/moodle-plugin-ci/vendor/webmozart/assert" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/automattic/ignorefile" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/dealerdirect/phpcodesniffer-composer-installer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/laravel-zero/phar-updater" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/marcj/topsort" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/moodlehq/moodle-cs" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/moodlehq/moodle-local_ci" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/moodlehq/moodle-local_moodlecheck" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/moodlehq/moodle-plugin-ci" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mustache/mustache" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/nikic/php-parser" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/pdepend/pdepend" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/php-parallel-lint/php-console-color" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/php-parallel-lint/php-console-highlighter" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpcompatibility/php-compatibility" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpcsstandards/phpcsextra" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpcsstandards/phpcsutils" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpmd/phpmd" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpunit/php-file-iterator" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpunit/php-timer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/sebastian/cli-parser" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/sebastian/phpcpd" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/sebastian/version" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/config" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/dependency-injection" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/dotenv" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/serializer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/var-exporter" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/yaml" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

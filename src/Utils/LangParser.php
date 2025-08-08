@@ -1,10 +1,10 @@
 <?php
 
-namespace Tuchsoft\MoodleChecklist\Action;
+namespace Tuchsoft\MoodleChecklist\Utils;
 
 use Exception;
 
-class LangParser extends AbstractAction
+class LangParser extends AbstractUtils
 {
 
 

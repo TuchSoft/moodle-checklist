@@ -5,7 +5,7 @@ namespace Tuchsoft\MoodleChecklist\Report;
 use Exception;
 use phpDocumentor\Reflection\Types\Scalar;
 
-class Issue
+class Issue implements \JsonSerializable
 {
     /**
      * @var string The issue code.
@@ -73,6 +73,54 @@ class Issue
     }
 
     /**
+     * Creates an Issue object from a parsed array.
+     *
+     * This method iterates through the provided array and assigns values
+     * to properties only if the property exists in the class.
+     *
+     * @param array $data The associative array to create the object from.
+     * @return Issue
+     * @throws Exception If a required key is missing from the array.
+     */
+    public static function fromJson(array $data): Issue
+    {
+        // First, check for required keys to ensure the object can be created.
+        $requiredKeys = ['code', 'severity', 'message', 'path', 'line'];
+        foreach ($requiredKeys as $key) {
+            if (!isset($data[$key])) {
+                throw new Exception("Missing required key: '$key' in array data.");
+            }
+        }
+
+        // Use the constructor for initial creation with required properties.
+        $issue = new self(
+            $data['code'],
+            $data['severity'],
+            $data['message'],
+            $data['path'],
+            $data['line']
+        );
+
+        // Now, loop through the remaining data and assign to existing properties.
+        foreach ($data as $key => $value) {
+            if (property_exists($issue, $key)) {
+                // Use a dedicated setter if one exists, otherwise set directly.
+                $setterMethod = 'set' . ucfirst($key);
+                if (method_exists($issue, $setterMethod)) {
+                    // Call the setter to use its validation logic.
+                    $issue->$setterMethod($value);
+                } else {
+                    // Direct assignment for properties without a specific setter.
+                    // Note: This bypasses encapsulation and is less safe.
+                    $issue->$key = $value;
+                }
+            }
+        }
+
+        return $issue;
+    }
+
+    /**
      * Throws an exception if the issue has already been reported.
      *
      * @throws Exception If the issue has already been reported.
@@ -80,7 +128,6 @@ class Issue
     private function ensureNotReported(): void
     {
         if ($this->reported) {
-            var_dump((new Exception())->getTrace());
             throw new Exception('The issue has already been reported and cannot be modified.');
         }
     }
@@ -326,7 +373,7 @@ class Issue
     public function addCode(string $codePrefix): self
     {
         $this->ensureNotReported();
-        $this->code = "$codePrefix.$this->code";
+        $this->code = $this->code ? "$codePrefix.$this->code" : $codePrefix;
         return $this;
     }
 
@@ -344,5 +391,27 @@ class Issue
         $this->ensureNotReported();
         $this->messageData[$key] = $value;
         return $this;
+    }
+
+
+
+    /**
+     * Specify data which should be serialized to JSON.
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        // Return an array of all properties that should be serialized.
+        return [
+            'code' => $this->code,
+            'severity' => $this->severity,
+            'message' => $this->message,
+            'path' => $this->path,
+            'line' => $this->line,
+            'ref' => $this->ref,
+            'help' => $this->help,
+            'messageData' => $this->messageData,
+            'reported' => $this->reported,
+        ];
     }
 }

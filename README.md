@@ -4,13 +4,13 @@ This document outlines the core components and their defined responsibilities wi
 
 ### Process
 
-A **Process** represents a **connection to an external command or tool that doesn't run on PHP**. Its primary function is to encapsulate the logic for interacting with these outside executables, like shell commands, system utilities, or other programming language scripts. An `Process` can only be invoked by an `Action`.
+A **Process** represents a **connection to an external command or tool that doesn't run on PHP**. Its primary function is to encapsulate the logic for interacting with these outside executables, like shell commands, system utilities, or other programming language scripts. An `Process` can only be invoked by an `Utils`.
 
 ---
 
-### Action
+### Utils
 
-An **Action** defines a **simple, definite, and non-validating operation**. Its purpose is to perform a specific task that doesn't inherently report quality-related issues such as warnings, errors, or tips. An `Action` is solely operational, executing a defined task. It is the only component capable of directly invoking a `Process`.
+An **Utils** defines a **simple, definite, and non-validating operation**. Its purpose is to perform a specific task that doesn't inherently report quality-related issues such as warnings, errors, or tips. An `Utils` is solely operational, executing a defined task. It is the only component capable of directly invoking a `Process`.
 
 ---
 

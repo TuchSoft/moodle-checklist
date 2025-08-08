@@ -1,8 +1,8 @@
 <?php
 
-namespace Tuchsoft\MoodleChecklist\Action;
+namespace Tuchsoft\MoodleChecklist\Utils;
 
-abstract class AbstractAction
+abstract class AbstractUtils
 {
 
     protected ?string $lastError = null;

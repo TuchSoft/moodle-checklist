@@ -33,12 +33,8 @@ abstract class AbstractSingleFileCheck extends AbstractCheck
         $this->filename = basename($this->path);
     }
 
-    /**
-     * Executes the standard file checks defined in this abstract class.
-     * Concrete implementations can override this to add more specific checks
-     * or call parent::execute() to run these standard checks first.
-     */
-    protected function _execute(): void
+
+    protected function execute(): void
     {
         $exist = $this->fileExist(
             $this->path, // Use $this->path instead of $this->file

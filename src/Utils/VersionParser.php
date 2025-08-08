@@ -1,13 +1,13 @@
 <?php
 
-namespace Tuchsoft\MoodleChecklist\Action;
+namespace Tuchsoft\MoodleChecklist\Utils;
 
 
 
 use stdClass;
 use Throwable;
 
-class VersionParser extends AbstractAction
+class VersionParser extends AbstractUtils
 {
     private array $pluginTypePaths;
 
@@ -48,7 +48,6 @@ class VersionParser extends AbstractAction
             'type' => null,
             'name' => null,
             'path' => null,
-            'fullname' => null,
             'version' => null,
             'release' => null,
             'component' => null,
@@ -78,7 +77,6 @@ class VersionParser extends AbstractAction
                 $pluginData['type'] = $componentType;
                 $pluginData['name'] = $componentName;
                 $pluginData['path'] = $this->pluginTypePaths[$componentType] . '/' . $componentName;
-                $pluginData['fullname'] = $pluginData['type'] . '_' . $pluginData['name'];
             }
         }
 
@@ -95,7 +93,6 @@ class VersionParser extends AbstractAction
                     $pluginData['type'] = $typeName;
                     $pluginData['name'] = $matches[1];
                     $pluginData['path'] = $typePathSegment . '/' . $pluginData['name'];
-                    $pluginData['fullname'] = $pluginData['type'] . '_' . $pluginData['name'];
                     $resolved = true;
                     break;
                 }

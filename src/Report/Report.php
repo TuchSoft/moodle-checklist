@@ -6,12 +6,12 @@ namespace Tuchsoft\MoodleChecklist\Report;
 use PHP_CodeSniffer\Util\Common;
 use Tuchsoft\MoodleChecklist\Settings;
 
-class Report
+class Report implements \JsonSerializable
 {
 
-    public const int SEVERITY_ERROR = 5;
-    public const int SEVERITY_WARNING = 3;
-    public const int SEVERITY_TIP = 0;
+    public const SEVERITY_ERROR = 5;
+    public const SEVERITY_WARNING = 3;
+    public const SEVERITY_TIP = 0;
 
 
     /**
@@ -22,8 +22,8 @@ class Report
     private string $name;
     private array $subReports = [];
 
-    private float $timeStart;
-    private float $timeEnd;
+    private ?float $timeStart = 0;
+    private ?float $timeEnd = 0;
 
     private Settings $setting;
 
@@ -32,16 +32,22 @@ class Report
 
     public function __construct(string $name, Settings $setting) {
         $this->name = $name;
-        $this->timeStart = microtime(true);
         $this->setting = $setting;
     }
 
-    public function setCompleted(): void {
-        $this->timeEnd = microtime(true);
+    public function start(): static {
+        $this->timeStart = microtime(true);
+        return $this;
     }
 
-    public function getTotalTime(): float {
-        return round($this->timeEnd - $this->timeStart, 2);
+    public function complete(): static {
+        $this->timeEnd = microtime(true);
+        return $this;
+    }
+
+    public function getTotalTime(): ?float {
+        if (!$this->timeStart) return null;
+        return round(($this->timeEnd - $this->timeStart) * 1000, 0);
     }
 
 
@@ -108,12 +114,24 @@ class Report
 
     private function _addIssue(Issue $issue): void
     {
-        $info = $this->setting->definition->get("{$this->name}.{$issue->getCode()}");
+
+        if (!$this->timeStart) {
+            throw new \Exception('Report has not been started yet, use Report::start() before adding issues.');
+        }
+
+        if (!$issue->getCode()) {
+            throw new \Exception('');
+        }
+
+        $issue->addCode($this->name);
+
+        $info = $this->setting->definition->get($issue->getCode());
+
         if (!$info['active']) {
             return;
         }
 
-        $issue->addCode($this->name);
+
 
         $msg = $issue->getMessage();
         $data = $issue->getMessageData();
@@ -129,7 +147,7 @@ class Report
         }
         $issue->setPath($path);
 
-        $issue->setMessage(str_replace(array_keys($data), array_values($data), $msg));
+        $issue->setMessage(str_replace(array_map(fn ($key) => "\{$key\}", array_keys($data)), array_values($data), $msg));
         $issue->setRef($info['ref']);
         $issue->setHelp($info['help']);
         $issue->setReported();
@@ -139,8 +157,8 @@ class Report
     }
 
 
-    public function isIssueActive($code) {
-        return $this->setting->definition->get("$this->name.$code")['active'];
+    public function isIssueActive(string $code) {
+        return $this->setting->definition->get($code)['active'];
     }
 
 
@@ -174,7 +192,8 @@ class Report
 
     public function getReportWithIssue(): array
     {
-        return array_intersect_key($this->subReports, $this->hasIssue);
+        $x = array_intersect_key($this->subReports, $this->hasIssue);
+        return $x;
     }
 
     public function getReportWithoutIssue(): array
@@ -190,39 +209,60 @@ class Report
      * @param Report ...$reports
      * @return Report
      */
-    public static function merge($name, Report ...$reports): Report
+    public function mergeIn(Report ...$reports): static
     {
-
-        $mergedReport = new Report($name, $reports[0]->setting);
         foreach ($reports as $report) {
-            $mergedReport->subReports = array_merge($mergedReport->subReports, $report->getSubReports());
-            $mergedReport->subReports[$report->name] = $report->getTotalTime();
-            $mergedReport->hasIssue = array_merge($mergedReport->hasIssue, array_values($report->hasIssue));
-            array_push($mergedReport->issues, ...$report->issues);
+            $this->subReports = array_merge($this->subReports, $report->getSubReports());
+            $this->subReports[$report->name] = $report->getTotalTime();
+            $this->hasIssue = array_merge($this->hasIssue, $report->hasIssue);
+            array_push($this->issues, ...$report->issues);
         }
-        return $mergedReport;
+        return $this;
     }
 
 
 
 
-    public function fromJson(array $json): array {
-            $issues = [];
-            foreach ($json as $path => $fileReport) {
-                foreach ($fileReport['messages'] as $line => $columns) {
-                    foreach ($columns as $column => $messages) {
-                        foreach ($messages as $messageData) {
-                            $severity = match(true) {
-                                $messageData['type'] == 'ERROR' => Report::SEVERITY_ERROR,
-                                $messageData['type'] == 'WARNING' && $messageData['severity'] > 1 => Report::SEVERITY_WARNING,
-                                default => Report::SEVERITY_TIP
-                            };
-                            $issues[]  = new Issue($messageData['source'], $severity,  $messageData['message'], $path, $line);
-                        }
-                    }
-                }
+    public static function fromJson(array $json, $settings): static {
+        if (!isset($json['name'], $json['issues']) || empty($json['name'])) {
+            throw new \Exception('Missing required fields (name, issue)');
+        }
+        $report = new Report($json['name'], $settings);
+        foreach ($json['issues'] as $issues) {
+            foreach ($issues as $path => $issue) {
+                $report->issues[] = Issue::fromJson($issue);
+                $report->hasIssue[$report->name] = $report->name;
             }
-            return $issues;
+        }
+        /**
+        if (isset($json['subReports'])) {
+            foreach ($json['subReports'] as $subReports) {
+                $report->subReports[] = Report::fromJson($subReports, $settings);
+            }
+        }
+         */
+
+        if ($json['timeStart'] && $json['timeEnd']) {
+            $report->timeStart = $json['timeStart'];
+            $report->timeEnd = $json['timeEnd'];
+        }
+
+        return $report;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON.
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'name' => $this->name,
+            'issues' => $this->getIssues(true), // Group issues by file path for clarity in JSON output
+            'subReports' => $this->subReports,
+            'timeStart' => $this->timeStart,
+            'timeEnd' => $this->timeEnd
+        ];
     }
 
 

@@ -64,7 +64,29 @@ class CheckPluginCommand extends AbstractCommand
                 InputOption::VALUE_NEGATABLE,
                 'The report type to generate (e.g., full, json, checkstyle, summary).',
                 true
+            )
+            ->addOption(
+                'additional-check',
+                'a',
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                "An optional list of namespace and path for additional check, in the form '<info>my\\namespace:/my/path</info>'",
+                []
+            )
+            ->addOption(
+                'parallel',
+                null,
+                InputOption::VALUE_NEGATABLE,
+                'Execute all the check in parallel',
+                true
+            )
+            ->addOption(
+                'only',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'DO NOT USE | Used internally to achieve parallel execution',
+                null
             );
+
 
     }
 
@@ -77,37 +99,31 @@ class CheckPluginCommand extends AbstractCommand
             $this->error("Error: Plugin directory not found or invalid: '{$options['plugin']}'");
             return false;
         }
-        $option['plugin'] = realpath($options['plugin']);
+        $options['plugin'] = realpath($options['plugin']);
 
-        if ($options['format']) {
-            foreach ($options['format'] as $format) {
-                $format = explode(':', $format);
-                $option['format'][array_shift($format)] = ($format ? join(':', $format) : null);
-            }
-        }
 
-        return $option;
+
+        return $options;
     }
 
-    protected function main($options): int
+    protected function main(): int
     {
-        $settings = new Settings($options);
-        $this->text("Checking Moodle plugin in {$settings->plugin->fullpath}");
+
+        $this->io->text("Checking Moodle plugin in {$this->settings->plugin->fullpath}");
 
 
-        // Store original $_SERVER['argv'].
-        $originalArgv = $_SERVER['argv'] ?? [];
-        //Clear for PHP_CodeSniffer or similar tools if needed.
+        // Store original $_SERVER['argv'] and clear for PHP_CodeSniffer or similar tools if needed.
+        $_SERVER['_argv'] = $_SERVER['argv'] ?? [];
         $_SERVER['argv'] = [];
 
         try {
-            $this->info("Plugin Name: {$settings->plugin->fullname} (Version: {$settings->plugin->version})");
-            $checker = new Checker($settings);
+            $this->io->info("Plugin Name: {$this->settings->plugin->component} (Version: {$this->settings->plugin->version})");
+            $checker = new Checker($this->settings, $this->io);
             $report = $checker->runChecks();
 
-            $reporter = new Reporter($settings, $report);
+            $reporter = new Reporter($this->settings, $report);
 
-            $this->text('Done, generating report...');
+
             $reporter->printReports();
 
             // Using SymfonyStyle's section for a title-like output
@@ -115,27 +131,25 @@ class CheckPluginCommand extends AbstractCommand
 
             $wIssue = $report->getReportWithIssue();
             $woIssue =  $report->getReportWithoutIssue();
-            $executed = array_merge(
-                array_map(fn ($name, $time) => "$name*: {$time}s", array_keys($wIssue), $wIssue),
-                array_map(fn ($name, $time) => "$name: {$time}s", array_keys($woIssue), $woIssue),
-            );
+            $executed = array_filter(array_merge(
+                array_map(fn ($name, $time) => $time !== null ? "$name*: {$time}ms" : null, array_keys($wIssue), $wIssue),
+                array_map(fn ($name, $time) =>  $time !== null ?  "$name: {$time}ms" : null, array_keys($woIssue), $woIssue),
+            ));
             sort($executed);
-            $this->printList($executed);
+            $this->io->printList($executed);
 
             if ($reporter->totalErrors > 0 || $reporter->totalWarnings > 0) {
-                $this->warning('All checks done but something is not shiny yet, check the report!');
+                $this->io->warning('All checks done but something is not shiny yet, check the report!');
                 return Command::FAILURE;
             } else {
-                $this->success('All checks passed! Ready to release!');
+                $this->io->success('All checks passed! Ready to release!');
                 return Command::SUCCESS;
             }
 
         } catch (Exception $e) {
-            $this->error("An unexpected error occurred: {$e->getMessage()}");
-            return Command::FAILURE;
+            throw $e;
         } finally {
-            // Restore original $_SERVER['argv'] in a finally block to ensure it's always restored
-            $_SERVER['argv'] = $originalArgv;
+            $_SERVER['argv'] = $_SERVER['_argv'];
         }
     }
 }

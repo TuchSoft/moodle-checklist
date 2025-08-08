@@ -2,142 +2,272 @@
 
 namespace Tuchsoft\MoodleChecklist;
 
-
+use Composer\Autoload\ClassLoader;
 use Exception;
-use FilesystemIterator;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use ReflectionClass;
-use Throwable;
+
 use Tuchsoft\MoodleChecklist\Check\AbstractCheck;
+use Tuchsoft\MoodleChecklist\Process\ParallelCheckProcess;
 use Tuchsoft\MoodleChecklist\Report\Report;
-use Tuchsoft\MoodleChecklist\Report\Reporter;
+use Tuchsoft\MoodleChecklist\Utils\InputOutput;
 
 class Checker
 {
     private Settings $settings;
-    private array $checks = []; // Stores instances of AbstractCheck
+    private array $checks = [];
+    private ClassLoader $autoloader;
 
-    public function __construct(Settings $settings)
+    public function __construct(Settings $settings, private InputOutput $io)
     {
         $this->settings = $settings;
+        $this->io->debug('Checker initialized with provided settings.');
 
-        // Populate the Plugin object within the Settings
         if ($this->settings->plugin->hasError()) {
-            // Handle error, e.g., throw an exception or log
             throw new Exception('Failed to parse plugin info: ' . $this->settings->plugin->getErrorMessage());
         }
 
+        $this->autoloader = $this->getComposerAutoloader();
+        $this->io->debug('Composer autoloader found and stored.');
+
         $this->discoverChecks();
+        $this->io->debug('Check discovery process completed.');
+    }
+
+    private function getComposerAutoloader(): ClassLoader
+    {
+        $autoloader = null;
+        $this->io->debug('Searching for Composer autoloader...');
+        foreach (spl_autoload_functions() as $function) {
+            if (is_array($function) && $function[0] instanceof ClassLoader) {
+                $autoloader = $function[0];
+                $this->io->debug('Found Composer autoloader.');
+                break;
+            }
+        }
+
+        if (!$autoloader) {
+            throw new Exception('Composer autoloader not found.');
+        }
+
+        return $autoloader;
     }
 
     private function discoverChecks(): void
     {
-        $checkDirs = [__DIR__ . '/Check'];
+        $checkSources = [
+            'Tuchsoft\MoodleChecklist\Check' => __DIR__ . '/Check',
+        ];
 
-        $customCheckPath = getenv('MOODLE_CHECKLIST_CUSTOM_CHECKS_PATH');
-        if ($customCheckPath && is_dir($customCheckPath)) {
-            $checkDirs[] = $customCheckPath;
-        }
-
-        // Set up the custom error handler before loading files
-        $this->setupErrorAndExceptionHandler();
-
-        foreach ($checkDirs as $dir) {
-            $this->loadChecksFromDirectory($dir);
-        }
-
-        // Restore the default error handler after the file loading is complete
-        $this->restoreErrorAndExceptionHandler();
-    }
-
-    private function setupErrorAndExceptionHandler(): void
-    {
-        // Set a custom error handler for non-fatal errors
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-            // Log the error and throw an exception to be caught
-            // in case the error is not fatal and can be handled
-            $message = "Error: [$errno] $errstr in $errfile on line $errline";
-            error_log($message);
-            // You can choose to throw an exception or just log and continue
-            // For a class redeclaration, this will not be called, as it's a fatal error.
-            // But this is good practice for other errors.
-        });
-
-        // Set an exception handler for fatal errors (like class redeclaration)
-        register_shutdown_function(function () {
-            $error = error_get_last();
-            if ($error && in_array($error['type'], [E_ERROR, E_PARSE, E_COMPILE_ERROR, E_CORE_ERROR, E_RECOVERABLE_ERROR])) {
-                // A fatal error occurred
-                $message = 'FATAL ERROR: ' . $error['message'] . ' in ' . $error['file'] . ' on line ' . $error['line'];
-                error_log($message);
-
-                // You can add logic to send an email, display a user-friendly error page, etc.
-                // For now, we'll just throw an exception to be caught by the calling code if possible,
-                // and exit with a non-zero status code.
-                throw new Exception($message);
+        $customCheckPath = $this->settings->customChecks;
+        $this->io->debug('Checking for custom check paths...');
+        foreach ($customCheckPath as $namespace => $path) {
+            if ($namespace && is_string($namespace) && $path && is_dir($path)) {
+                $checkSources[$namespace] = $path;
+                $this->io->debug("Added custom check source: {$namespace} => {$path}");
+            } else {
+                $this->io->debug("Skipped invalid custom check source for namespace '{$namespace}'.");
             }
-        });
+        }
+
+        $this->io->debug('Registering namespaces...');
+        $this->registerNamespaces($checkSources);
+
+        if ($this->settings->isSingle()) {
+            $this->io->debug("Single check mode activated for '{$this->settings->execute}'.");
+            $this->loadSingleCheck($this->settings->execute);
+            return;
+        }
+
+        $this->io->debug('Searching for all concrete checks...');
+        $foundChecks = $this->findConcreteChecks($checkSources);
+        $this->checks = array_unique($foundChecks);
+        $this->io->debug('Found ' . count($this->checks) . ' unique concrete checks.');
     }
 
-    private function restoreErrorAndExceptionHandler(): void
+    private function registerNamespaces(array $namespaces): void
     {
-        restore_error_handler();
-        // There is no `restore_shutdown_function`, so it will persist until the end of the script.
+        foreach ($namespaces as $namespace => $directory) {
+            if (!$this->isNamespaceRegistered($namespace)) {
+                $this->io->debug("Registering namespace '{$namespace}' for directory '{$directory}'.");
+                $this->autoloader->addPsr4($namespace . '\\', $directory);
+            } else {
+                $this->io->debug("Namespace '{$namespace}' is already registered, skipping.");
+            }
+        }
     }
 
-    private function loadChecksFromDirectory(string $directory): void
+    private function isNamespaceRegistered(string $namespace): bool
     {
-        $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS)
-        );
+        $psr4Prefixes = array_keys($this->autoloader->getPrefixesPsr4());
+        $namespaceWithSlash = $namespace . '\\';
+        return in_array($namespaceWithSlash, $psr4Prefixes, true);
+    }
 
-        // The try-catch block here is now more effective because the shutdown function
-        // will "catch" fatal errors and throw an exception for the try-catch block to handle.
-        try {
-            foreach ($iterator as $file) {
+    private function findConcreteChecks(array $prefixes): array
+    {
+        $checks = [];
+        foreach ($prefixes as $namespace => $path) {
+            $this->io->debug("Scanning path '{$path}' for checks in namespace '{$namespace}'.");
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS)
+            );
+
+            /** @var \SplFileInfo $file */
+            foreach ($files as $file) {
                 if ($file->isFile() && $file->getExtension() === 'php') {
-                    require_once $file->getPathname();
-                }
-            }
-        } catch (Throwable $t) {
-            // Now you can catch the exceptions thrown by the shutdown function
-            throw new Exception("Cannot load file '{$file->getPathname()}': ".$t->getMessage());
-        }
-
-        foreach (get_declared_classes() as $class) {
-            $reflection = new ReflectionClass($class);
-            if ($reflection->isSubclassOf(AbstractCheck::class) && !$reflection->isAbstract() && !$reflection->isInterface() && $reflection->isInstantiable()) {
-                if (str_starts_with($reflection->getFileName(), $directory)) {
-                    if (!isset($this->checks[$reflection->getName()])) {
-                        // Pass the plugin's full path to the check constructor
-                        $this->checks[$reflection->getName()] = $reflection->newInstance($this->settings);
+                    $this->io->debug("Processing file: '{$file->getFilename()}'.");
+                    $className = $this->getCheckClassName($namespace, $file->getPathname());
+                    if ($className) {
+                        $this->io->debug("Candidate class name '{$className}'.");
+                        if ($this->isConcreteCheck($className)) {
+                            $checks[] = $className;
+                            $this->io->debug("Found concrete check: '{$className}'.");
+                        } else {
+                            $this->io->debug("Class '{$className}' is not a valid concrete check.");
+                        }
+                    } else {
+                        $this->io->debug("File '{$file->getFilename()}' does not appear to be a check class.");
                     }
                 }
             }
-
         }
+        $this->io->debug('Finished scanning all prefixes.');
+        return $checks;
+    }
+
+    private function getCheckClassName(string $namespace, string $filepath): ?string
+    {
+        $this->io->debug("Generating class name for '{$filepath}'.");
+        $className = "$namespace\\".str_replace( '.php', '', basename($filepath));
+
+        if (str_ends_with($className, 'Check') && class_exists($className, true)) {
+            $this->io->debug("Resolved class name: '{$className}'.");
+            return $className;
+        }
+        $this->io->debug("Class '{$className}' is not a valid check class or doesn't exist.");
+        return null;
+    }
+
+    private function isConcreteCheck(string $className): bool
+    {
+        try {
+            $this->io->debug("Checking if '{$className}' is a concrete check.");
+            $reflection = new ReflectionClass($className);
+            $isSubclass = $reflection->isSubclassOf(AbstractCheck::class);
+            $isNotAbstract = !$reflection->isAbstract();
+            $isInstantiable = $reflection->isInstantiable();
+
+            $this->io->debug("Reflection for '{$className}': isSubclassOf AbstractCheck: " . ($isSubclass ? 'true' : 'false') . ", isAbstract: " . (!$isNotAbstract ? 'true' : 'false') . ", isInstantiable: " . ($isInstantiable ? 'true' : 'false') . ".");
+            return $isSubclass && $isNotAbstract && $isInstantiable;
+        } catch (Exception $e) {
+            $this->io->debug("Exception caught while reflecting '{$className}': " . $e->getMessage());
+            return false;
+        }
+    }
+
+    private function loadSingleCheck(string $className): void
+    {
+        $this->io->debug("Attempting to load single check: '{$className}'.");
+        if (!$this->isConcreteCheck($className)) {
+            throw new Exception("Class '{$className}' is not a valid concrete check.");
+        }
+
+        $this->checks = [$className];
+        $this->io->debug("Single check '{$className}' loaded successfully.");
     }
 
     /**
      * Executes all discovered checks and aggregates their reports into a single Reporter instance.
      *
-     * @return Reporter A fully populated Reporter instance ready for printing.
+     * @return Report A fully populated Report instance ready for printing.
      */
     public function runChecks(): Report
     {
         $reports = [];
+        $report = new Report($this->settings->plugin->component, $this->settings);
+        $report->start();
 
+        $this->io->debug('The following checks have been discovered:');
+        $this->io->printList(array_map(fn($c) => $c::getName(), $this->checks), level: Settings::VERBOSITY_DEBUG);
 
-        foreach ($this->checks as $checkInstance) {
-            /** @var AbstractCheck $checkInstance */
-            $checkInstance->execute(); // Execute populates its internal Report object
-            $reports[] = $checkInstance->getReport(); // Retrieve the populated Report
+        $initialCheckCount = count($this->checks);
+        $this->checks = array_filter($this->checks, fn($c) => $report->isIssueActive($c::getName()));
+        $this->io->debug('Filtered ' . ($initialCheckCount - count($this->checks)) . ' inactive checks.');
+
+        $this->io->verbose('The following checks are active and will be executed:');
+        $this->io->printList(array_map(fn($c) => $c::getName(), $this->checks), level: Settings::VERBOSITY_VERBOSE);
+
+        if (empty($this->checks)) {
+            $this->io->verbose('No active checks to run.');
+            $report->complete();
+            return $report;
         }
 
-        return Report::merge($this->settings->plugin->component, ...$reports);
+        if ($this->settings->execute == Settings::PARALLEL_EXECUTION) {
+            $this->io->verbose('Executing checks in parallel mode.');
+            $options = [];
+            foreach ($this->settings->exclude as $str) {
+                $options[] = '--exclude';
+                $options[] = $str;
+                $this->io->debug("Adding exclude option: '{$str}'.");
+            }
+            foreach ($this->settings->include as $str) {
+                $options[] = '--include';
+                $options[] = $str;
+                $this->io->debug("Adding include option: '{$str}'.");
+            }
+            foreach ($this->settings->customChecks as $namespace => $path) {
+                $options[] = '--additional-check';
+                $options[] = "$namespace:$path";
+                $this->io->debug("Adding custom check option: '{$namespace}:{$path}'.");
+            }
 
+            $this->io->debug('Starting parallel check processes.');
+            $process = new ParallelCheckProcess($this->settings->plugin->fullpath, $this->checks, $options);
+            $process->execute();
 
-
+            foreach ($process->getAllStdout() as $i => $stdout) {
+                $this->io->debug("Processing output from process #{$i}.");
+                if (!$stdout) {
+                    $this->io->debug("Process #{$i} returned no stdout, skipping.");
+                    continue;
+                }
+                $stderr = trim($process->getAllStderr()[$i]);
+                if ($stderr != '') {
+                    throw new Exception("An error occurred in an underlying process: {$stderr}");
+                }
+                if (!($data = json_decode($stdout, true))) {
+                    throw new Exception("Unable to parse stdout, probably an error occurred: $stdout");
+                }
+                $reports[] = Report::fromJson($data, $this->settings);
+                $this->io->debug("Report from process #{$i} parsed successfully.");
+            }
+        }  else {
+            $this->io->verbose('Executing checks in sequential mode.');
+            foreach ($this->checks as $check) {
+                try {
+                    $this->io->debug("Instantiating check '{$check}'.");
+                    $checkInstance = new $check($this->settings);
+                    $this->io->verbose('Running check: ' . $checkInstance->getName() . '...');
+                    $checkInstance->run();
+                    $report = $checkInstance->getReport();
+                    $this->io->debug('Check ' . $checkInstance->getName() . ' finished. Report generated.');
+                    if ($this->settings->isSingle()) {
+                        $this->io->verbose('Single check mode complete.');
+                        return $report;
+                    }
+                    $reports[] = $report;
+                } catch (Exception $e) {
+                    // Log or handle the exception for a specific check.
+                    error_log("Failed to run check '{$check}': " . $e->getMessage());
+                    $this->io->debug("Exception during check '{$check}': " . $e->getMessage());
+                }
+            }
+        }
+        $this->io->debug('All checks finished. Merging reports.');
+        $report->complete();
+        $report->mergeIn(...$reports);
+        $this->io->debug('Final report generated.');
+        return $report;
     }
 }

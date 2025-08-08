@@ -1,10 +1,10 @@
 <?php
 
-namespace Tuchsoft\MoodleChecklist\Action;
+namespace Tuchsoft\MoodleChecklist\Utils;
 
 use Exception;
 
-class PhpFileLoader extends AbstractAction
+class PhpFileLoader extends AbstractUtils
 {
 
 

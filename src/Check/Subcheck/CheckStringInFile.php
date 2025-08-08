@@ -3,7 +3,7 @@
 
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
-use Tuchsoft\MoodleChecklist\Action\TokenFinder;
+use Tuchsoft\MoodleChecklist\Utils\TokenFinder;
 use Tuchsoft\MoodleChecklist\Report\Report;
 
 
@@ -26,9 +26,8 @@ trait CheckStringInFile
         if (!is_array($token)) $token = [$token];
 
         foreach ($token as $t) {
-            $msg = str_replace('{token}', $t, $msg);
             if (empty($this->tokenFinder->searchInFile($t, 'README.md'))) {
-                $this->addIssue($code, $severity, $msg);
+                $this->addIssue($code, $severity, str_replace('{token}', $t, $msg));
             }
         }
     }

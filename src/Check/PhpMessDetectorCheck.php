@@ -14,18 +14,18 @@ class PhpMessDetectorCheck extends AbstractMoodleCiCheck
 {
     use GetAllFile;
 
-    protected function _execute(): void
+    protected function execute(): void
     {
-        if ($this->isActive('phpmd')) {
+
             $files = $this->getAllFile(ext: ['php']);
             if (empty($files)) {
                 return;
             }
 
 
-            $rules = realpath(__DIR__ . '/../../xvendor/moodle-plugin-ci/res/config/phpmd.xml');
+            $rules = realpath(__DIR__ . '/../../vendor/moodlehq/moodle-plugin-ci/res/config/phpmd.xml');
             if ($rules === false || !file_exists($rules)) {
-                $this->runtimeError('PHPMD ruleset not found. Expected at: ' . __DIR__ . '/../../xvendor/moodle-plugin-ci/res/config/phpmd.xml');
+                $this->runtimeError('PHPMD ruleset not found. Expected at: ' . __DIR__ . '/../../vendor/moodlehq/moodle-plugin-ci/res/config/phpmd.xml');
                 return;
             }
 
@@ -93,5 +93,5 @@ class PhpMessDetectorCheck extends AbstractMoodleCiCheck
                 }
             }
         }
-    }
+
 }

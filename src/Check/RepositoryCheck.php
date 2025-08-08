@@ -32,7 +32,7 @@ class RepositoryCheck extends AbstractCheck
      *
      * @return void
      */
-    protected function _execute(): void
+    protected function execute(): void
     {
         $this->loadGitData();
         if ($this->gitDataFailed) {

@@ -33,10 +33,10 @@ class ReadmeCheck extends AbstractSingleFileCheck
     }
 
 
-    protected function _execute(): void
+    protected function execute(): void
     {
         //Common file valifation
-        parent::_execute();
+        parent::execute();
 
 
 
@@ -93,7 +93,7 @@ class ReadmeCheck extends AbstractSingleFileCheck
         //Check that all the author in the code are also present in the README
         if ($this->isActive(($code = 'authors'))) {
             $this->loadAuthors();
-            $authors = array_map(fn($a) => $a['name'], $this->authors);
+            $authors = array_unique(array_map(fn($a) => $a['name'], $this->authors));
             $this->checkStringInFile(
                 $authors,
                 'README.md',

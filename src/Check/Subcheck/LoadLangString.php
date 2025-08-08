@@ -3,7 +3,7 @@
 
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
-use Tuchsoft\MoodleChecklist\Action\PhpFileLoader;
+use Tuchsoft\MoodleChecklist\Utils\PhpFileLoader;
 
 
 trait LoadLangString

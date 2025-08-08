@@ -5,13 +5,12 @@ namespace Tuchsoft\MoodleChecklist\Process;
 use Tuchsoft\MoodleChecklist\Report\Issue;
 use Tuchsoft\MoodleChecklist\Report\Report;
 
-class MoodleCISavepointProcess extends AbstractProcess
+class MoodleCISavepointProcess extends AbstractIssuesProcess
 {
-    private const string SCRIPT_NAME = 'check_upgrade_savepoints.php';
-    private const string SCRIPT_SOURCE_PATH = __DIR__.'/../../xvendor/moodle-local_ci/check_upgrade_savepoints/check_upgrade_savepoints.php';
+    private const SCRIPT_NAME = 'check_upgrade_savepoints.php';
+    private const SCRIPT_SOURCE_PATH = __DIR__.'/../../vendor/moodlehq/moodle-local_ci/check_upgrade_savepoints/check_upgrade_savepoints.php';
 
     private string $pluginRoot;
-    private array $messages = [];
 
 
     public function __construct(string $pluginRoot)
@@ -55,9 +54,6 @@ class MoodleCISavepointProcess extends AbstractProcess
                 return false;
             }
 
-            // 3. Parse the output from stdout.
-            $this->parseOutput();
-
         } finally {
             // 4. Delete the copied script, regardless of success or failure.
             if (file_exists($destinationScriptPath)) {
@@ -71,12 +67,12 @@ class MoodleCISavepointProcess extends AbstractProcess
     /**
      * Parses the raw text output from the script into Issue objects.
      */
-    private function parseOutput(): void
+    protected function parseOutput(): bool
     {
         $output = $this->getStdout();
         if (empty($output)) {
             $this->messages = [];
-            return;
+            return true;
         }
 
         $lines = explode("\n", $output);
@@ -89,8 +85,7 @@ class MoodleCISavepointProcess extends AbstractProcess
             }
         }
 
-
-
+        return true;
     }
 
     /**

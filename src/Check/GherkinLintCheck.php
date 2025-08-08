@@ -5,19 +5,22 @@ namespace Tuchsoft\MoodleChecklist\Check;
 
 
 
-use Tuchsoft\MoodleChecklist\Process\MoodleCIDocblockProcess;
+use Tuchsoft\MoodleChecklist\Process\MoodleCiGruntGherkinlintProcess;
 
 
-class DocBlockCheck extends AbstractMoodleCiCheck
+class GherkinLintCheck extends AbstractMoodleCiCheck
 {
     protected function execute(): void
     {
-        $process = new MoodleCIDocblockProcess($this->plugin->moodleroot, $this->plugin->fullpath);
+
+        $process = new MoodleCiGruntGherkinlintProcess($this->plugin->fullpath);
         $process->execute();
         if (!$process->isSuccessful()) {
             $this->runtimeError($process->getError());
         }
         $this->report->addIssues(...$process->getIssues($this->getName()));
+
+
     }
 
 }

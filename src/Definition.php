@@ -32,14 +32,14 @@ class Definition
 {
     public static array $definition = [];
     public static array $override = [];
-    private const array CHAR_PRIORITY = [
+    private const CHAR_PRIORITY = [
             '?' => 2,
             '*' => 3,
         ];
 
-    private const string GLOB_REGEX = '/[\*\?\[\]\!]/';
-    private const string GLOB_KEY = '_glob_';
-    private const array REQUIRED_PROPERTIES = ['#msg', '#ref', '#help', '#severity', '#desc', '#active'];
+    private const GLOB_REGEX = '/[\*\?\[\]\!]/';
+    private const GLOB_KEY = '_glob_';
+    private const REQUIRED_PROPERTIES = ['msg', 'ref', 'help', 'severity', 'desc', 'active'];
 
 
     public function __construct(string $definitionFile, string|array $override)
@@ -79,14 +79,14 @@ class Definition
      * Parsa la definizione ISSUE in una struttura ad albero normalizzata.
      * Gestisce percorsi a punti e array annidati, inclusi i pattern glob.
      */
-    private function parseDefinition(array $definitions, array $ovveride): void
+    private function parseDefinition(array $definitions, array $override): void
     {
         $output = [];
-
         $this->processArrayRecursively($definitions, $output);
         static::$definition = $output;
 
-        $this->processArrayRecursively($ovveride, $output);
+        $output = [];
+        $this->processArrayRecursively($override, $output);
         static::$override = $output;
     }
 
@@ -199,11 +199,12 @@ class Definition
         for ($i = 0; $i < max(strlen($a),  strlen($b)); $i++) {
             $char_a = $a[$i] ?? null;
             $char_b = $b[$i] ?? null;
-            $priority_a .= $char_a === null ? 0 : (static::CHAR_PRIORITY[$char_a] ?? 1);
-            $priority_b .= $char_b === null ? 0 : (static::CHAR_PRIORITY[$char_b] ?? 1);
+            $priority_a .= $char_a === null ? 1 : (static::CHAR_PRIORITY[$char_a] ?? 0);
+            $priority_b .= $char_b === null ? 1 : (static::CHAR_PRIORITY[$char_b] ?? 0);
         }
         return intval($priority_a) - intval($priority_b);
     }
+
 
     // --- Nuova funzione get() ricorsiva ---
     /**
@@ -216,15 +217,10 @@ class Definition
     {
         $parts = explode('.', $code);
 
-        $info = $this->_get($code, static::$definition, $parts,
-            $this->_get($code, static::$override, $parts)
-        );
-
-        //Remove the "#" from the fields
-        return array_combine(
-            array_map(fn ($k) => substr($k, 1), array_keys($info)),
-            array_values($info)
-        );
+        $info =  $this->_get($code, static::$override, $parts);
+        $info =  $this->_get($code, static::$definition, $parts, $info);
+        
+        return $info;
     }
 
     /**
@@ -235,7 +231,7 @@ class Definition
      * @param array $info The partial result that accumulate the info found, MUST BE empty the first call
      * @return array|null Il nodo trovato, o null se non trovato.
      */
-    private function _get(string $code, array $currentNode, array $remainingParts, array $info = [], string $fullGlob = ''): ?array
+    private function _get(string $code, array $currentNode, array $remainingParts, array $info = []): ?array
     {
 
         $info = $this->fillMissingProperties($info, $currentNode);
@@ -256,7 +252,7 @@ class Definition
 
 
             if (is_array($subNode)) {
-                return $this->_get($code, $subNode, $remainingParts, $info, $fullGlob);
+                return $this->_get($code, $subNode, $remainingParts, $info);
             } else {
                 return $info;
             }
@@ -267,12 +263,14 @@ class Definition
             $globNode = $currentNode[self::GLOB_KEY];
 
             foreach ($globNode as $globPattern => $subNode) {
-                $tmpGlob = $fullGlob ? "$fullGlob.$globPattern" : $globPattern;
-                if (fnmatch($tmpGlob, $code)) {
-                    $fullGlob = $tmpGlob;
+                $tmpGlob = $info['globSum'] ? $info['globSum'].'.'.$globPattern : $globPattern;
+                $tmpCode = $info['codeSum'] ? $info['codeSum'].'.'.$currentPart : $currentPart;
+                if (fnmatch($tmpGlob, $tmpCode)) {
+                    $info['globSum'] = $tmpGlob;
+                    $info['codeSum'] = $tmpCode;
                     // Trovato un match glob
                     if (is_array($subNode)) {
-                        return $this->_get($code, $subNode, $remainingParts, $info, $fullGlob);
+                        return $this->_get($code, $subNode, $remainingParts, $info);
                     } else {
                         return $info;
                     }
@@ -282,7 +280,7 @@ class Definition
 
         //Probably a complex glob, try again with the same node, and next code part
         if (!empty($remainingParts)) {
-            return $this->_get($code, $currentNode, $remainingParts, $info, $fullGlob);
+            return $this->_get($code, $currentNode, $remainingParts, $info);
         }
 
         // Now we are at the end of the tree
@@ -298,8 +296,8 @@ class Definition
                 $partialInfo[$prop] = $node[$prop];
             } else if (!isset($partialInfo[$prop]) || $partialInfo[$prop] === '') {
                 $partialInfo[$prop] = match ($prop) {
-                    '#active' => true,
-                    '#severity' => 3,
+                    'active' => true,
+                    'severity' => 3,
                     default => ''
                 };
             }

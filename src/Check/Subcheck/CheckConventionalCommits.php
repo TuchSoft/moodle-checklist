@@ -2,7 +2,7 @@
 
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
-use Tuchsoft\MoodleChecklist\Action\ConventionalCommitValidator;
+use Tuchsoft\MoodleChecklist\Utils\ConventionalCommitValidator;
 
 trait CheckConventionalCommits
 {

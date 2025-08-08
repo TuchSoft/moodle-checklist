@@ -1,15 +1,23 @@
 <?php
 
-
 namespace Tuchsoft\MoodleChecklist\Process;
 
 use Exception;
 use Symfony\Component\Process\Process;
 
-
 /**
  * AbstractProcess provides a base for executing external commands using Symfony Process.
- * It handles command execution, output collection, and basic error handling.
+ *
+ * This abstract class handles command execution, including:
+ * - Defining the command to be run.
+ * - Executing the command with an optional timeout.
+ * - Capturing standard output (stdout) and standard error (stderr).
+ * - Retrieving the exit code of the executed command.
+ * - Providing error handling and reporting.
+ * - Managing temporary files created during execution.
+ *
+ * Child classes must implement the `getCommand()` method to define the specific
+ * command array for execution.
  */
 abstract class AbstractProcess
 {
@@ -20,51 +28,29 @@ abstract class AbstractProcess
     protected ?string $error = null;
     protected array $tmpFiles = [];
 
-
-
-    public function __construct(private readonly ?string $cwd = null)
+    public function __construct(private ?string $cwd = null)
     {
     }
 
     /**
-     * Returns the command array to be executed.
-     * Each element in the array is a part of the command, preventing shell injection issues.
-     *
-     * @return array<string> The command as an array of strings.
-     */
-    abstract protected function getCommand(): array;
-
-    /**
      * Executes the defined command.
      *
-     * @param float|null $timeout The timeout in seconds for the process. Null for no timeout.
-     * @return bool True if the process was successful (exit code 0), false otherwise.
+     * This method orchestrates command execution, handles exceptions,
+     * and ensures temporary files are cleaned up.
+     *
+     * You can override this method to add custom logic before or after command
+     * execution. If overriding, always call `parent::execute()`.
+     *
+     * @param float|null $timeout The maximum time (in seconds) the process is allowed to run.
+     * Set to `null` for no timeout. Defaults to 60.0 seconds.
+     * @return bool True if the process completed successfully (exit code 0), false otherwise.
      */
     public function execute(?float $timeout = 60.0): bool
     {
-
-        $this->process = new Process($this->getCommand());
-        $this->process->setTimeout($timeout);
-        $this->process->setEnv([
-            'NODE_PATH' => __DIR__. '/../../node_modules',
-            'XDEBUG_SESSION' => NULL
-        ]);
-        if ($this->cwd) {
-            $this->process->setWorkingDirectory($this->cwd);
-        }
-
         try {
-            $this->process->run();
-
-            $this->stdout = $this->process->getOutput();
-            $this->stderr = $this->process->getErrorOutput();
-            $this->exitCode = $this->process->getExitCode();
-
-            if (!$this->process->isSuccessful()) {
-                $this->error =  $this->stderr;
+            if (!$this->run($timeout)) {
                 return false;
             }
-
         } catch (Exception $e) {
             $this->error = 'An unexpected error occurred during process execution: ' . $e->getMessage();
             return false;
@@ -72,34 +58,71 @@ abstract class AbstractProcess
             $this->removeTmpFiles();
         }
 
+        return true;
+    }
+
+    /**
+     * Creates and runs the Symfony Process.
+     *
+     * This method manages the lifecycle of the `Symfony\Component\Process\Process`
+     * object, including setting up the command, timeout, and working directory,
+     * then executing it and capturing outputs.
+     *
+     * This method should generally not be overridden.
+     *
+     * @param float|null $timeout The timeout for the execution in seconds.
+     * @return bool True if the command ran without immediate process errors, false otherwise.
+     */
+    protected function run(?float $timeout): bool
+    {
+        $this->process = $this->getProcess($this->getCommand(), $timeout);
+        $this->process->run();
+
+        $this->stdout = $this->process->getOutput();
+        $this->stderr = $this->process->getErrorOutput();
+        $this->exitCode = $this->process->getExitCode();
 
         return true;
     }
 
     /**
-     * Gets the standard output from the executed command.
+     * Creates and configures a Symfony Process instance.
      *
-     * @return string|null
+     * This method sets the command, timeout, and working directory for the
+     * `Symfony\Component\Process\Process` object.
+     *
+     * This method should generally not be overridden.
+     *
+     * @param array<string> $command The command as an array of strings.
+     * @param float|null $timeout The timeout for the process in seconds.
+     * @return Process The configured Symfony Process instance.
      */
-    public function getStdout(): ?string
+    protected function getProcess(array $command, ?float $timeout): Process
     {
-        return $this->stdout;
+        $process = new Process($command);
+        $process->setTimeout($timeout);
+        if ($this->cwd) {
+            $process->setWorkingDirectory($this->cwd);
+        }
+        return $process;
     }
 
     /**
-     * Gets the standard error output from the executed command.
+     * Returns the command as an array of strings to be executed.
      *
-     * @return string|null
+     * Each element in the array represents a part of the command, which helps
+     * prevent shell injection vulnerabilities.
+     *
+     * @return array<string> The command as an array, e.g., ['ls', '-l', '/tmp'].
      */
-    public function getStderr(): ?string
-    {
-        return $this->stderr;
-    }
+    abstract protected function getCommand(): array;
 
     /**
-     * Gets the exit code of the executed command.
+     * Gets the exit code returned by the executed command.
      *
-     * @return int|null
+     * A zero exit code typically indicates success.
+     *
+     * @return int|null The exit code, or null if the command has not been run.
      */
     public function getExitCode(): ?int
     {
@@ -107,9 +130,60 @@ abstract class AbstractProcess
     }
 
     /**
-     * Gets any error message generated during process execution.
+     * Checks if the overall process execution was successful.
      *
-     * @return string|null
+     * Success is determined by the absence of internal errors (`getError()`) and
+     * the Symfony Process indicating a successful completion (`isSuccessful()`).
+     *
+     * @return bool True if the process was successful, false otherwise.
+     */
+    public function isSuccessful(): bool
+    {
+        return empty($this->error) && $this->process !== null && $this->process->isSuccessful();
+    }
+
+    /**
+     * Removes all temporary files created by `writeTmpFile()`.
+     *
+     * This method is automatically called after `execute()` completes
+     * (in the `finally` block).
+     */
+    protected function removeTmpFiles(): void
+    {
+        foreach ($this->tmpFiles as $file) {
+            if (file_exists($file)) {
+                unlink($file);
+            }
+        }
+    }
+
+    /**
+     * Gets the standard output generated by the executed command.
+     *
+     * @return string|null The standard output, or null if the command has not been run or produced no output.
+     */
+    public function getStdout(): ?string
+    {
+        return $this->stdout;
+    }
+
+    /**
+     * Gets the standard error output generated by the executed command.
+     *
+     * @return string|null The standard error output, or null if the command has not been run or produced no error output.
+     */
+    public function getStderr(): ?string
+    {
+        return $this->stderr;
+    }
+
+    /**
+     * Gets any internal error message generated during the process execution within this class.
+     *
+     * This includes errors caught by the `execute` method's try-catch block
+     * or errors determined from the process's standard error output.
+     *
+     * @return string|null An error message, or null if no error occurred.
      */
     public function getError(): ?string
     {
@@ -117,29 +191,19 @@ abstract class AbstractProcess
     }
 
     /**
-     * Checks if the process was successful.
+     * Writes content to a temporary file and registers it for cleanup.
      *
-     * @return bool
+     * This is useful for commands that require input from files.
+     *
+     * @param string $content The content to write to the temporary file.
+     * @param string $ext An optional file extension (e.g., '.json', '.txt').
+     * @return string The full path to the created temporary file.
      */
-    public function isSuccessful(): bool
+    protected function writeTmpFile(string $content, string $ext = ''): string
     {
-        return empty($this->error) && $this->process !== null && $this->process->isSuccessful();
-    }
-
-
-    protected  function writeTmpFile(string $content, string $ext = ''): string {
-        $file = tempnam(sys_get_temp_dir(), 'remark-config').$ext;
+        $file = tempnam(sys_get_temp_dir(), 'process_tmp') . $ext;
         file_put_contents($file, $content);
         $this->tmpFiles[] = $file;
         return $file;
-    }
-
-
-    protected function removeTmpFiles(): void {
-        foreach ($this->tmpFiles as $file) {
-            if (file_exists($file)) {
-                unlink($file);
-            }
-        }
     }
 }
