@@ -55,7 +55,7 @@ class Settings extends Config
             foreach ($options['exclude'] as $include) {
                 $inputDefinitions[$include] = ['active' => false];
             }
-        } else if ($options['definition']) {
+        } else if ($options['definition'] ?? null) {
             $inputDefinitions = $options['definition'];
         }
 

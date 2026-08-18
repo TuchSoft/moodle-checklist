@@ -3,8 +3,8 @@
 
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
+use Tuchsoft\IssueReporter\Issue;
 use Tuchsoft\MoodleChecklist\Utils\TokenFinder;
-use Tuchsoft\MoodleChecklist\Report\Report;
 
 
 trait CheckStringInFile
@@ -13,7 +13,7 @@ trait CheckStringInFile
 
     protected ?TokenFinder $tokenFinder = null;
 
-    protected function checkStringInFile($token, $file, $code, $msg, $severity = Report::SEVERITY_ERROR): void {
+    protected function checkStringInFile($token, $file, $code, $msg, $severity = Issue::SEVERITY_ERROR): void {
         if (!$this->tokenFinder) {
             $this->tokenFinder = new TokenFinder($this->plugin->fullpath);
         }

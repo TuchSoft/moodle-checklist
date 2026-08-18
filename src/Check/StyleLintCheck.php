@@ -18,7 +18,7 @@ class StyleLintCheck extends AbstractMoodleCiCheck
         if (!$process->isSuccessful()) {
             $this->runtimeError($process->getError());
         }
-        $this->report->addIssues(...$process->getIssues($this->getName()));
+        $this->addIssueObjects(...$process->getIssues($this->getName()));
 
 
     }

@@ -2,8 +2,8 @@
 
 namespace Tuchsoft\MoodleChecklist\Process;
 
-use Tuchsoft\MoodleChecklist\Report\Issue;
-use Tuchsoft\MoodleChecklist\Report\Report;
+use Tuchsoft\IssueReporter\Issue;
+use Tuchsoft\IssueReporter\Report;
 
 /**
  * RemarkProcess executes the 'npx remark' command and parses its JSON output.
@@ -15,12 +15,17 @@ class RemarkProcess extends AbstractIssuesProcess
     private ?array $tree = null;
 
 
+    private int $severityLow;
+    private int $severityHigh;
+
     /**
      * @param string $file The path to the Markdown file to process.
      */
-    public function __construct(string $file, protected array $options = [])
+    public function __construct(string $file, protected array $options = [], int $severityLow = Issue::SEVERITY_WARNING, int $severityHigh = Issue::SEVERITY_ERROR)
     {
         $this->file = $file;
+        $this->severityLow = $severityLow;
+        $this->severityHigh = $severityHigh;
         parent::__construct();
     }
 
@@ -90,19 +95,25 @@ class RemarkProcess extends AbstractIssuesProcess
      *
      * @return array|null The parsed issues, or null if not available or parsing failed.
      */
-    public function getIssues($severity_low = Report::SEVERITY_WARNING, $severity_high = Report::SEVERITY_ERROR): ?array
+    public function getIssues(?string $code = null): array
     {
         if (!isset($this->issues[0]) || !isset($this->issues[0]['messages'])) {
             return [];
         }
 
-        return array_map(fn ($issue) => new Issue(
-            "{$issue['source']}.{$issue['ruleId']}",
-            ($issue['fatal'] ? $severity_high : $severity_low),
-            $issue['reason'],
-            $this->file,
-            $issue['line'] ?? null
-        ), $this->issues[0]['messages']  );
+        return array_map(function ($issue) use ($code) {
+            $newIssue = new Issue(
+                "{$issue['source']}.{$issue['ruleId']}",
+                ($issue['fatal'] ? $this->severityHigh : $this->severityLow),
+                $issue['reason'],
+                $this->file,
+                $issue['line'] ?? null
+            );
+            if ($code) {
+                $newIssue->addCode($code);
+            }
+            return $newIssue;
+        }, $this->issues[0]['messages']);
     }
 
 

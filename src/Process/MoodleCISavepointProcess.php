@@ -2,8 +2,8 @@
 
 namespace Tuchsoft\MoodleChecklist\Process;
 
-use Tuchsoft\MoodleChecklist\Report\Issue;
-use Tuchsoft\MoodleChecklist\Report\Report;
+use Tuchsoft\IssueReporter\Issue;
+use Tuchsoft\IssueReporter\Report;
 
 class MoodleCISavepointProcess extends AbstractIssuesProcess
 {
@@ -99,9 +99,9 @@ class MoodleCISavepointProcess extends AbstractIssuesProcess
        foreach ($this->messages as $severity => $messages) {
            foreach ($messages as $message) {
                $severity = match($severity) {
-                   'ERROR' => Report::SEVERITY_ERROR,
-                   'WARN' => Report::SEVERITY_WARNING,
-                   'NOTE' => Report::SEVERITY_TIP
+                   'ERROR' => Issue::SEVERITY_ERROR,
+                   'WARN' => Issue::SEVERITY_WARNING,
+                   'NOTE' => Issue::SEVERITY_TIP
                };
                $issues[] = new Issue(
                    $code,

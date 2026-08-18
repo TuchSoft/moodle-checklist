@@ -2,8 +2,8 @@
 
 namespace Tuchsoft\MoodleChecklist\Process;
 
-use Tuchsoft\MoodleChecklist\Report\Issue;
-use Tuchsoft\MoodleChecklist\Report\Report;
+use Tuchsoft\IssueReporter\Issue;
+use Tuchsoft\IssueReporter\Report;
 
 /**
  * IssuesMustacheProcess extends AbstractParallelProcess to validate Mustache templates using Moodle CI tools.
@@ -95,9 +95,9 @@ class IssuesMustacheProcess extends AbstractParallelProcess
 
             if (isset($info['severity'])) {
                 $severity = match($info['severity']) {
-                    'ERROR' => Report::SEVERITY_ERROR,
-                    'WARNING' => Report::SEVERITY_WARNING,
-                    'INFO' => Report::SEVERITY_TIP
+                    'ERROR' => Issue::SEVERITY_ERROR,
+                    'WARNING' => Issue::SEVERITY_WARNING,
+                    'INFO' => Issue::SEVERITY_TIP
                 };
                 // Ensure path is relative to moodleRoot for consistency, if provided.
                 $filePath = $info['path'] ?? '';
@@ -179,7 +179,7 @@ class IssuesMustacheProcess extends AbstractParallelProcess
                 // Java is installed, but the local vnu.jar was not found.
                 $this->issues[] = new Issue(
                     '',
-                    Report::SEVERITY_WARNING,
+                    Issue::SEVERITY_WARNING,
                     'Java is installed, but the local VNU.jar validator was not found at: ' . $vnuJarPath . '. Attempting to use online validator.',
                     'MoodleCIMustacheProcess',
                     null
@@ -196,7 +196,7 @@ class IssuesMustacheProcess extends AbstractParallelProcess
         // 3. If neither local Java/VNU.jar nor an internet connection is available, add a critical error.
         $this->issues[] = new Issue(
             '',
-            Report::SEVERITY_ERROR,
+            Issue::SEVERITY_ERROR,
             'Neither Java (for local VNU.jar) nor an active internet connection (for online validator) could be detected. HTML validation cannot proceed.',
             'MoodleCIMustacheProcess',
             null

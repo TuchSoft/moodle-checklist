@@ -7,8 +7,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Tuchsoft\IssueReporter\Reporter;
 use Tuchsoft\MoodleChecklist\Checker;
-use Tuchsoft\MoodleChecklist\Report\Reporter;
 use Tuchsoft\MoodleChecklist\Settings;
 
 // Explicitly import Command for constants
@@ -124,10 +124,9 @@ class CheckPluginCommand extends AbstractCommand
             $checker = new Checker($this->settings, $this->io);
             $report = $checker->runChecks();
 
-            $reporter = new Reporter($this->settings, $report);
-            $reporter->printReport($report, 'info');
+            Reporter::printReport($report, 'info');
 
-            if ($report->getTotalErrors() > 0 || $report->getTotalErrors() > 0) {
+            if ($report->getTotalErrors() > 0 || $report->getTotalWarnings() > 0) {
                 $this->io->warning('All checks done but something is not shiny yet, check the report!');
                 return Command::FAILURE;
             } else {

@@ -2,8 +2,8 @@
 
 namespace Tuchsoft\MoodleChecklist\Process;
 
-use Tuchsoft\MoodleChecklist\Report\Issue;
-use Tuchsoft\MoodleChecklist\Report\Report;
+use Tuchsoft\IssueReporter\Issue;
+use Tuchsoft\IssueReporter\Report;
 
 class MoodleCiGruntStylelintProcess extends AbstractMoodleCiGruntProcess
 {
@@ -47,9 +47,9 @@ class MoodleCiGruntStylelintProcess extends AbstractMoodleCiGruntProcess
             if ($currentFile !== null && preg_match($issueRegex, $line, $matches)) {
 
                 $severity = match (mb_ord($matches['symbol'])) {
-                    10006 => Report::SEVERITY_ERROR,
-                    9888 => Report::SEVERITY_WARNING,
-                    default => Report::SEVERITY_TIP
+                    10006 => Issue::SEVERITY_ERROR,
+                    9888 => Issue::SEVERITY_WARNING,
+                    default => Issue::SEVERITY_TIP
                 };
 
                 $this->issues[] = new Issue(

@@ -9,7 +9,7 @@ use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckLangStringInFile;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckStringInFile;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\LintMarkdown;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\LoadAuthors;
-use Tuchsoft\MoodleChecklist\Report\Report;
+use Tuchsoft\IssueReporter\Issue;
 use Tuchsoft\MoodleChecklist\Settings;
 
 class ReadmeCheck extends AbstractSingleFileCheck
@@ -45,8 +45,8 @@ class ReadmeCheck extends AbstractSingleFileCheck
         if ($this->isActive(($code = 'lint'))) {
             $this->lintMarkdown($this->path,
                 ['--rc-path='.realpath(__DIR__.'/../Config/markdown-lint.json')],
-                Report::SEVERITY_TIP,
-                Report::SEVERITY_WARNING
+                Issue::SEVERITY_TIP,
+                Issue::SEVERITY_WARNING
             );
         }
 
@@ -57,7 +57,7 @@ class ReadmeCheck extends AbstractSingleFileCheck
             $this->lintMarkdown(
                 $this->path,
                 ['--rc-path='.realpath(__DIR__.'/../Config/standard-readme.json')],
-                Report::SEVERITY_ERROR);
+                Issue::SEVERITY_ERROR);
         }
 
 

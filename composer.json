@@ -5,8 +5,7 @@
     "autoload": {
         "psr-4": {
             "Tuchsoft\\MoodleChecklist\\": "src/",
-            "PHP_CodeSniffer\\": "vendor/squizlabs/php_codesniffer/src",
-            "Tuchsoft\\MoodleChecklist\\Report\\Format\\": "src/Report/Format"
+            "PHP_CodeSniffer\\": "vendor/squizlabs/php_codesniffer/src"
         }
     },
     "authors": [

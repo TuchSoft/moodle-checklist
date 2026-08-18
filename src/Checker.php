@@ -6,9 +6,9 @@ use Composer\Autoload\ClassLoader;
 use Exception;
 use ReflectionClass;
 
+use Tuchsoft\IssueReporter\Report;
 use Tuchsoft\MoodleChecklist\Check\AbstractCheck;
 use Tuchsoft\MoodleChecklist\Process\ParallelCheckProcess;
-use Tuchsoft\MoodleChecklist\Report\Report;
 use Tuchsoft\MoodleChecklist\Utils\InputOutput;
 
 class Checker
@@ -173,14 +173,14 @@ class Checker
     public function runChecks(): Report
     {
         $reports = [];
-        $finalReport = new Report($this->settings->plugin->component, $this->settings);
+        $finalReport = new Report($this->settings->plugin->component, $this->settings->plugin->fullpath);
         $finalReport->start();
 
         $this->io->debug('The following checks have been discovered:');
         $this->io->printList(array_map(fn($c) => $c::getName(), $this->checks), level: Settings::VERBOSITY_DEBUG);
 
 
-        $this->checks = array_filter($this->checks, fn($c) => $finalReport->isIssueActive($c::getName()));
+        $this->checks = array_filter($this->checks, fn($c) => $this->settings->definition->get($c::getName())['active'] ?? true);
         $this->io->debug('Filtered ' . count($this->checks) . ' active checks.');
 
         $this->io->verbose('The following checks are active and will be executed:');
@@ -228,7 +228,7 @@ class Checker
                 if (!($data = json_decode($stdout, true))) {
                     throw new Exception("Unable to parse stdout, probably an error occurred: $stdout");
                 }
-                $reports[] = Report::fromJson($data, $this->settings);
+                $reports[] = Report::fromJson($data);
                 $this->io->debug("Report from process #{$i} parsed successfully.");
             }
         }  else {

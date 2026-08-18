@@ -7,8 +7,8 @@ use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SimpleXMLElement;
-use Tuchsoft\MoodleChecklist\Report\Issue;
-use Tuchsoft\MoodleChecklist\Report\Report;
+use Tuchsoft\IssueReporter\Issue;
+use Tuchsoft\IssueReporter\Report;
 
 /**
  * Runs the moodle-local_moodlecheck tool to check for DocBlock issues.
@@ -136,11 +136,11 @@ class MoodleCIDocblockProcess extends AbstractIssuesProcess
         foreach ($xml->file as $fileElement) {
             foreach ($fileElement->error as $errorElement) {
                 $this->issues[] = new Issue(
-                    $errorElement['source'],
-                    Report::SEVERITY_ERROR,
-                    $errorElement['message'],
-                    $fileElement['name'],
-                     intval($errorElement['line'])
+                    (string) $errorElement['source'],
+                    Issue::SEVERITY_ERROR,
+                    (string) $errorElement['message'],
+                    (string) $fileElement['name'],
+                    (int) $errorElement['line']
                 );
             }
         }
@@ -180,12 +180,12 @@ class MoodleCIDocblockProcess extends AbstractIssuesProcess
         );
 
         foreach ($iterator as $item) {
-            $destPath = $dest . '/' . $item->getSubPathName();
+            $destPath = $dest . '/' . $iterator->getSubPathName();
             if ($item->isDir()) {
-                if (!is_dir($destPath) && !mkdir($destPath)) {
+                if (!is_dir($destPath) && !mkdir($destPath, 0755, true)) {
                     return false;
                 }
-            } elseif (!copy($item, $destPath)) {
+            } elseif (!copy($item->getPathname(), $destPath)) {
                 return false;
             }
         }

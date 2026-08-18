@@ -10,7 +10,7 @@ use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckFileMimeType;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckFileSize;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\FileExist;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\GetAllFile;
-use Tuchsoft\MoodleChecklist\Report\Report;
+use Tuchsoft\IssueReporter\Issue;
 
 class FileStructureCheck extends AbstractCheck
 {
@@ -141,9 +141,9 @@ class FileStructureCheck extends AbstractCheck
 
                 if ($this->isActive($code)) {
                     if ($type === 'dir') {
-                        $this->dirNotExist($fullPath, $code, $message, Report::SEVERITY_WARNING);
+                        $this->dirNotExist($fullPath, $code, $message, Issue::SEVERITY_WARNING);
                     } else {
-                        $this->fileNotExist($fullPath, $code, $message, Report::SEVERITY_WARNING);
+                        $this->fileNotExist($fullPath, $code, $message, Issue::SEVERITY_WARNING);
                     }
                 }
             }

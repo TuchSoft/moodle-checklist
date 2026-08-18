@@ -2,8 +2,8 @@
 
 namespace Tuchsoft\MoodleChecklist\Process;
 
-use Tuchsoft\MoodleChecklist\Report\Issue;
-use Tuchsoft\MoodleChecklist\Report\Report;
+use Tuchsoft\IssueReporter\Issue;
+use Tuchsoft\IssueReporter\Report;
 
 class MoodleCiGruntGherkinlintProcess extends AbstractMoodleCiGruntProcess
 {
@@ -48,7 +48,7 @@ class MoodleCiGruntGherkinlintProcess extends AbstractMoodleCiGruntProcess
                         $message = trim($matches[2]); // Trim message to remove trailing spaces
                         $issueCode = $matches[3];
 
-                        $this->issues[] = new Issue($issueCode, Report::SEVERITY_ERROR, $message, $currentFile, $lineNumber );
+                        $this->issues[] = new Issue($issueCode, Issue::SEVERITY_ERROR, $message, $currentFile, $lineNumber );
 
                     }
                 }

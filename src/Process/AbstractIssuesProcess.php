@@ -2,6 +2,8 @@
 
 namespace Tuchsoft\MoodleChecklist\Process;
 
+use Tuchsoft\IssueReporter\Issue;
+
 abstract class AbstractIssuesProcess extends AbstractProcess
 {
     /**

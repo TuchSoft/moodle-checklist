@@ -3,7 +3,7 @@
 
 namespace Tuchsoft\MoodleChecklist\Check\Subcheck;
 
-use Tuchsoft\MoodleChecklist\Report\Report;
+use Tuchsoft\IssueReporter\Issue;
 
 
 trait CheckLangStringInFile
@@ -12,7 +12,7 @@ trait CheckLangStringInFile
     use LoadLangString;
 
 
-    protected function checkLangStringInFile($strname, $file, $code, $msg, $severity = Report::SEVERITY_ERROR): void {
+    protected function checkLangStringInFile($strname, $file, $code, $msg, $severity = Issue::SEVERITY_ERROR): void {
         $this->loadLangString();
 
         if (!isset($langStrings[$strname]) || empty(trim($langStrings[$strname]))) {
