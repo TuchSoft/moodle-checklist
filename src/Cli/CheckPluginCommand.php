@@ -86,6 +86,9 @@ class CheckPluginCommand extends AbstractCommand
                 'DO NOT USE | Used internally to achieve parallel execution',
                 null
             );
+            foreach (Reporter::getOptionsDefinition() as $option) {
+                $this->getDefinition()->addOption($option);
+            }
 
 
     }
@@ -122,23 +125,9 @@ class CheckPluginCommand extends AbstractCommand
             $report = $checker->runChecks();
 
             $reporter = new Reporter($this->settings, $report);
+            $reporter->printReport($report, 'info');
 
-
-            $reporter->printReports();
-
-            // Using SymfonyStyle's section for a title-like output
-            $this->io->section('The following checks had run (* has issue)');
-
-            $wIssue = $report->getReportWithIssue();
-            $woIssue =  $report->getReportWithoutIssue();
-            $executed = array_filter(array_merge(
-                array_map(fn ($name, $time) => $time !== null ? "$name*: {$time}ms" : null, array_keys($wIssue), $wIssue),
-                array_map(fn ($name, $time) =>  $time !== null ?  "$name: {$time}ms" : null, array_keys($woIssue), $woIssue),
-            ));
-            sort($executed);
-            $this->io->printList($executed);
-
-            if ($reporter->totalErrors > 0 || $reporter->totalWarnings > 0) {
+            if ($report->getTotalErrors() > 0 || $report->getTotalErrors() > 0) {
                 $this->io->warning('All checks done but something is not shiny yet, check the report!');
                 return Command::FAILURE;
             } else {

@@ -10,6 +10,8 @@ use \Symfony\Component\Console\Style\SymfonyStyle;
 
 class InputOutput extends SymfonyStyle {
 
+    public const OUTPUT_ERROR= 512;
+
     public function __construct(InputInterface $input, OutputInterface $output, private Settings $settings)
     {
         parent::__construct($input, $output);
@@ -27,7 +29,19 @@ class InputOutput extends SymfonyStyle {
 
     public function error($message, $level = Settings::VERBOSITY_NORMAL): void
     {
-        $this->getErrorOutput()->block($message, 'ERROR', 'fg=white;bg=red', ' ', true, level: $level);
+
+        $this->block($message, 'ERROR', 'fg=white;bg=red', ' ', true, level: self::OUTPUT_ERROR);
+    }
+
+
+    public function writeln($messages, int $type = self::OUTPUT_NORMAL): void
+    {
+        if ($type === self::OUTPUT_ERROR) {
+            $this->getErrorOutput()->writeln($messages, self::OUTPUT_NORMAL);
+        } else {
+            parent::writeln($messages, $type);
+        }
+
     }
 
     public function success($message, $level = Settings::VERBOSITY_NORMAL): void
@@ -52,7 +66,7 @@ class InputOutput extends SymfonyStyle {
     }
     public function block($messages, ?string $type = null, ?string $style = null, string $prefix = ' ', bool $padding = false, bool $escape = true, $level = Settings::VERBOSITY_NORMAL): void
     {
-        if (!$this->settings->isVerbosityAtLeast($level)) return;
+        if ($level != self::OUTPUT_ERROR && !$this->settings->isVerbosityAtLeast($level)) return;
         parent::block($messages, $type, $style, $prefix, $padding, $escape);
     }
 

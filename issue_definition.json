@@ -6,5 +6,9 @@
       "ref": "https://github.com/RichardLitt/standard-readme/blob/main/spec.md#title",
       "help": "Change the title of your README.md document to match '{token}'"
     }
+  },
+  "my": {
+    "ref": "https://github.com/RichardLitt/standard-readme/blob/main/spec.md#title",
+    "help": "Change the title of your README.md document to match '{token}'"
   }
 }

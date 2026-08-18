@@ -19,8 +19,10 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ERROR);
 
 $application = new Application('Moodle Plugin Checker', '1.0.0');
-
 $application->add(new CheckPluginCommand());
+$application->add(new \Tuchsoft\IssueReporter\Command\ListFormat());
+
+
 
 $application->run();
 

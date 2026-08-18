@@ -72,17 +72,18 @@ class Settings extends Config
         //Call PHPCS constructor
         parent::__construct([], false);
 
+        $this->reportFile = $options['reportFile'] ?? 'php://stdout';
         // Apply our specific options for PHPCS reporting system
         $formats = ['summary' => null, 'full' => null];
         if ($options['format']) {
             $formats = [];
             foreach ($options['format'] as $format) {
                 $splitted = explode(':', $format);
-                $formats[$splitted[0]] = $splitted[1] ?? 'php://stdout';
+                $formats[$splitted[0]] = $splitted[1] ?? $this->reportFile;
             }
         }
         $this->reports = $formats;
-        $this->reportFile = $options['reportFile'] ?? null;
+
         $this->showSources = $options['showSources'] ?? false;
         $this->reportWidth = $options['reportWidth'] ?? 80;
         $this->interactive = false;

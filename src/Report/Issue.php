@@ -30,7 +30,12 @@ class Issue implements \JsonSerializable
     /**
      * @var int The line number where the issue was found.
      */
-    private int $line;
+    private int $line = 0;
+
+    /**
+     * @var int The column number where the issue was found.
+     */
+    private int $column = 0;
 
     /**
      * @var string An optional reference for the issue.
@@ -61,15 +66,16 @@ class Issue implements \JsonSerializable
      * @param string|null $path The file path where the issue was found (relative to plugin root).
      * @param int|null $line The line number where the issue was found.
      */
-    public function __construct(string $code, int $severity, string $message, ?string $path = null, ?int $line = 1)
+    public function __construct(string $code, int $severity, string $message, ?string $path = null, ?int $line = 0, ?int $col = 0, string $ref = '', string $help = '')
     {
         $this->code = $code;
         $this->severity = $severity;
         $this->message = $message;
         $this->path = $path ?? '.';
-        $this->line = $line ?? 1;
-        $this->ref = ''; // Initialize optional properties
-        $this->help = ''; // Initialize optional properties
+        $this->line = $line ?? 0;
+        $this->col = $col ?? 0;
+        $this->ref = $ref;
+        $this->help = $help;
     }
 
     /**
@@ -392,6 +398,18 @@ class Issue implements \JsonSerializable
         $this->messageData[$key] = $value;
         return $this;
     }
+
+    public function getColumn(): int
+    {
+        return $this->column;
+    }
+
+    public function setColumn(int $column): void
+    {
+        $this->column = $column;
+    }
+
+
 
 
 

@@ -5,7 +5,8 @@
     "autoload": {
         "psr-4": {
             "Tuchsoft\\MoodleChecklist\\": "src/",
-            "PHP_CodeSniffer\\": "vendor/squizlabs/php_codesniffer/src"
+            "PHP_CodeSniffer\\": "vendor/squizlabs/php_codesniffer/src",
+            "Tuchsoft\\MoodleChecklist\\Report\\Format\\": "src/Report/Format"
         }
     },
     "authors": [
@@ -15,6 +16,10 @@
         }
     ],
     "repositories": [
+        {
+            "type": "path",
+            "url" : "/Users/mattiabonzi/Progetti/IssueReporter"
+        },
         {
             "type": "vcs",
             "url": "https://github.com/moodlehq/moodle-local_ci.git"
@@ -38,6 +43,7 @@
         "ext-simplexml": "*",
         "ext-curl": "*",
         "ext-libxml": "*",
+        "ext-dom": "*",
         "moodlehq/moodle-plugin-ci": "^4",
         "symfony/process": "^5.4",
         "squizlabs/php_codesniffer": "^3.13",
@@ -48,7 +54,8 @@
         "phpmd/phpmd": "^2.13.0",
         "symfony/console": "^5.4",
         "symfony/serializer": "6.4.x-dev",
-        'automattic/ignorefile": "^3.0@dev"
+        "automattic/ignorefile": "^3.0@dev",
+        "tuchsoft/issue-reporter": "dev-main"
 
     },
     "scripts": {

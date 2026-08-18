@@ -414,3 +414,5 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/node,linux,macos,windows,composer,phpstorm,intellij
 
 /xvendor
+#Ignore the AI plans directory
+.complex_plans
