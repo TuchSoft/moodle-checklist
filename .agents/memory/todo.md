@@ -19,5 +19,9 @@
   - Removed `src/Check/TestCheck.php` artifact.
   - Fixtures `tests/fixtures/clean-plugin` + `tests/fixtures/dirty-plugin`.
   - `tests/Integration/CheckCommandTest.php` clean/dirty + format smoke tests.
+- Fixed missing-file handling in `ReadmeCheck` and `GitIgnoreCheck`.
+  - `AbstractSingleFileCheck` Template Method; subclasses implement `executeSingleFile()`.
+  - `RemarkProcess::getIssues()` coalesces `source`/`ruleId`/`line` defaults.
+  - Fixture `tests/fixtures/missing-files-plugin` + parallel-mode integration tests.
 
 ## Backlog

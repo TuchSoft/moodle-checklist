@@ -54,7 +54,7 @@ class GitIgnoreCheck extends AbstractSingleFileCheck
         $this->mimeType = ['text/plain'];
     }
 
-    protected function execute(): void
+    protected function executeSingleFile(): void
     {
         $baseDir = dirname($this->path);
 

@@ -27,3 +27,7 @@ Co-managed with humans. Only open items — move finished work out (agent memory
   - Removed leftover `src/Check/TestCheck.php` production test artifact.
   - Added `tests/fixtures/clean-plugin` and `tests/fixtures/dirty-plugin` fixtures.
   - Added `tests/Integration/CheckCommandTest.php` covering clean/dirty plugin runs and JSON/checkstyle formats.
+- Fixed missing-file handling in `ReadmeCheck` and `GitIgnoreCheck`.
+  - Refactored `AbstractSingleFileCheck` to a Template Method so subclasses can't skip file-existence validation.
+  - Hardened `RemarkProcess::getIssues()` against remark fatal messages that lack `source`/`ruleId`.
+  - Added `tests/fixtures/missing-files-plugin` and parallel-mode integration tests for missing `README.md` and `.gitignore`.

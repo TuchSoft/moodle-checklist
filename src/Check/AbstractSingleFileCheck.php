@@ -30,14 +30,15 @@ abstract class AbstractSingleFileCheck extends AbstractCheck
     public function __construct(protected Settings $settings)
     {
         parent::__construct($settings);
-        $this->filename = basename($this->path);
     }
 
 
-    protected function execute(): void
+    final protected function execute(): void
     {
+        $this->filename = basename($this->path);
+
         $exist = $this->fileExist(
-            $this->path, // Use $this->path instead of $this->file
+            $this->path,
             'file-not-found',
             "File '{$this->filename}' is missing."
         );
@@ -57,5 +58,13 @@ abstract class AbstractSingleFileCheck extends AbstractCheck
         if ($this->isActive(($code = 'file-mimetype'))) {
             $this->checkFileMimeType($this->path, $code, $this->mimeType);
         }
+
+        $this->executeSingleFile();
     }
+
+    /**
+     * Subclass-specific logic for the single file check.
+     * This is only called when the file exists.
+     */
+    abstract protected function executeSingleFile(): void;
 }

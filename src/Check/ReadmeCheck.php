@@ -33,14 +33,8 @@ class ReadmeCheck extends AbstractSingleFileCheck
     }
 
 
-    protected function execute(): void
+    protected function executeSingleFile(): void
     {
-        //Common file valifation
-        parent::execute();
-
-
-
-
         //Default markdown linter
         if ($this->isActive(($code = 'lint'))) {
             $this->lintMarkdown($this->path,

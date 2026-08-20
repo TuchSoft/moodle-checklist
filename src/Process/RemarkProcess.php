@@ -101,10 +101,15 @@ class RemarkProcess extends AbstractIssuesProcess
         }
 
         return array_map(function ($issue) use ($code) {
+            $isFatal = !empty($issue['fatal']);
+            $ruleId = $issue['ruleId'] ?? 'fatal';
+            $source = $issue['source'] ?? 'remark';
+            $reason = $issue['reason'] ?? 'Unknown issue';
+
             $newIssue = new Issue(
-                "{$issue['source']}.{$issue['ruleId']}",
-                ($issue['fatal'] ? $this->severityHigh : $this->severityLow),
-                $issue['reason'],
+                "{$source}.{$ruleId}",
+                $isFatal ? $this->severityHigh : $this->severityLow,
+                $reason,
                 $this->file,
                 $issue['line'] ?? null
             );
