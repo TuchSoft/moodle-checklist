@@ -29,7 +29,7 @@ class CheckPluginCommand extends AbstractCommand
                 'format',
                 'f',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
-                'The report type to generate (e.g., info, json, checkstyle).',
+                "The report type to generate (e.g., info, json, checkstyle). <comment>For AI/LLM agents, 'emacs' is the recommended format.</comment>",
                 ['info']
             )
             ->addOption(
