@@ -9,7 +9,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Tuchsoft\IssueReporter\Reporter;
 use Tuchsoft\MoodleChecklist\Checker;
-use Tuchsoft\MoodleChecklist\Settings;
 
 // Explicitly import Command for constants
 
@@ -30,8 +29,8 @@ class CheckPluginCommand extends AbstractCommand
                 'format',
                 'f',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
-                'The report type to generate (e.g., full, json, checkstyle, summary).',
-                ['summary', 'full' ]
+                'The report type to generate (e.g., info, json, checkstyle).',
+                ['info']
             )
             ->addOption(
                 'config',
@@ -40,16 +39,16 @@ class CheckPluginCommand extends AbstractCommand
                 'Path to a config file',
             )
             ->addOption(
-                'include',
+                'include-check',
                 'i',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
-                'Issue to include in the run',
+                'Check to include in the run (e.g. readme, filestructure)',
             )
             ->addOption(
-                'exclude',
+                'exclude-check',
                 'x',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
-                'Issue to exclude from the run',
+                'Check to exclude from the run (e.g. images, repository)',
             )
             ->addOption(
                 'source',
@@ -99,7 +98,7 @@ class CheckPluginCommand extends AbstractCommand
 
 
         if (!is_dir($options['plugin'])) {
-            $this->error("Error: Plugin directory not found or invalid: '{$options['plugin']}'");
+            $this->validationError = "Plugin directory not found or invalid: '{$options['plugin']}'";
             return false;
         }
         $options['plugin'] = realpath($options['plugin']);
@@ -124,7 +123,15 @@ class CheckPluginCommand extends AbstractCommand
             $checker = new Checker($this->settings, $this->io);
             $report = $checker->runChecks();
 
-            Reporter::printReport($report, 'info');
+            $formats = $this->settings->reports ?: ['info' => 'php://stdout'];
+            foreach ($formats as $format => $outputFile) {
+                $outputFile = $outputFile ?: 'php://stdout';
+                // IssueReporter has no dedicated 'json' format; 'raw' is JSON-serialized report.
+                if ($format === 'json') {
+                    $format = 'raw';
+                }
+                Reporter::printReport($report, $format, $outputFile);
+            }
 
             if ($report->getTotalErrors() > 0 || $report->getTotalWarnings() > 0) {
                 $this->io->warning('All checks done but something is not shiny yet, check the report!');

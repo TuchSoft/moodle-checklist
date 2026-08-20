@@ -22,8 +22,8 @@ class Settings extends Config
     public Plugin $plugin;
     public Moodle $moodle;
     public string $execute;
-    public array $include = [];
-    public array $exclude = [];
+    public array $checkInclude = [];
+    public array $checkExclude = [];
     /**
      * @var array namesapce => dir mappings for additional custom checks
      */
@@ -44,16 +44,16 @@ class Settings extends Config
         $this->execute = $options['only'] ?? ($options['parallel'] ? self::PARALLEL_EXECUTION : self::SEQUENTIAL_EXECUTION);
 
         $inputDefinitions = [];
-        if ($options['include']) {
-            $this->include = $options['include'];
+        if ($options['include-check']) {
+            $this->checkInclude = $options['include-check'];
             $inputDefinitions = ['*' => ['active' => false]];
-            foreach ($options['include'] as $include) {
+            foreach ($options['include-check'] as $include) {
                 $inputDefinitions[$include] = ['active' => true];
             }
-        } else if ($options['exclude']) {
-            $this->exclude = $options['exclude'];
-            foreach ($options['exclude'] as $include) {
-                $inputDefinitions[$include] = ['active' => false];
+        } else if ($options['exclude-check']) {
+            $this->checkExclude = $options['exclude-check'];
+            foreach ($options['exclude-check'] as $exclude) {
+                $inputDefinitions[$exclude] = ['active' => false];
             }
         } else if ($options['definition'] ?? null) {
             $inputDefinitions = $options['definition'];
@@ -74,7 +74,7 @@ class Settings extends Config
 
         $this->reportFile = $options['reportFile'] ?? 'php://stdout';
         // Apply our specific options for PHPCS reporting system
-        $formats = ['summary' => null, 'full' => null];
+        $formats = ['info' => null];
         if ($options['format']) {
             $formats = [];
             foreach ($options['format'] as $format) {

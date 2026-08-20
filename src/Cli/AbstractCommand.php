@@ -5,13 +5,13 @@ namespace Tuchsoft\MoodleChecklist\Cli;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Tuchsoft\MoodleChecklist\Settings;
 use Tuchsoft\MoodleChecklist\Utils\InputOutput;
 
 abstract class AbstractCommand extends Command
 {
-    private $validParams = true;
+    private bool $validParams = true;
+    protected ?string $validationError = null;
 
     protected Settings $settings;
     protected InputOutput $io;
@@ -34,7 +34,8 @@ abstract class AbstractCommand extends Command
     {
 
         if (!$this->validParams) {
-            $this->io->error("Argument does not seems to be valid, tyeue -vvv to get more details");
+            $message = $this->validationError ?? 'Argument does not seem to be valid (use -vvv to get more details).';
+            $this->io->error($message);
             return Command::FAILURE;
         }
 

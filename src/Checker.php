@@ -82,6 +82,9 @@ class Checker
         $this->io->debug('Found ' . count($this->checks) . ' checks.');
     }
 
+    /**
+     * @param array<string, string> $namespaces
+     */
     private function registerNamespaces(array $namespaces): void
     {
         foreach ($namespaces as $namespace => $directory) {
@@ -99,6 +102,10 @@ class Checker
         return in_array($namespaceWithSlash, $psr4Prefixes, true);
     }
 
+    /**
+     * @param array<string, string> $prefixes
+     * @return string[]
+     */
     private function findChecks(array $prefixes): array
     {
         $checks = [];
@@ -195,15 +202,15 @@ class Checker
         if ($this->settings->execute == Settings::PARALLEL_EXECUTION) {
             $this->io->verbose('Executing checks in parallel mode.');
             $options = [];
-            foreach ($this->settings->exclude as $str) {
-                $options[] = '--exclude';
+            foreach ($this->settings->checkExclude as $str) {
+                $options[] = '--exclude-check';
                 $options[] = $str;
-                $this->io->debug("Adding exclude option: '{$str}'.");
+                $this->io->debug("Adding exclude-check option: '{$str}'.");
             }
-            foreach ($this->settings->include as $str) {
-                $options[] = '--include';
+            foreach ($this->settings->checkInclude as $str) {
+                $options[] = '--include-check';
                 $options[] = $str;
-                $this->io->debug("Adding include option: '{$str}'.");
+                $this->io->debug("Adding include-check option: '{$str}'.");
             }
             foreach ($this->settings->customChecks as $namespace => $path) {
                 $options[] = '--additional-check';

@@ -37,7 +37,7 @@ class PhpLintCheck extends AbstractMoodleCiCheck
             if ($result) {
                 foreach ($result->getErrors() as $error) {
                     $this->addError(
-                        $code,
+                        'php-lint-error',
                         $error->getMessage(),
                         $error->getFilePath()
                     );

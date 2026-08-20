@@ -6,7 +6,6 @@ use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckConventionalCommits;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckSemanticVersioning;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\GitData;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\LoadLangString;
-use Tuchsoft\MoodleChecklist\Plugin;
 use Tuchsoft\MoodleChecklist\Settings;
 
 class RepositoryCheck extends AbstractCheck
@@ -83,7 +82,7 @@ class RepositoryCheck extends AbstractCheck
                 $tagNames = array_column($this->repoTags, 'name');
                 $this->checkSemVer($tagNames, $code);
             } else {
-                $this->report->addTip(
+                $this->addTip(
                     $code,
                     'No tags found. It is recommended to create tags for releases following Semantic Versioning.'
                 );

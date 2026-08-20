@@ -34,6 +34,13 @@ trait CheckFileMimeType
                     $filePath
                 );
             } elseif (!in_array($mimeType, $allowedMimeTypes, true)) {
+                // Some systems report Markdown files as text/plain; accept that for .md files
+                // when text/markdown is among the allowed types.
+                $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                if ($mimeType === 'text/plain' && $extension === 'md' && in_array('text/markdown', $allowedMimeTypes, true)) {
+                    return;
+                }
+
                 $this->addWarning(
                     $code,
                     "File '{$filename}' has unexpected MIME type: '{$mimeType}'. Expected one of: '" . implode("', '", $allowedMimeTypes) . "'.",

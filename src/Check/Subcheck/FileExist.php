@@ -10,6 +10,12 @@ trait FileExist
 {
     use BaseCheckTrait;
 
+    /**
+     * @param string $file
+     * @param string $code
+     * @param string|null $msg
+     * @param int $severity
+     */
     protected function fileExist($file, $code, ?string $msg = null, $severity = Issue::SEVERITY_ERROR ): bool {
         if (!$msg) $msg = "File not found ($file)";
         if (!is_file($file)) {
@@ -20,6 +26,12 @@ trait FileExist
     }
 
 
+    /**
+     * @param string $dir
+     * @param string $code
+     * @param string|null $msg
+     * @param int $severity
+     */
     protected function dirExist($dir, $code, ?string $msg = null, $severity = Issue::SEVERITY_ERROR ): bool {
         if (!$msg) $msg = "Directory not found ($dir)";
         if (!is_dir($dir)) {
@@ -29,6 +41,12 @@ trait FileExist
         return true;
     }
 
+    /**
+     * @param string $file
+     * @param string $code
+     * @param string|null $msg
+     * @param int $severity
+     */
     protected function fileNotExist($file, $code, ?string $msg = null, $severity = Issue::SEVERITY_ERROR ): bool {
         if (!$msg) $msg = "File should not exist ($file)";
         if (is_file($file)) {
@@ -39,6 +57,12 @@ trait FileExist
     }
 
 
+    /**
+     * @param string $dir
+     * @param string $code
+     * @param string|null $msg
+     * @param int $severity
+     */
     protected function dirNotExist($dir, $code, ?string $msg = null, $severity = Issue::SEVERITY_ERROR ): bool {
         if (!$msg) $msg = "Directory should not exist ($dir)";
         if (is_dir($dir)) {

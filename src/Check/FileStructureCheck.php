@@ -2,7 +2,6 @@
 
 namespace Tuchsoft\MoodleChecklist\Check;
 
-use MoodlePluginCI\PluginValidate\Plugin;
 use MoodlePluginCI\PluginValidate\PluginValidate;
 use MoodlePluginCI\PluginValidate\Requirements\RequirementsResolver;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckFileEncoding;

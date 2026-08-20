@@ -8,6 +8,11 @@ class PhpFileLoader extends AbstractUtils
 {
 
 
+    /**
+     * @param string $filePath
+     * @param string $var
+     * @return mixed
+     */
     public function load($filePath, $var): mixed
     {
         $this->checkForError();

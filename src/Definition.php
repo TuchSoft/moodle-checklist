@@ -42,6 +42,10 @@ class Definition
     private const REQUIRED_PROPERTIES = ['msg', 'ref', 'help', 'severity', 'desc', 'active'];
 
 
+    /**
+     * @param string $definitionFile
+     * @param string|array $override
+     */
     public function __construct(string $definitionFile, string|array $override)
     {
         $override = is_string($override) ? $this->loadFromFiles($override) : $override;
@@ -50,6 +54,10 @@ class Definition
 
 
 
+    /**
+     * @param string $files
+     * @return array
+     */
     private function loadFromFiles(...$files): array {
         $definitions = [];
         foreach ($files as $file) {
@@ -78,6 +86,10 @@ class Definition
     /**
      * Parsa la definizione ISSUE in una struttura ad albero normalizzata.
      * Gestisce percorsi a punti e array annidati, inclusi i pattern glob.
+     */
+    /**
+     * @param array $definitions
+     * @param array $override
      */
     private function parseDefinition(array $definitions, array $override): void
     {
@@ -289,6 +301,11 @@ class Definition
 
 
 
+    /**
+     * @param array $partialInfo
+     * @param array|null $node
+     * @return array
+     */
     private function fillMissingProperties(array $partialInfo, ?array $node = null): array
     {
         foreach (self::REQUIRED_PROPERTIES as $prop) {

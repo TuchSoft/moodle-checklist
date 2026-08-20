@@ -6,7 +6,7 @@ namespace Tuchsoft\MoodleChecklist\Check;
 
 
 use Tuchsoft\MoodleChecklist\Process\MoodleCiGruntStylelintProcess;
-use Tuchsoft\MoodleChecklist\Process\MoodleCISavepointProcess;
+
 
 class StyleLintCheck extends AbstractMoodleCiCheck
 {

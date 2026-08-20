@@ -73,6 +73,10 @@ trait BaseCheckTrait
     }
 
 
+    /**
+     * @param string|null $msg
+     * @param string|null $path
+     */
     protected function runtimeError($msg, $path = null): void
     {
         $message = $msg ?? 'An unexpected error occurred';

@@ -3,7 +3,6 @@
 namespace Tuchsoft\MoodleChecklist\Process;
 
 use Tuchsoft\IssueReporter\Issue;
-use Tuchsoft\IssueReporter\Report;
 
 /**
  * RemarkProcess executes the 'npx remark' command and parses its JSON output.

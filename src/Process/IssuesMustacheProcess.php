@@ -3,7 +3,6 @@
 namespace Tuchsoft\MoodleChecklist\Process;
 
 use Tuchsoft\IssueReporter\Issue;
-use Tuchsoft\IssueReporter\Report;
 
 /**
  * IssuesMustacheProcess extends AbstractParallelProcess to validate Mustache templates using Moodle CI tools.
@@ -143,6 +142,8 @@ class IssuesMustacheProcess extends AbstractParallelProcess
      */
     private function hasInternetConnection(): bool
     {
+        $errno = 0;
+        $errstr = '';
         $connected = @fsockopen("www.google.com", 80, $errno, $errstr, 5);
         if ($connected) {
             fclose($connected);

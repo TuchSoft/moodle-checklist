@@ -1,6 +1,10 @@
 #!/usr/bin/env php
 <?php
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL & ~E_DEPRECATED);
+
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../vendor/squizlabs/php_codesniffer/autoload.php';
 
@@ -13,10 +17,6 @@ if (!defined('PHP_CODESNIFFER_CBF')) {
 
 use Symfony\Component\Console\Application;
 use Tuchsoft\MoodleChecklist\Cli\CheckPluginCommand;
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ERROR);
 
 $application = new Application('Moodle Plugin Checker', '1.0.0');
 $application->add(new CheckPluginCommand());

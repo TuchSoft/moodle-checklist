@@ -11,6 +11,12 @@ trait LintMarkdown
 {
     use BaseCheckTrait;
 
+    /**
+     * @param string $file
+     * @param string|array $config
+     * @param int $severity_low
+     * @param int $severity_high
+     */
     public function lintMarkdown($file, $config, $severity_low = Issue::SEVERITY_WARNING, $severity_high = Issue::SEVERITY_ERROR): void
     {
 

@@ -4,7 +4,6 @@ namespace Tuchsoft\MoodleChecklist\Utils;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\OutputStyle;
 use Tuchsoft\MoodleChecklist\Settings;
 use \Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -55,11 +54,17 @@ class InputOutput extends SymfonyStyle {
         parent::text($message);
     }
 
+    /**
+     * @param string $message
+     */
     public function verbose($message): void
     {
         $this->text($message, Settings::VERBOSITY_VERBOSE);
     }
 
+    /**
+     * @param string $message
+     */
     public function debug($message): void
     {
         $this->text($message, Settings::VERBOSITY_DEBUG);
@@ -70,6 +75,11 @@ class InputOutput extends SymfonyStyle {
         parent::block($messages, $type, $style, $prefix, $padding, $escape);
     }
 
+    /**
+     * @param string[] $list
+     * @param int $offset
+     * @param int $level
+     */
     public function printList(array $list, $offset = 1, $level = Settings::VERBOSITY_NORMAL): void
     {
         if (!$this->settings->isVerbosityAtLeast($level)) return;

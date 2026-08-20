@@ -8,7 +8,6 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SimpleXMLElement;
 use Tuchsoft\IssueReporter\Issue;
-use Tuchsoft\IssueReporter\Report;
 
 /**
  * Runs the moodle-local_moodlecheck tool to check for DocBlock issues.
@@ -179,8 +178,10 @@ class MoodleCIDocblockProcess extends AbstractIssuesProcess
             RecursiveIteratorIterator::SELF_FIRST
         );
 
+        $source = rtrim($source, '/');
         foreach ($iterator as $item) {
-            $destPath = $dest . '/' . $iterator->getSubPathName();
+            $relativePath = substr($item->getPathname(), strlen($source) + 1);
+            $destPath = $dest . '/' . $relativePath;
             if ($item->isDir()) {
                 if (!is_dir($destPath) && !mkdir($destPath, 0755, true)) {
                     return false;
