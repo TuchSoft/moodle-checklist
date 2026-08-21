@@ -40,31 +40,32 @@ class YamlLintCheck extends AbstractCheck
         }
     }
 
-    public function fix(bool $apply): void
+    public function fix(bool $apply): bool
     {
         $files = $this->getAllFile(ext: ['yml', 'yaml']);
         if (empty($files)) {
-            return;
+            return true;
         }
 
         $process = new PrettierFixProcess($files);
         if (!$process->isAvailable()) {
             $this->io->warning('prettier is not available; skipping YAML fixer.');
-            return;
+            return false;
         }
 
         if (!$apply) {
             $this->io->text('Would run prettier on ' . count($files) . ' YAML file(s).');
-            return;
+            return true;
         }
 
         $process->execute();
         $exit = $process->getExitCode();
         if ($exit !== 0 && $exit !== 1) {
             $this->io->warning('YAML formatting finished with errors: ' . trim($process->getStderr() ?: 'unknown error'));
-        } else {
-            $this->io->success('YAML files formatted with prettier.');
+            return false;
         }
+        $this->io->success('YAML files formatted with prettier.');
+        return true;
     }
 
 }

@@ -87,6 +87,7 @@ class FixPluginCommand extends AbstractCommand
             }
 
             $ran = 0;
+            $failed = 0;
             $skipped = 0;
             foreach ($fixables as $check) {
                 $name = get_class($check)::getName();
@@ -97,18 +98,34 @@ class FixPluginCommand extends AbstractCommand
                 }
 
                 $this->io->section("Running formatter for '{$name}'");
-                $check->fix($this->apply);
-                $ran++;
+                $success = $check->fix($this->apply);
+                if ($success) {
+                    $ran++;
+                } else {
+                    $failed++;
+                }
             }
 
             if ($this->apply) {
-                $this->io->success("Formatting applied. {$ran} formatter(s) ran, {$skipped} skipped.");
+                $summary = "{$ran} formatter(s) ran";
+                if ($failed > 0) {
+                    $summary .= ", {$failed} failed";
+                    $this->io->warning("Formatting applied with failures. {$summary}, {$skipped} skipped.");
+                } else {
+                    $this->io->success("Formatting applied. {$summary}, {$skipped} skipped.");
+                }
                 $this->io->text('Run `bin/console check <plugin>` to verify the remaining issues.');
             } else {
-                $this->io->success("Dry-run complete. {$ran} formatter(s) would run, {$skipped} skipped. Use --apply to write changes.");
+                $summary = "{$ran} formatter(s) would run";
+                if ($failed > 0) {
+                    $summary .= ", {$failed} would fail";
+                    $this->io->warning("Dry-run complete. {$summary}, {$skipped} skipped. Use --apply to write changes.");
+                } else {
+                    $this->io->success("Dry-run complete. {$summary}, {$skipped} skipped. Use --apply to write changes.");
+                }
             }
 
-            return Command::SUCCESS;
+            return $failed > 0 ? Command::FAILURE : Command::SUCCESS;
         } catch (Exception $e) {
             throw $e;
         } finally {

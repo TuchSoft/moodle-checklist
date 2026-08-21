@@ -45,60 +45,67 @@ class XmlLintCheck extends AbstractCheck
         }
     }
 
-    public function fix(bool $apply): void
+    public function fix(bool $apply): bool
     {
         $files = $this->getAllFile(ext: ['xml']);
         if (empty($files)) {
-            return;
+            return true;
         }
 
         $xmllint = new XmllintFixProcess($files);
         if ($xmllint->isAvailable()) {
             if (!$apply) {
                 $this->io->text('Would run xmllint --format on ' . count($files) . ' XML file(s).');
-                return;
+                return true;
             }
+            $success = true;
             foreach ($files as $file) {
                 $process = new XmllintFixProcess([$file]);
                 $process->execute();
                 $exit = $process->getExitCode();
                 if ($exit !== 0 && $exit !== 1) {
                     $this->io->warning("xmllint failed for {$file}: " . trim($process->getStderr() ?: 'unknown error'));
+                    $success = false;
                 }
             }
             $this->io->success('XML files formatted with xmllint.');
-            return;
+            return $success;
         }
 
         if (!$apply) {
             $this->io->text('Would pretty-print ' . count($files) . ' XML file(s) using PHP DOM.');
-            return;
+            return true;
         }
 
+        $success = true;
         foreach ($files as $file) {
-            $this->formatXmlWithDom($file);
+            if (!$this->formatXmlWithDom($file)) {
+                $success = false;
+            }
         }
         $this->io->success('XML files pretty-printed with PHP DOM.');
+        return $success;
     }
 
-    private function formatXmlWithDom(string $file): void
+    private function formatXmlWithDom(string $file): bool
     {
         $content = @file_get_contents($file);
         if ($content === false) {
-            return;
+            return false;
         }
 
         $dom = new \DOMDocument('1.0');
         $dom->preserveWhiteSpace = false;
         $dom->formatOutput = true;
         if (!@$dom->loadXML($content)) {
-            return;
+            return false;
         }
 
         $xml = $dom->saveXML();
         if ($xml === false) {
-            return;
+            return false;
         }
         file_put_contents($file, $xml);
+        return true;
     }
 }

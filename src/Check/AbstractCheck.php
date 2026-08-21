@@ -65,9 +65,10 @@ abstract class AbstractCheck implements FixableCheckInterface
     /**
      * No-op default. Fixable checks must override this.
      */
-    public function fix(bool $apply): void
+    public function fix(bool $apply): bool
     {
-        // No-op by default.
+        // No-op by default: nothing to fix, so report success.
+        return true;
     }
 
 

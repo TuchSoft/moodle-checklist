@@ -42,47 +42,51 @@ class JsonLintCheck extends AbstractCheck
         }
     }
 
-    public function fix(bool $apply): void
+    public function fix(bool $apply): bool
     {
         $files = $this->getAllFile(ext: ['json']);
         if (empty($files)) {
-            return;
+            return true;
         }
 
         $prettier = new PrettierFixProcess($files);
         if ($prettier->isAvailable()) {
-            if ($apply) {
-                $prettier->execute();
-                $exit = $prettier->getExitCode();
-                if ($exit !== 0 && $exit !== 1) {
-                    $this->io->warning('JSON formatting finished with errors: ' . trim($prettier->getStderr() ?: 'unknown error'));
-                } else {
-                    $this->io->success('JSON files formatted with prettier.');
-                }
-            } else {
+            if (!$apply) {
                 $this->io->text('Would run prettier on ' . count($files) . ' JSON file(s).');
+                return true;
             }
-            return;
+            $prettier->execute();
+            $exit = $prettier->getExitCode();
+            if ($exit !== 0 && $exit !== 1) {
+                $this->io->warning('JSON formatting finished with errors: ' . trim($prettier->getStderr() ?: 'unknown error'));
+                return false;
+            }
+            $this->io->success('JSON files formatted with prettier.');
+            return true;
         }
 
         if (!$apply) {
             $this->io->text('Would pretty-print ' . count($files) . ' JSON file(s) using PHP.');
-            return;
+            return true;
         }
 
+        $success = true;
         foreach ($files as $file) {
             $content = file_get_contents($file);
             if ($content === false) {
+                $success = false;
                 continue;
             }
             $decoded = json_decode($content, true);
             if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) {
+                $success = false;
                 continue;
             }
             $pretty = json_encode($decoded, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL;
             file_put_contents($file, $pretty);
         }
         $this->io->success('JSON files pretty-printed.');
+        return $success;
     }
 
 }

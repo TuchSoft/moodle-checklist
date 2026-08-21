@@ -25,11 +25,11 @@ class PhpCsCheck extends AbstractMoodleCiCheck
         $this->addIssueObjects(...$process->getIssues($this->getName()));
     }
 
-    public function fix(bool $apply): void
+    public function fix(bool $apply): bool
     {
         if (!$this->canFix()) {
             $this->io->warning('phpcbf is not available; skipping PHP fixer.');
-            return;
+            return false;
         }
 
         $process = new MoodleCiPhpcbfProcess($this->plugin->fullpath, $this->plugin->moodleroot);
@@ -38,11 +38,13 @@ class PhpCsCheck extends AbstractMoodleCiCheck
             $exit = $process->getExitCode();
             if ($exit !== 0 && $exit !== 1) {
                 $this->io->warning('phpcbf finished with errors: ' . trim($process->getStderr() ?: 'unknown error'));
-            } else {
-                $this->io->success('PHP files formatted with phpcbf.');
+                return false;
             }
-        } else {
-            $this->io->text('Would run phpcbf on ' . $this->plugin->fullpath);
+            $this->io->success('PHP files formatted with phpcbf.');
+            return true;
         }
+
+        $this->io->text('Would run phpcbf on ' . $this->plugin->fullpath);
+        return true;
     }
 }

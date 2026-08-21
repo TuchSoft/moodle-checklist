@@ -57,18 +57,7 @@ class ImageCheck extends AbstractCheck
      */
     private function getImageFiles(): array
     {
-        $allFiles = $this->getAllFile(ext: self::KNOWN_IMAGE_EXTENSIONS);
-        $pluginPath = rtrim($this->plugin->fullpath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-
-        return array_values(array_filter($allFiles, function (string $file) use ($pluginPath): bool {
-            $relative = str_replace($pluginPath, '', $file);
-            foreach (['.moodleplugin/', 'vendor/', 'node_modules/', '.git/'] as $skip) {
-                if (str_starts_with($relative, $skip)) {
-                    return false;
-                }
-            }
-            return true;
-        }));
+        return $this->getAllFile(ext: self::KNOWN_IMAGE_EXTENSIONS);
     }
 
     private function checkFile(string $file): void
@@ -207,13 +196,14 @@ class ImageCheck extends AbstractCheck
         }
     }
 
-    public function fix(bool $apply): void
+    public function fix(bool $apply): bool
     {
         $files = $this->getImageFiles();
         if (empty($files)) {
-            return;
+            return true;
         }
 
+        $overall = true;
         foreach ($files as $file) {
             $relative = $this->getRelativePath($file);
             $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
@@ -230,11 +220,13 @@ class ImageCheck extends AbstractCheck
                     $this->io->text("Optimized {$relative} (saved {$saved} bytes).");
                 } else {
                     $this->io->warning("Failed to optimize {$relative}.");
+                    $overall = false;
                 }
             } else {
                 $this->io->text("Would optimize {$relative}.");
             }
         }
+        return $overall;
     }
 
     private function getOptimizerProcess(string $extension, string $file): ?AbstractImageOptimizerProcess

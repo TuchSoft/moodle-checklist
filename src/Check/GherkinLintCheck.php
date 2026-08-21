@@ -32,31 +32,32 @@ class GherkinLintCheck extends AbstractMoodleCiCheck
 
     }
 
-    public function fix(bool $apply): void
+    public function fix(bool $apply): bool
     {
         $files = $this->getAllFile(ext: ['feature']);
         if (empty($files)) {
-            return;
+            return true;
         }
 
         $process = new GherkinFixProcess($files);
         if (!$process->isAvailable()) {
             $this->io->warning('reformat-gherkin is not available; skipping Gherkin fixer.');
-            return;
+            return false;
         }
 
         if (!$apply) {
             $this->io->text('Would run reformat-gherkin on ' . count($files) . ' feature file(s).');
-            return;
+            return true;
         }
 
         $process->execute();
         $exit = $process->getExitCode();
         if ($exit !== 0 && $exit !== 1) {
             $this->io->warning('Gherkin formatting finished with errors: ' . trim($process->getStderr() ?: 'unknown error'));
-        } else {
-            $this->io->success('Feature files formatted with reformat-gherkin.');
+            return false;
         }
+        $this->io->success('Feature files formatted with reformat-gherkin.');
+        return true;
     }
 
 }

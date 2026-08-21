@@ -21,6 +21,7 @@ interface FixableCheckInterface
      * Run the formatter.
      *
      * @param bool $apply If true, overwrite files. If false, dry-run only.
+     * @return bool True if the formatter ran successfully, false if it failed.
      */
-    public function fix(bool $apply): void;
+    public function fix(bool $apply): bool;
 }

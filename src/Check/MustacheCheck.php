@@ -34,31 +34,32 @@ class MustacheCheck extends AbstractMoodleCiCheck
 
     }
 
-    public function fix(bool $apply): void
+    public function fix(bool $apply): bool
     {
         $files = $this->getAllFile(ext: ['mustache']);
         if (empty($files)) {
-            return;
+            return true;
         }
 
         $process = new DjlintFixProcess($files);
         if (!$process->isAvailable()) {
             $this->io->warning('djlint is not available; skipping Mustache fixer.');
-            return;
+            return false;
         }
 
         if (!$apply) {
             $this->io->text('Would run djlint --reformat on ' . count($files) . ' Mustache file(s).');
-            return;
+            return true;
         }
 
         $process->execute();
         $exit = $process->getExitCode();
         if ($exit !== 0 && $exit !== 1) {
             $this->io->warning('Mustache formatting finished with errors: ' . trim($process->getStderr() ?: 'unknown error'));
-        } else {
-            $this->io->success('Mustache files formatted with djlint.');
+            return false;
         }
+        $this->io->success('Mustache files formatted with djlint.');
+        return true;
     }
 
 }

@@ -108,30 +108,31 @@ class ReadmeCheck extends AbstractSingleFileCheck
         //TODO: Check all the link
     }
 
-    public function fix(bool $apply): void
+    public function fix(bool $apply): bool
     {
         if (!is_file($this->path)) {
-            return;
+            return true;
         }
 
         $process = new PrettierFixProcess([$this->path]);
         if (!$process->isAvailable()) {
             $this->io->warning('prettier is not available; skipping Markdown fixer.');
-            return;
+            return false;
         }
 
         if (!$apply) {
             $this->io->text('Would run prettier on README.md.');
-            return;
+            return true;
         }
 
         $process->execute();
         $exit = $process->getExitCode();
         if ($exit !== 0 && $exit !== 1) {
             $this->io->warning('README formatting finished with errors: ' . trim($process->getStderr() ?: 'unknown error'));
-        } else {
-            $this->io->success('README.md formatted with prettier.');
+            return false;
         }
+        $this->io->success('README.md formatted with prettier.');
+        return true;
     }
 
 
