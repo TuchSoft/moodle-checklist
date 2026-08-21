@@ -11,13 +11,19 @@
   "dependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
+    "cwebp-bin": "^8.0.0",
+    "gifsicle": "^7.0.1",
     "grunt": "^1.6.1",
+    "mozjpeg": "^8.0.0",
+    "pngquant-bin": "^9.0.0",
+    "prettier": "^3.9.6",
     "remark-cli": "^12.0.1",
     "remark-lint": "^10.0.1",
     "remark-preset-lint-consistent": "^6.0.1",
     "remark-preset-lint-markdown-style-guide": "^6.0.1",
     "remark-preset-lint-recommended": "^7.0.1",
     "standard-readme-preset": "^1.0.9",
+    "svgo": "^4.0.2",
     "vfile-reporter-json": "^4.0.0"
   }
 }

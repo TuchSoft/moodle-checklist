@@ -3,6 +3,7 @@
     "description": "Automated quality checks for Moodle plugins.",
     "license": "GPL-3.0-or-later",
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "Tuchsoft\\MoodleChecklist\\": "src/",
@@ -46,7 +47,7 @@
         "phpunit/phpunit": "^9.6"
     },
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "ext-fileinfo": "*",
         "ext-simplexml": "*",
         "ext-curl": "*",
@@ -63,11 +64,16 @@
         "symfony/console": "^5.4",
         "symfony/serializer": "6.4.x-dev",
         "automattic/ignorefile": "^3.0@dev",
-        "tuchsoft/issue-reporter": "dev-main"
+        "tuchsoft/issue-reporter": "dev-main",
+        "intervention/image": "^3",
+        "ext-gd": "*",
+        "ext-exif": "*"
 
     },
     "scripts": {
+        "install-python-deps": "php bin/install-python-deps.php",
         "post-autoload-dump": [
+            "@install-python-deps",
             "npm i",
             "npm i --prefix ./vendor/moodlehq/moodle-local_ci"
         ]
