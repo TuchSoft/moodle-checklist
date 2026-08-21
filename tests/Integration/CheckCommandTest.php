@@ -18,11 +18,13 @@ class CheckCommandTest extends TestCase
      */
     private const EXCLUDED_EXTERNAL_CHECKS = [
         '--exclude-check=filestructure',
-        '--exclude-check=images',
+        '--exclude-check=marketplaceimages',
         '--exclude-check=repository',
         '--exclude-check=moodle-plugin-ci.docblock',
         '--exclude-check=moodle-plugin-ci.gherkinlint',
+        '--exclude-check=moodle-plugin-ci.jslint',
         '--exclude-check=moodle-plugin-ci.mustache',
+        '--exclude-check=moodle-plugin-ci.phpcs',
         '--exclude-check=moodle-plugin-ci.savepoint',
         '--exclude-check=moodle-plugin-ci.stylelint',
         '--exclude-check=moodle-plugin-ci.phplint',

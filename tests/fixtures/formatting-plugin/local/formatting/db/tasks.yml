@@ -1,0 +1,4 @@
+my_task:
+  cron: "*/5 * * * *"
+  class: local_formatting\\task\\sample
+  args: [1,   2]
