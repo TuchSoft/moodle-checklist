@@ -5,6 +5,7 @@ namespace Tuchsoft\MoodleChecklist\Check;
 
 
 
+use Tuchsoft\MoodleChecklist\Check\Subcheck\GetAllFile;
 use Tuchsoft\MoodleChecklist\Process\MoodleCiGruntStylelintProcess;
 use Tuchsoft\MoodleChecklist\Process\MoodleCiStylelintFixProcess;
 
@@ -29,17 +30,22 @@ class StyleLintCheck extends AbstractMoodleCiCheck
 
     }
 
-    public function fix(bool $apply): void
+    public function fix(bool $apply): bool
     {
+        if (!$this->canFix()) {
+            $this->io->warning('stylelint is not available; skipping CSS/SCSS fixer.');
+            return false;
+        }
+
         $files = $this->collectCssFiles();
         if (empty($files)) {
             $this->io->text('No CSS/SCSS files to fix.');
-            return;
+            return true;
         }
 
         if (!$apply) {
             $this->io->text('Would run stylelint --fix on ' . count($files) . ' file(s).');
-            return;
+            return true;
         }
 
         $process = new MoodleCiStylelintFixProcess($files, $this->findConfig());
@@ -47,9 +53,10 @@ class StyleLintCheck extends AbstractMoodleCiCheck
         $exit = $process->getExitCode();
         if ($exit !== 0 && $exit !== 1) {
             $this->io->warning('stylelint --fix finished with errors: ' . trim($process->getStderr() ?: 'unknown error'));
-        } else {
-            $this->io->success('CSS/SCSS files formatted with stylelint.');
+            return false;
         }
+        $this->io->success('CSS/SCSS files formatted with stylelint.');
+        return true;
     }
 
     /**
@@ -64,7 +71,7 @@ class StyleLintCheck extends AbstractMoodleCiCheck
         );
         /** @var \SplFileInfo $file */
         foreach ($iterator as $file) {
-            if ($file->isFile() && in_array($file->getExtension(), ['css', 'scss'], true)) {
+            if ($file->isFile() && in_array($file->getExtension(), ['css', 'scss'], true) && !GetAllFile::isPathIgnored($file->getPathname(), $this->plugin->fullpath)) {
                 $files[] = $file->getPathname();
             }
         }

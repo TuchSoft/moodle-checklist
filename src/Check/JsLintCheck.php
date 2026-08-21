@@ -2,6 +2,7 @@
 
 namespace Tuchsoft\MoodleChecklist\Check;
 
+use Tuchsoft\MoodleChecklist\Check\Subcheck\GetAllFile;
 use Tuchsoft\MoodleChecklist\Process\MoodleCiEslintFixProcess;
 use Tuchsoft\MoodleChecklist\Process\MoodleCiEslintProcess;
 
@@ -29,22 +30,22 @@ class JsLintCheck extends AbstractMoodleCiCheck
         $this->addIssueObjects(...$process->getIssues($this->getName()));
     }
 
-    public function fix(bool $apply): void
+    public function fix(bool $apply): bool
     {
         if (!$this->canFix()) {
             $this->io->warning('eslint is not available; skipping JavaScript fixer.');
-            return;
+            return false;
         }
 
         $files = $this->collectJsFiles();
         if (empty($files)) {
             $this->io->text('No JavaScript files to fix.');
-            return;
+            return true;
         }
 
         if (!$apply) {
             $this->io->text('Would run eslint --fix on ' . count($files) . ' JavaScript file(s).');
-            return;
+            return true;
         }
 
         $process = new MoodleCiEslintFixProcess($files, $this->findConfig());
@@ -52,12 +53,13 @@ class JsLintCheck extends AbstractMoodleCiCheck
         $exit = $process->getExitCode();
         if ($exit !== 0 && $exit !== 1) {
             $this->io->warning('eslint --fix finished with errors: ' . trim($process->getStderr() ?: 'unknown error'));
-        } else {
-            $this->io->success('JavaScript files formatted with eslint.');
+            return false;
         }
+        $this->io->success('JavaScript files formatted with eslint.');
 
         // AMD modules need rebuilding. If grunt is available, rebuild them.
         $this->rebuildAmd();
+        return true;
     }
 
     /**
@@ -72,7 +74,7 @@ class JsLintCheck extends AbstractMoodleCiCheck
         );
         /** @var \SplFileInfo $file */
         foreach ($iterator as $file) {
-            if ($file->isFile() && $file->getExtension() === 'js') {
+            if ($file->isFile() && $file->getExtension() === 'js' && !GetAllFile::isPathIgnored($file->getPathname(), $this->plugin->fullpath)) {
                 $files[] = $file->getPathname();
             }
         }
