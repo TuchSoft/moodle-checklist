@@ -97,6 +97,7 @@ class Settings extends Config
         $this->verbosity = match( $options['verbosity'] ) {
             OutputInterface::VERBOSITY_QUIET => self::VERBOSITY_QUIET,
             OutputInterface::VERBOSITY_NORMAL => self::VERBOSITY_NORMAL,
+            OutputInterface::VERBOSITY_VERBOSE => self::VERBOSITY_VERBOSE,
             OutputInterface::VERBOSITY_VERY_VERBOSE => self::VERBOSITY_VERBOSE,
             OutputInterface::VERBOSITY_DEBUG => self::VERBOSITY_DEBUG,
         };

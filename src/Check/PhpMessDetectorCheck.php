@@ -56,7 +56,7 @@ class PhpMessDetectorCheck extends AbstractMoodleCiCheck
                 rewind($stream);
                 $jsonOutput = stream_get_contents($stream);
                 fclose($stream);
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 if (is_resource($stream)) {
                     fclose($stream);
                 }
