@@ -18,6 +18,8 @@ trait GetAllFile
      * Directories that should never be scanned or fixed, regardless of .gitignore.
      * Implemented as a static method because trait constants cannot be accessed
      * from static helper methods called on the trait itself.
+     *
+     * @return array<int,string>
      */
     private static function getAlwaysExcludedDirs(): array
     {
@@ -36,6 +38,8 @@ trait GetAllFile
 
     /**
      * Files that should never be scanned or fixed, regardless of .gitignore.
+     *
+     * @return array<int,string>
      */
     private static function getAlwaysExcludedFiles(): array
     {
