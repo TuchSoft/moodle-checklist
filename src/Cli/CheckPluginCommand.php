@@ -86,6 +86,13 @@ class CheckPluginCommand extends AbstractCommand
                 true
             )
             ->addOption(
+                'moodle-root',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Absolute path to the Moodle project root (not the web docroot).',
+                null
+            )
+            ->addOption(
                 'only',
                 null,
                 InputOption::VALUE_OPTIONAL,

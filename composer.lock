@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "09a3b75b9b72324224a7cdb39b56e691",
+    "content-hash": "4e0ca64aec98f215f8b02f2715a8f3c6",
     "packages": [
         {
             "name": "automattic/ignorefile",
@@ -5077,10 +5077,16 @@
         {
             "name": "tuchsoft/issue-reporter",
             "version": "dev-main",
-            "dist": {
-                "type": "path",
-                "url": "/Users/mattiabonzi/Progetti/IssueReporter",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/TuchSoft/issue-reporter.git",
                 "reference": "471793edd4ba9d2dd1dacc7894b5466cd9af3d31"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/TuchSoft/issue-reporter/zipball/471793edd4ba9d2dd1dacc7894b5466cd9af3d31",
+                "reference": "471793edd4ba9d2dd1dacc7894b5466cd9af3d31",
+                "shasum": ""
             },
             "require": {
                 "davidbadura/markdown-builder": "^1.1",
@@ -5095,6 +5101,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^12.3"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -5118,9 +5125,11 @@
                 }
             ],
             "description": "A reporting library for static code analysis issues. It reads, aggregates, and formats common issue formats into various report types.",
-            "transport-options": {
-                "relative": false
-            }
+            "support": {
+                "source": "https://github.com/TuchSoft/issue-reporter/tree/main",
+                "issues": "https://github.com/TuchSoft/issue-reporter/issues"
+            },
+            "time": "2026-08-20T12:20:29+00:00"
         }
     ],
     "packages-dev": [

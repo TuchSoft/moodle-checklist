@@ -21,11 +21,11 @@ class Plugin extends MoodleCiPlugin {
 
     private ?string $errorMessage = null; //Any error message that arise during the execution
 
-    public function __construct(string $pluginFullPath)
+    public function __construct(string $pluginFullPath, ?string $moodleRoot = null)
     {
 
         $parser = new VersionParser();
-        $parsedData = ($parser)->parse($pluginFullPath);
+        $parsedData = ($parser)->parse($pluginFullPath, $moodleRoot);
 
 
         if ($parsedData === null) {

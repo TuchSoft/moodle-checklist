@@ -23,8 +23,8 @@
     ],
     "repositories": [
         {
-            "type": "path",
-            "url" : "/Users/mattiabonzi/Progetti/IssueReporter"
+            "type": "vcs",
+            "url": "https://github.com/TuchSoft/issue-reporter.git"
         },
         {
             "type": "vcs",
@@ -83,7 +83,7 @@
             "php": "8.2"
         },
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": false
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     }
 }

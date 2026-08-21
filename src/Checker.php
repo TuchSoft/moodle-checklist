@@ -242,6 +242,11 @@ class Checker
                 $options[] = "$namespace:$path";
                 $this->io->debug("Adding custom check option: '{$namespace}:{$path}'.");
             }
+            if ($this->settings->plugin->moodleroot) {
+                $options[] = '--moodle-root';
+                $options[] = $this->settings->plugin->moodleroot;
+                $this->io->debug("Adding moodle-root option: '{$this->settings->plugin->moodleroot}'.");
+            }
 
             $this->io->debug('Starting parallel check processes.');
             $process = new ParallelCheckProcess($this->settings->plugin->fullpath, $this->checks, $options);

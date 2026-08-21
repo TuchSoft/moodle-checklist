@@ -39,7 +39,8 @@ class Settings extends Config
     {
         global $_SERVER;
         //Load the plugin
-        $this->plugin = new Plugin($options['plugin']);
+        $moodleRoot = $options['moodle-root'] ?? null;
+        $this->plugin = new Plugin($options['plugin'], $moodleRoot);
         $this->moodle = new Moodle($this->plugin->moodleroot);
         $this->execute = $options['only'] ?? (($options['parallel'] ?? true) ? self::PARALLEL_EXECUTION : self::SEQUENTIAL_EXECUTION);
 

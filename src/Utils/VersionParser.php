@@ -25,9 +25,12 @@ class VersionParser extends AbstractUtils
      * Parses plugin information from its full path and version.php.
      *
      * @param string $pluginFullPath The absolute path to the plugin directory.
+     * @param string|null $moodleRoot Optional absolute path to the Moodle project root.
+     *                               If provided and absolute, it is used directly.
+     *                               Otherwise the root is guessed from the plugin path.
      * @return array|null An associative array of plugin data, or null on error.
      */
-    public function parse(string $pluginFullPath): ?array
+    public function parse(string $pluginFullPath, ?string $moodleRoot = null): ?array
     {
         $this->checkForError();
         $pluginFullPath = rtrim($pluginFullPath, '/\\');
@@ -104,7 +107,25 @@ class VersionParser extends AbstractUtils
             }
         }
 
-        $pluginData['moodleroot'] = substr($pluginData['fullpath'], 0, strlen($pluginData['path']) * -1);
+        $guessedRoot = substr($pluginData['fullpath'], 0, strlen($pluginData['path']) * -1);
+
+        if ($moodleRoot !== null && $moodleRoot !== '' && str_starts_with($moodleRoot, '/')) {
+            $pluginData['moodleroot'] = rtrim($moodleRoot, '/');
+        } else {
+            $pluginData['moodleroot'] = $guessedRoot;
+            // Moodle 5.1+ uses a 'public/' web docroot. If the guessed root is the
+            // docroot, move up one level to the actual project root. We detect the
+            // project root by looking for admin/cli/upgrade.php, which is always
+            // located there. This keeps standalone usage working when the wrapper
+            // does not pass an explicit Moodle root.
+            $upgradeFile = $pluginData['moodleroot'] . '/admin/cli/upgrade.php';
+            if (!file_exists($upgradeFile)) {
+                $parentRoot = dirname($pluginData['moodleroot']);
+                if ($parentRoot !== $pluginData['moodleroot'] && file_exists($parentRoot . '/admin/cli/upgrade.php')) {
+                    $pluginData['moodleroot'] = $parentRoot;
+                }
+            }
+        }
 
         return $pluginData;
     }

@@ -51,6 +51,13 @@ class FixPluginCommand extends AbstractCommand
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
                 'Check to exclude from the fix run (e.g. mustache)',
                 []
+            )
+            ->addOption(
+                'moodle-root',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Absolute path to the Moodle project root (not the web docroot).',
+                null
             );
     }
 

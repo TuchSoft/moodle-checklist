@@ -10,6 +10,7 @@ class MoodleCISavepointProcess extends AbstractIssuesProcess
     private const SCRIPT_SOURCE_PATH = __DIR__.'/../../vendor/moodlehq/moodle-local_ci/check_upgrade_savepoints/check_upgrade_savepoints.php';
 
     private string $pluginRoot;
+    private ?string $destinationScriptPath = null;
 
 
     public function __construct(string $pluginRoot)
@@ -22,9 +23,13 @@ class MoodleCISavepointProcess extends AbstractIssuesProcess
 
     protected function getCommand(): array
     {
+        if ($this->destinationScriptPath === null) {
+            throw new \RuntimeException('Savepoint script destination path has not been set.');
+        }
+
         return [
             'php',
-            self::SCRIPT_NAME,
+            $this->destinationScriptPath,
         ];
     }
 
@@ -37,9 +42,13 @@ class MoodleCISavepointProcess extends AbstractIssuesProcess
             return false;
         }
 
-        $destinationScriptPath = $this->pluginRoot . '/' . self::SCRIPT_NAME;
-        if (is_file($destinationScriptPath)) {
-            $this->error = 'Refusing to overwrite existing check_upgrade_savepoints.php in plugin root: ' . $destinationScriptPath;
+        // Use a unique temporary filename inside the plugin root so we never
+        // collide with a file the plugin itself may ship (some plugins include
+        // check_upgrade_savepoints.php). dirname(__FILE__) in the script resolves
+        // to the plugin directory, so checks still target the correct files.
+        $destinationScriptPath = tempnam($this->pluginRoot, '.mcp-savepoint-') . '.php';
+        if ($destinationScriptPath === false) {
+            $this->error = "Failed to create temporary savepoint script in plugin root: {$this->pluginRoot}";
             return false;
         }
 
@@ -49,6 +58,9 @@ class MoodleCISavepointProcess extends AbstractIssuesProcess
                 $this->error = "Failed to copy check_upgrade_savepoints.php to plugin root: {$this->pluginRoot}";
                 return false;
             }
+
+            // Override the command to execute the temporary copy.
+            $this->destinationScriptPath = $destinationScriptPath;
 
             // 2. Execute the script using the parent's method.
             // The CWD is set to pluginRoot via the constructor.
