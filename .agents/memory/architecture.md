@@ -6,3 +6,5 @@
 - `BaseCheckTrait::addTip/addWarning/addError/addIssue` build/enrich issues and call `Tuchsoft\IssueReporter\Report::addIssue()`.
 - Process parsers return `Tuchsoft\IssueReporter\Issue` objects; checks add them via `addIssueObjects()` so enrichment runs.
 - `Checker` creates the final `Report` with the plugin path as base path and uses `Settings::$definition` for active-check filtering.
+- `FixableCheckInterface` lets a check expose a formatter. `FixPluginCommand` reuses `Checker` discovery and calls `fix($apply)` on active fixable checks.
+- `FixPluginCommand` is dry-run by default; `--apply` enables file writes. Fixers call external tools (`phpcbf`, `stylelint --fix`, `prettier`, `xmllint`, `djlint`, `reformat-gherkin`, `eslint --fix`).

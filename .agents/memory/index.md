@@ -1,0 +1,6 @@
+- CLI entry `bin/console check <plugin-path>`.
+- `--phase=none|pre-build|post-build` switches validation profiles.
+- Checks `marketplaceimages` (poster/screenshots) and `image` (source image quality) split.
+- Runtime deps: `composer.json` (PHP), `package.json` (Node), `requirements.txt` (Python via `.venv/`).
+- Composer config: `minimum-stability: dev` + `prefer-stable: true`.
+- Docs live in `./docs`; this file mirrors `docs/index.md`.

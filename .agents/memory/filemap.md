@@ -1,0 +1,25 @@
+## Fix / formatter layer
+
+- `src/Check/FixableCheckInterface.php` — interface for checks that can auto-format.
+- `src/Cli/FixPluginCommand.php` — `fix` command, dry-run by default, `--apply` writes.
+- `src/Check/PhpCsCheck.php` — PHPCS check + `phpcbf` fixer.
+- `src/Check/JsLintCheck.php` — ESLint check + `eslint --fix` + `grunt amd` fixer.
+- `src/Process/MoodleCiPhpcsProcess.php` — runs `phpcs --report-json`.
+- `src/Process/MoodleCiPhpcbfProcess.php` — runs `phpcbf`.
+- `src/Process/MoodleCiEslintProcess.php` / `MoodleCiEslintFixProcess.php` — ESLint check/fix.
+- `src/Process/MoodleCiStylelintFixProcess.php` — `stylelint --fix`.
+- `src/Process/PrettierFixProcess.php` — `prettier` for JSON/YAML/Markdown.
+- `src/Process/XmllintFixProcess.php` — `xmllint --format`.
+- `src/Process/DjlintFixProcess.php` — `djlint --reformat` for Mustache.
+- `src/Process/GherkinFixProcess.php` — `reformat-gherkin` for feature files.
+- `src/Process/Image/AbstractImageOptimizerProcess.php` — base for image optimizer processes.
+- `src/Process/Image/PngquantProcess.php`, `MozjpegProcess.php`, `SvgoProcess.php`, `CwebpProcess.php`, `GifsicleProcess.php` — image optimizer wrappers.
+- `src/Check/MarketplaceImagesCheck.php` — renamed from `ImagesCheck`; validates `.moodleplugin/` poster + screenshots.
+- `src/Check/ImageCheck.php` — validates all source images (format, MIME, size, dimensions, location, naming, EXIF, compression).
+- `requirements.txt` — Python deps (`djlint`, `reformat-gherkin`).
+- `bin/install-python-deps.php` — creates `.venv/` and installs Python deps.
+- `tests/fixtures/formatting-plugin/` — fixture for `fix` command tests.
+- `tests/Integration/FixCommandTest.php` — integration tests for dry-run and apply.
+- `tests/Integration/ImageCheckTest.php` — integration tests for `ImageCheck`.
+- `tests/Integration/MarketplaceImagesCheckTest.php` — integration tests for `MarketplaceImagesCheck`.
+- `tests/Integration/ImageOptimizerProcessTest.php` — verifies optimizer binaries are available.

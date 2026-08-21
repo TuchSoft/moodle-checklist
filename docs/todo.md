@@ -10,6 +10,20 @@ Co-managed with humans. Only open items — move finished work out (agent memory
 
 ## Done
 
+- Fixed `composer.lock` resolution conflict caused by `composer/composer dev-main` requiring a newer `justinrainbow/json-schema` than the locked `dev-master`.
+  - Added `"prefer-stable": true` to `composer.json` (kept `minimum-stability: dev`).
+  - Regenerated `composer.lock`; `composer/composer` now resolves to stable `2.10.2` and `justinrainbow/json-schema` to stable `6.10.0`.
+  - Verified `composer update --lock --no-install` succeeds and image/check tests pass.
+- Integrated PHPCS as a check (`moodle-plugin-ci.phpcs`) and added a `fix` command.
+  - New checks: `PhpCsCheck`, `JsLintCheck`.
+  - New `fix` command, dry-run by default, `--apply` writes files.
+  - Formatters added for PHP (`phpcbf`), JavaScript (`eslint --fix` + `grunt amd`), CSS/SCSS (`stylelint --fix`), JSON/YAML/Markdown (`prettier`), XML (`xmllint --format`), Mustache (`djlint --reformat`), Gherkin (`reformat-gherkin`).
+  - Added `tests/fixtures/formatting-plugin` and `tests/Integration/FixCommandTest.php`.
+- Added `--phase` option to the `check` command.
+  - `none` preserves current behavior.
+  - `pre-build` disables `forbidden-dir`/`forbidden-file` for dev dependencies.
+  - `post-build`: disables source-only checks and whole checks (`marketplaceimages`, `readme`, `gitignore`, `repository`).
+  - `--include-check` / `--exclude-check` still override phase defaults.
 - Plan A: stabilize `tuchsoft/issue-reporter`.
 - Plan B: migrate `moodle-checklist` internal report/format code to `tuchsoft/issue-reporter`.
   - Deleted `src/Report` and removed the `Report\Format` autoload entry.
@@ -27,6 +41,11 @@ Co-managed with humans. Only open items — move finished work out (agent memory
   - Removed leftover `src/Check/TestCheck.php` production test artifact.
   - Added `tests/fixtures/clean-plugin` and `tests/fixtures/dirty-plugin` fixtures.
   - Added `tests/Integration/CheckCommandTest.php` covering clean/dirty plugin runs and JSON/checkstyle formats.
+- Renamed `ImagesCheck` to `MarketplaceImagesCheck` and added a new `ImageCheck` for source images.
+  - New dependencies: `intervention/image` (PHP), image optimizer binaries via npm (`pngquant-bin`, `cwebp-bin`, `gifsicle`, `mozjpeg`, `svgo`), and Python tools via `requirements.txt` (`djlint`, `reformat-gherkin`).
+  - Added `bin/install-python-deps.php` and wired it into Composer's `post-autoload-dump`.
+  - Added `src/Process/Image/*` optimizer process classes and updated `DjlintFixProcess`/`GherkinFixProcess` to find `.venv/bin/` first.
+  - Added fixtures and integration tests for `ImageCheck`, `MarketplaceImagesCheck`, and image optimizer processes.
 - Fixed missing-file handling in `ReadmeCheck` and `GitIgnoreCheck`.
   - Refactored `AbstractSingleFileCheck` to a Template Method so subclasses can't skip file-existence validation.
   - Hardened `RemarkProcess::getIssues()` against remark fatal messages that lack `source`/`ruleId`.
