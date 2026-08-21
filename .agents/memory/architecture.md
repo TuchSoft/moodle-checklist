@@ -8,3 +8,4 @@
 - `Checker` creates the final `Report` with the plugin path as base path and uses `Settings::$definition` for active-check filtering.
 - `FixableCheckInterface` lets a check expose a formatter. `FixPluginCommand` reuses `Checker` discovery and calls `fix($apply)` on active fixable checks.
 - `FixPluginCommand` is dry-run by default; `--apply` enables file writes. Fixers call external tools (`phpcbf`, `stylelint --fix`, `prettier`, `xmllint`, `djlint`, `reformat-gherkin`, `eslint --fix`).
+- `VersionParser` derives `moodleroot` from the plugin path and now accepts an explicit `--moodle-root` from the CLI. For Moodle 5.1+ `public/` docroot it falls back to the parent directory when `admin/cli/upgrade.php` is found there.

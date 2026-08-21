@@ -33,6 +33,7 @@
 - `composer.json` uses `minimum-stability: dev` (some required packages only exist as dev branches) **and** `prefer-stable: true` (so every package that *can* be stable is pinned to a stable release).
 - Python tools are installed into a local `.venv/` via `bin/install-python-deps.php`, triggered by Composer's `post-autoload-dump`.
 - Process classes must locate bundled binaries in `node_modules/.bin/` or `.venv/bin/` before falling back to `which`.
+- Node image-optimizer binaries (`pngquant-bin`, `mozjpeg`, `gifsicle`, `cwebp-bin`) need native build tooling on non-x86_64 platforms because they compile from source. The consuming environment (e.g. Docker image) must provide it; document this in the project docs.
 
 ## Phase-based definition overrides
 

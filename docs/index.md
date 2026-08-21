@@ -31,6 +31,7 @@ Auto-formats the plugin files. **Dry-run by default**; add `--apply` to write ch
 - `--include-check=<check>` / `--exclude-check=<check>` — include or exclude individual checks. These always take precedence over `--phase`.
 - `--format=<format>` — output format for `check` (`info`, `json`, `checkstyle`, etc.).
 - `--no-parallel` — run checks sequentially instead of in parallel. In parallel mode, a single failing subprocess no longer aborts the whole run; the failing check is reported as a runtime error and the remaining checks continue.
+- `--moodle-root=<path>` — absolute path to the Moodle project root (the directory containing `config.php` and `admin/cli/upgrade.php`, not the web docroot). When omitted, the root is guessed from the plugin path, with a fallback for Moodle 5.1+ `public/` docroot layouts.
 - `--apply` — global guard for `fix`; without it the command only prints what would be changed.
 
 ## Checks and formatters
@@ -58,6 +59,12 @@ All runtime dependencies are listed and installed automatically:
 - **PHP** — managed by Composer (`composer.json`).
 - **Node tools** — managed by npm (`package.json`). Composer's `post-autoload-dump` runs `npm i`.
 - **Python tools** — managed by pip (`requirements.txt`). Composer's `post-autoload-dump` creates `.venv/` and installs them.
+
+`composer.json` declares `tuchsoft/issue-reporter` as a VCS dependency (`https://github.com/TuchSoft/issue-reporter.git`). A standard `composer install` clones it automatically.
+
+### Native build tools for image optimization
+
+The image formatter uses npm packages that ship prebuilt binaries for common platforms (`pngquant-bin`, `mozjpeg`, `gifsicle`, `cwebp-bin`). On non-x86_64 platforms (e.g. ARM64 Linux) these packages may need to compile from source during `npm i`. Make sure the environment provides native build tooling such as `build-essential`, `automake`, `libtool`, `nasm`, `libpng-dev`, `libjpeg-dev`, and `pkg-config`.
 
 Composer configuration:
 

@@ -1,6 +1,9 @@
 - CLI entry `bin/console check <plugin-path>`.
 - `--phase=none|pre-build|post-build` switches validation profiles.
+- `--moodle-root=<path>` overrides guessed Moodle root for Moodle 5.1+ `public/` docroot.
 - Checks `marketplaceimages` (poster/screenshots) and `image` (source image quality) split.
 - Runtime deps: `composer.json` (PHP), `package.json` (Node), `requirements.txt` (Python via `.venv/`).
-- Composer config: `minimum-stability: dev` + `prefer-stable: true`.
+- `tuchsoft/issue-reporter` is a VCS dependency (`https://github.com/TuchSoft/issue-reporter.git`).
+- Composer config: `minimum-stability: dev` + `prefer-stable: true`; `dealerdirect/phpcodesniffer-composer-installer` allowed.
+- Native image optimizer npm binaries need build tooling on non-x86_64 platforms.
 - Docs live in `./docs`; this file mirrors `docs/index.md`.
