@@ -14,13 +14,13 @@ class StyleLintCheck extends AbstractMoodleCiCheck
 {
     public function canFix(): bool
     {
-        return (new MoodleCiStylelintFixProcess([], $this->findConfig()))->isAvailable();
+        return (new MoodleCiStylelintFixProcess([], $this->plugin->moodleroot, $this->findConfig()))->isAvailable();
     }
 
     protected function execute(): void
     {
 
-        $process = new MoodleCiGruntStylelintProcess($this->plugin->fullpath);
+        $process = new MoodleCiGruntStylelintProcess($this->plugin->fullpath, $this->plugin->moodleroot);
         $process->execute();
         if (!$process->isSuccessful()) {
             $this->runtimeError($process->getError());
@@ -48,7 +48,7 @@ class StyleLintCheck extends AbstractMoodleCiCheck
             return true;
         }
 
-        $process = new MoodleCiStylelintFixProcess($files, $this->findConfig());
+        $process = new MoodleCiStylelintFixProcess($files, $this->plugin->moodleroot, $this->findConfig());
         $process->execute();
         $exit = $process->getExitCode();
         if ($exit !== 0 && $exit !== 1) {

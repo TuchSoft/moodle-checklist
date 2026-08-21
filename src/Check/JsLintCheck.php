@@ -10,7 +10,7 @@ class JsLintCheck extends AbstractMoodleCiCheck
 {
     public function canFix(): bool
     {
-        return (new MoodleCiEslintFixProcess([], $this->findConfig()))->isAvailable();
+        return (new MoodleCiEslintFixProcess([], $this->plugin->moodleroot, $this->findConfig()))->isAvailable();
     }
 
     protected function execute(): void
@@ -21,7 +21,7 @@ class JsLintCheck extends AbstractMoodleCiCheck
         }
 
         $config = $this->findConfig();
-        $process = new MoodleCiEslintProcess($files, $config);
+        $process = new MoodleCiEslintProcess($files, $this->plugin->moodleroot, $config);
         $process->execute();
         if (!$process->isSuccessful() && $process->getExitCode() !== 1) {
             $this->runtimeError($process->getError() ?? 'eslint failed.');
@@ -48,7 +48,7 @@ class JsLintCheck extends AbstractMoodleCiCheck
             return true;
         }
 
-        $process = new MoodleCiEslintFixProcess($files, $this->findConfig());
+        $process = new MoodleCiEslintFixProcess($files, $this->plugin->moodleroot, $this->findConfig());
         $process->execute();
         $exit = $process->getExitCode();
         if ($exit !== 0 && $exit !== 1) {

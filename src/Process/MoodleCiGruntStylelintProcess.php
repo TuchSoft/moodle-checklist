@@ -8,9 +8,9 @@ class MoodleCiGruntStylelintProcess extends AbstractMoodleCiGruntProcess
 {
 
 
-    public function __construct(string $ploginRoot)
+    public function __construct(string $ploginRoot, string $moodleRoot)
     {
-        parent::__construct($ploginRoot, 'stylelint');
+        parent::__construct($ploginRoot, $moodleRoot, 'stylelint');
     }
 
 

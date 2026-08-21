@@ -22,7 +22,7 @@ class GherkinLintCheck extends AbstractMoodleCiCheck
     protected function execute(): void
     {
 
-        $process = new MoodleCiGruntGherkinlintProcess($this->plugin->fullpath);
+        $process = new MoodleCiGruntGherkinlintProcess($this->plugin->fullpath, $this->plugin->moodleroot);
         $process->execute();
         if (!$process->isSuccessful()) {
             $this->runtimeError($process->getError());

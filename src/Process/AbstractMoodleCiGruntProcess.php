@@ -20,8 +20,11 @@ abstract class AbstractMoodleCiGruntProcess extends AbstractIssuesProcess
      * @param string $ploginRoot The root directory of the Moodle plugin or component.
      * @param string $task The specific Grunt task to be executed (e.g., 'amdlint', 'csslint').
      */
-    public function __construct(string $ploginRoot, private string $task)
-    {
+    public function __construct(
+        string $ploginRoot,
+        private string $moodleRoot,
+        private string $task,
+    ) {
         parent::__construct($ploginRoot);
     }
 
@@ -37,8 +40,32 @@ abstract class AbstractMoodleCiGruntProcess extends AbstractIssuesProcess
      */
     protected function getCommand(): array
     {
-        // Path to grunt-cli might vary depending on installation, realpath provides robustness.
-        return [realpath(__DIR__ . '/../../node_modules/grunt-cli/bin/grunt'), '--force', '--no-color', $this->task];
+        $grunt = $this->findGrunt();
+        if (!$grunt) {
+            throw new \Exception('grunt not found. Install it in the Moodle root or run `npm install grunt`.');
+        }
+        return [$grunt, '--force', '--no-color', $this->task];
+    }
+
+    private function findGrunt(): ?string
+    {
+        $candidates = [
+            $this->moodleRoot . '/node_modules/.bin/grunt',
+            $this->moodleRoot . '/node_modules/grunt/bin/grunt',
+            $this->moodleRoot . '/../node_modules/.bin/grunt',
+            $this->moodleRoot . '/../node_modules/grunt/bin/grunt',
+            __DIR__ . '/../../node_modules/.bin/grunt',
+            __DIR__ . '/../../node_modules/grunt/bin/grunt',
+            'node_modules/.bin/grunt',
+            'node_modules/grunt/bin/grunt',
+        ];
+        foreach ($candidates as $candidate) {
+            $real = realpath($candidate);
+            if ($real && is_executable($real)) {
+                return $real;
+            }
+        }
+        return null;
     }
 
 
