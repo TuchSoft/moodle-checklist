@@ -20,7 +20,7 @@ Validates the plugin and reports issues.
 ./bin/console fix <plugin-path> [options]
 ```
 
-Auto-formats the plugin files. **Dry-run by default**; add `--apply` to write changes. After applying, re-run `check` to verify any remaining issues.
+Auto-formats the plugin files. **Dry-run by default**; add `--apply` to write changes. After applying, re-run `check` to verify any remaining issues. The final summary reports how many formatters ran, failed, and were skipped.
 
 ### Common options
 
@@ -30,7 +30,7 @@ Auto-formats the plugin files. **Dry-run by default**; add `--apply` to write ch
   - `post-build`: validate a built distribution artifact. Disables source-only checks such as `.moodleplugin/`, `.git/`, README/CHANGELOG/LICENSE/CONTRIBUTING, `.gitignore`, screenshots, and repository-history checks.
 - `--include-check=<check>` / `--exclude-check=<check>` — include or exclude individual checks. These always take precedence over `--phase`.
 - `--format=<format>` — output format for `check` (`info`, `json`, `checkstyle`, etc.).
-- `--no-parallel` — run checks sequentially instead of in parallel.
+- `--no-parallel` — run checks sequentially instead of in parallel. In parallel mode, a single failing subprocess no longer aborts the whole run; the failing check is reported as a runtime error and the remaining checks continue.
 - `--apply` — global guard for `fix`; without it the command only prints what would be changed.
 
 ## Checks and formatters
@@ -49,7 +49,7 @@ Auto-formats the plugin files. **Dry-run by default**; add `--apply` to write ch
 | `marketplaceimages` | `.moodleplugin/` poster + screenshots | — |
 | `image` | Source images: format, MIME, size, dimensions, location, naming, EXIF metadata, compression | `pngquant`, `mozjpeg`, `svgo`, `gifsicle`, `cwebp` |
 
-Formatters that are not installed in the environment are reported as skipped.
+Formatters that are not installed in the environment are reported as skipped. File scanning and fixers respect `.gitignore` and a hardcoded safety list (`node_modules`, `.git`, `vendor`, `.venv`, `.idea`, `.moodleplugin`, `.complex_plans`, `.agents`, `.phpunit.cache`) so dependency directories and temporary files such as `check_upgrade_savepoints.php` are ignored.
 
 ## Dependencies
 

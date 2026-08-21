@@ -12,11 +12,20 @@
 ## Fixable checks
 
 - `AbstractCheck` implements `FixableCheckInterface` with safe no-op defaults.
-- Checks that have a formatter override `canFix()` and `fix(bool $apply)`.
+- Checks that have a formatter override `canFix()` and `fix(bool $apply): bool`.
+- `fix()` returns `true` on success, `false` on internal/runtime failure.
 - `Checker` injects the `InputOutput` instance into checks via `setIo()` before running.
 - `FixPluginCommand` discovers active checks, filters to `FixableCheckInterface`, and calls `fix()`.
 - `FixPluginCommand` is dry-run by default; `--apply` is required to write files.
+- The final summary counts only successful formatters as "ran"; failures are reported separately.
 - Fixer processes report `stderr` and accept exit code `1` as success when the tool fixed (or partially fixed) files.
+
+## File scanning exclusions
+
+- `GetAllFile::isPathIgnored()` is the single source of truth for paths that should be skipped by checks and fixers.
+- It uses `automattic/ignorefile` to combine a hardcoded safety list with the plugin's `.gitignore`.
+- Hardcoded dirs: `node_modules`, `.git`, `vendor`, `.venv`, `.idea`, `.moodleplugin`, `.complex_plans`, `.agents`, `.phpunit.cache`.
+- Hardcoded file: `check_upgrade_savepoints.php` (temporary CI script copied into plugin root).
 
 ## Dependency management rule
 
