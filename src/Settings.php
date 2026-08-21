@@ -41,16 +41,16 @@ class Settings extends Config
         //Load the plugin
         $this->plugin = new Plugin($options['plugin']);
         $this->moodle = new Moodle($this->plugin->moodleroot);
-        $this->execute = $options['only'] ?? ($options['parallel'] ? self::PARALLEL_EXECUTION : self::SEQUENTIAL_EXECUTION);
+        $this->execute = $options['only'] ?? (($options['parallel'] ?? true) ? self::PARALLEL_EXECUTION : self::SEQUENTIAL_EXECUTION);
 
         $inputDefinitions = [];
-        if ($options['include-check']) {
+        if ($options['include-check'] ?? false) {
             $this->checkInclude = $options['include-check'];
             $inputDefinitions = ['*' => ['active' => false]];
             foreach ($options['include-check'] as $include) {
                 $inputDefinitions[$include] = ['active' => true];
             }
-        } else if ($options['exclude-check']) {
+        } else if ($options['exclude-check'] ?? false) {
             $this->checkExclude = $options['exclude-check'];
             foreach ($options['exclude-check'] as $exclude) {
                 $inputDefinitions[$exclude] = ['active' => false];
@@ -59,15 +59,21 @@ class Settings extends Config
             $inputDefinitions = $options['definition'];
         }
 
-        if ($options['additional-check']) {
+        if ($options['additional-check'] ?? false) {
             foreach ($options['additional-check'] as $checkStr) {
                 $parsed = explode(':', $checkStr);
                 $this->customChecks[$parsed[0]] = $parsed[1];
             }
         }
 
-        //Load the issue definition
-        $this->definition = new Definition(__DIR__.'/../issue_definition.json', $inputDefinitions);
+        // Load the issue definition, optionally merged with a phase profile.
+        $phase = $options['phase'] ?? 'none';
+        $definitionFiles = [__DIR__.'/../issue_definition.json'];
+        if ($phase !== 'none' && is_file(__DIR__."/../phases/{$phase}.json")) {
+            $definitionFiles[] = __DIR__."/../phases/{$phase}.json";
+        }
+
+        $this->definition = new Definition($definitionFiles, $inputDefinitions);
 
         //Call PHPCS constructor
         parent::__construct([], false);
@@ -75,7 +81,7 @@ class Settings extends Config
         $this->reportFile = $options['reportFile'] ?? 'php://stdout';
         // Apply our specific options for PHPCS reporting system
         $formats = ['info' => null];
-        if ($options['format']) {
+        if ($options['format'] ?? false) {
             $formats = [];
             foreach ($options['format'] as $format) {
                 $splitted = explode(':', $format);

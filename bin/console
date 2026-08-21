@@ -17,10 +17,12 @@ if (!defined('PHP_CODESNIFFER_CBF')) {
 
 use Symfony\Component\Console\Application;
 use Tuchsoft\MoodleChecklist\Cli\CheckPluginCommand;
+use Tuchsoft\MoodleChecklist\Cli\FixPluginCommand;
 use Tuchsoft\IssueReporter\Command\ListFormat;
 
 $application = new Application('Moodle Plugin Checker', '1.0.0');
 $application->add(new CheckPluginCommand());
+$application->add(new FixPluginCommand());
 $application->add(new ListFormat());
 
 // Symfony defaults --help with no command to the 'list' command help.

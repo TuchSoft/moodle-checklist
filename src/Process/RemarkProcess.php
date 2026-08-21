@@ -25,7 +25,7 @@ class RemarkProcess extends AbstractIssuesProcess
         $this->file = $file;
         $this->severityLow = $severityLow;
         $this->severityHigh = $severityHigh;
-        parent::__construct();
+        parent::__construct(realpath(__DIR__.'/../..') ?: null);
     }
 
     /**
@@ -60,12 +60,13 @@ class RemarkProcess extends AbstractIssuesProcess
         if ($stderr !== null && $stderr !== '') {
 
             // vfile-reporter-json outputs an array of issues
-            $this->issues = json_decode($stderr, true, 512, JSON_THROW_ON_ERROR);
-
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                $this->error = ($this->error ? $this->error . "\n" : '') . 'Unknown error: ' . json_last_error_msg();
+            try {
+                $this->issues = json_decode($stderr, true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException $e) {
+                $this->error = ($this->error ? $this->error . "\n" : '') . "Invalid JSON from remark (stderr): {$stderr}";
                 return false;
             }
+
         } else {
             // If there are no issues, stderr might be empty
             $this->issues = [];
@@ -76,9 +77,10 @@ class RemarkProcess extends AbstractIssuesProcess
         $stdout = $this->getStdout();
         if ($stdout !== null && $stdout !== '') {
 
-            $this->tree = json_decode($stdout, true, 512, JSON_THROW_ON_ERROR);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                $this->error = ($this->error ? $this->error . "\n" : '') . 'Unknown error: ' . json_last_error_msg();
+            try {
+                $this->tree = json_decode($stdout, true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException $e) {
+                $this->error = ($this->error ? $this->error . "\n" : '') . "Invalid JSON from remark (stdout): {$stdout}";
                 return false;
             }
 

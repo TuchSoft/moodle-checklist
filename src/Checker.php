@@ -177,6 +177,14 @@ class Checker
      *
      * @return Report A fully populated Report instance ready for printing.
      */
+    /**
+     * @return string[] Discovered check class names.
+     */
+    public function getChecks(): array
+    {
+        return $this->checks;
+    }
+
     public function runChecks(): Report
     {
         $reports = [];
@@ -244,6 +252,7 @@ class Checker
                 try {
                     $this->io->debug("Instantiating check '{$check}'.");
                     $checkInstance = new $check($this->settings);
+                    $checkInstance->setIo($this->io);
                     $this->io->verbose('Running check: ' . $checkInstance->getName());
                     $checkInstance->run();
                     $report = $checkInstance->getReport();

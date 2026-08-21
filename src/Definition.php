@@ -43,22 +43,23 @@ class Definition
 
 
     /**
-     * @param string $definitionFile
+     * @param string|array $definitionFiles
      * @param string|array $override
      */
-    public function __construct(string $definitionFile, string|array $override)
+    public function __construct(string|array $definitionFiles, string|array $override)
     {
         $override = is_string($override) ? $this->loadFromFiles($override) : $override;
-        $this->parseDefinition($this->loadFromFiles($definitionFile), $override);
+        $definitionFiles = is_string($definitionFiles) ? [$definitionFiles] : $definitionFiles;
+        $this->parseDefinition($this->loadFromFiles(...$definitionFiles), $override);
     }
 
 
 
     /**
-     * @param string $files
+     * @param string ...$files
      * @return array
      */
-    private function loadFromFiles(...$files): array {
+    private function loadFromFiles(string ...$files): array {
         $definitions = [];
         foreach ($files as $file) {
             if (!is_string($file)) {
@@ -78,7 +79,7 @@ class Definition
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new Exception("Error decoding definition file '{$file}': " . json_last_error_msg());
             }
-            $definitions = array_merge_recursive($definitions, $data);
+            $definitions = array_replace_recursive($definitions, $data);
         }
         return $definitions;
     }
@@ -275,8 +276,8 @@ class Definition
             $globNode = $currentNode[self::GLOB_KEY];
 
             foreach ($globNode as $globPattern => $subNode) {
-                $tmpGlob = $info['globSum'] ? $info['globSum'].'.'.$globPattern : $globPattern;
-                $tmpCode = $info['codeSum'] ? $info['codeSum'].'.'.$currentPart : $currentPart;
+                $tmpGlob = ($info['globSum'] ?? '') ? $info['globSum'].'.'.$globPattern : $globPattern;
+                $tmpCode = ($info['codeSum'] ?? '') ? $info['codeSum'].'.'.$currentPart : $currentPart;
                 if (fnmatch($tmpGlob, $tmpCode)) {
                     $info['globSum'] = $tmpGlob;
                     $info['codeSum'] = $tmpCode;

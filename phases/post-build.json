@@ -1,0 +1,15 @@
+{
+  "filestructure": {
+    "required-dir-moodleplugin": { "active": false },
+    "required-dir-git": { "active": false },
+    "required-file-readme": { "active": false },
+    "required-file-changelog": { "active": false },
+    "required-file-license": { "active": false },
+    "required-file-contributing": { "active": false },
+    "required-file-gitignore": { "active": false }
+  },
+  "marketplaceimages": { "active": false },
+  "readme": { "active": false },
+  "gitignore": { "active": false },
+  "repository": { "active": false }
+}

@@ -48,7 +48,14 @@ class CheckPluginCommand extends AbstractCommand
                 'exclude-check',
                 'x',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
-                'Check to exclude from the run (e.g. images, repository)',
+                'Check to exclude from the run (e.g. marketplaceimages, image, repository)',
+            )
+            ->addOption(
+                'phase',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Validation phase: none (default, current behavior), pre-build, or post-build',
+                'none'
             )
             ->addOption(
                 'source',

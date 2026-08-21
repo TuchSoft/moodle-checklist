@@ -10,5 +10,23 @@
   "my": {
     "ref": "https://github.com/RichardLitt/standard-readme/blob/main/spec.md#title",
     "help": "Change the title of your README.md document to match '{token}'"
+  },
+  "moodle-plugin-ci": {
+    "phpcs": {
+      "*": {
+        "severity": "warning",
+        "msg": "PHP coding style violation: {message}",
+        "ref": "https://moodledev.io/general/development/policies/codingstyle",
+        "help": "Run `bin/console fix <plugin> --apply` to auto-fix PHP style issues, or fix the file manually."
+      }
+    },
+    "jslint": {
+      "*": {
+        "severity": "warning",
+        "msg": "JavaScript lint issue: {message}",
+        "ref": "https://moodledev.io/docs/guides/javascript",
+        "help": "Run `bin/console fix <plugin> --apply` to auto-fix JavaScript issues, or fix the file manually."
+      }
+    }
   }
 }

@@ -1,0 +1,6 @@
+{
+  "filestructure": {
+    "forbidden-dir": { "active": false },
+    "forbidden-file": { "active": false }
+  }
+}
