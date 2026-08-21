@@ -44,6 +44,9 @@ class MoodleCiEslintFixProcess extends AbstractProcess
             // Moodle root node_modules (preferred, avoids duplication in Docker)
             $this->moodleRoot . '/node_modules/.bin/eslint',
             $this->moodleRoot . '/node_modules/eslint/bin/eslint.js',
+            // Moodle 5.1+ public docroot layout
+            $this->moodleRoot . '/public/node_modules/.bin/eslint',
+            $this->moodleRoot . '/public/node_modules/eslint/bin/eslint.js',
             // Moodle 5.2+ nested docroot layout
             $this->moodleRoot . '/../node_modules/.bin/eslint',
             $this->moodleRoot . '/../node_modules/eslint/bin/eslint.js',

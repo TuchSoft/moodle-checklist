@@ -45,6 +45,7 @@ trait GetAllFile
     {
         return [
             'check_upgrade_savepoints.php',
+            '.mcp-savepoint-*.php',
         ];
     }
 

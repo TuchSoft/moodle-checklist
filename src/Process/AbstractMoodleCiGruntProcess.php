@@ -52,6 +52,9 @@ abstract class AbstractMoodleCiGruntProcess extends AbstractIssuesProcess
         $candidates = [
             $this->moodleRoot . '/node_modules/.bin/grunt',
             $this->moodleRoot . '/node_modules/grunt/bin/grunt',
+            // Moodle 5.1+ public docroot layout
+            $this->moodleRoot . '/public/node_modules/.bin/grunt',
+            $this->moodleRoot . '/public/node_modules/grunt/bin/grunt',
             $this->moodleRoot . '/../node_modules/.bin/grunt',
             $this->moodleRoot . '/../node_modules/grunt/bin/grunt',
             __DIR__ . '/../../node_modules/.bin/grunt',

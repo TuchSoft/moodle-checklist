@@ -41,11 +41,11 @@ abstract class AbstractProcess
      * You can override this method to add custom logic before or after command
      * execution. If overriding, always call `parent::execute()`.
      *
-     * @param float|null $timeout The maximum time (in seconds) the process is allowed to run.
-     * Set to `null` for no timeout. Defaults to 60.0 seconds.
+     * @param float|null $timeout The maximum time in seconds the process is allowed to run.
+     * Set to `null` for no timeout. Defaults to 180.0 seconds.
      * @return bool True if the process completed successfully (exit code 0), false otherwise.
      */
-    public function execute(?float $timeout = 60.0): bool
+    public function execute(?float $timeout = 180.0): bool
     {
         try {
             if (!$this->run($timeout)) {

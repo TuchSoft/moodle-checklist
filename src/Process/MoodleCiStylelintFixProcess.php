@@ -44,6 +44,9 @@ class MoodleCiStylelintFixProcess extends AbstractProcess
             // Moodle root node_modules (preferred, avoids duplication in Docker)
             $this->moodleRoot . '/node_modules/.bin/stylelint',
             $this->moodleRoot . '/node_modules/stylelint/bin/stylelint.mjs',
+            // Moodle 5.1+ public docroot layout
+            $this->moodleRoot . '/public/node_modules/.bin/stylelint',
+            $this->moodleRoot . '/public/node_modules/stylelint/bin/stylelint.mjs',
             // Moodle 5.2+ nested docroot layout
             $this->moodleRoot . '/../node_modules/.bin/stylelint',
             $this->moodleRoot . '/../node_modules/stylelint/bin/stylelint.mjs',

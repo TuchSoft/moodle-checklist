@@ -34,7 +34,7 @@ class MoodleCISavepointProcess extends AbstractIssuesProcess
     }
 
 
-    public function execute(?float $timeout = 60.0): bool
+    public function execute(?float $timeout = 180.0): bool
     {
         // This tool is expected to be run from the Moodle project root.
         if (!file_exists(self::SCRIPT_SOURCE_PATH)) {

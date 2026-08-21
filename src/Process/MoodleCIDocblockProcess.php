@@ -23,6 +23,7 @@ class MoodleCIDocblockProcess extends AbstractIssuesProcess
     private const PLUGIN_SOURCE_DIR = __DIR__ . '/../../vendor/moodlehq/moodle-local_moodlecheck';
 
     private string $moodleRoot;
+    private string $moodleDirroot;
     private string $pluginRoot;
 
     /**
@@ -32,9 +33,26 @@ class MoodleCIDocblockProcess extends AbstractIssuesProcess
     public function __construct(string $moodleRoot, string $pluginRoot)
     {
         $this->moodleRoot = rtrim($moodleRoot, '/');
+        $this->moodleDirroot = $this->resolveMoodleDirroot($this->moodleRoot);
         $this->pluginRoot = rtrim($pluginRoot, '/');
-        // The command will be executed in the Moodle root directory.
-        parent::__construct($this->moodleRoot);
+        // The command will be executed in the Moodle dirroot directory (project root or public/).
+        parent::__construct($this->moodleDirroot);
+    }
+
+    /**
+     * Returns the actual Moodle dirroot.
+     *
+     * In Moodle 5.1+ the web docroot is nested inside a public/ directory, but
+     * $CFG->dirroot points at that public directory. Local plugins and CLI scripts
+     * must be resolved relative to the dirroot, not the project root.
+     */
+    private function resolveMoodleDirroot(string $moodleRoot): string
+    {
+        $publicDirroot = $moodleRoot . '/public';
+        if (is_dir($publicDirroot) && is_file($publicDirroot . '/lib/setup.php')) {
+            return $publicDirroot;
+        }
+        return $moodleRoot;
     }
 
     /**
@@ -59,7 +77,7 @@ class MoodleCIDocblockProcess extends AbstractIssuesProcess
      */
     public function execute(?float $timeout = 300.0): bool
     {
-        $pluginDestDir =  "{$this->moodleRoot}/local/moodlecheck";
+        $pluginDestDir =  "{$this->moodleDirroot}/local/moodlecheck";
 
         if (!is_dir(self::PLUGIN_SOURCE_DIR)) {
             $this->error = 'Could not find moodlecheck plugin source at: ' . self::PLUGIN_SOURCE_DIR;
