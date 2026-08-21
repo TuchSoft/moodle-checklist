@@ -17,9 +17,22 @@ if (!is_dir($venv)) {
     }
 }
 
+$python = $venv . '/bin/python';
+if (!is_executable($python)) {
+    fwrite(STDERR, "Python interpreter not found or not executable in virtual environment: {$python}\n");
+    exit(1);
+}
+
+// Ensure pip is available inside the venv. Some distributions ship venv without ensurepip/pip.
+passthru(escapeshellarg($python) . ' -m ensurepip --upgrade', $exit);
+if ($exit !== 0) {
+    fwrite(STDERR, "Failed to bootstrap pip in virtual environment at {$venv}\n");
+    exit($exit);
+}
+
 $pip = $venv . '/bin/pip';
-if (!is_executable($pip) && !file_exists($pip)) {
-    fwrite(STDERR, "pip not found in virtual environment: {$pip}\n");
+if (!is_executable($pip)) {
+    fwrite(STDERR, "pip not found or not executable in virtual environment: {$pip}\n");
     exit(1);
 }
 

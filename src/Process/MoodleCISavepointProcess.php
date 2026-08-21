@@ -33,11 +33,15 @@ class MoodleCISavepointProcess extends AbstractIssuesProcess
     {
         // This tool is expected to be run from the Moodle project root.
         if (!file_exists(self::SCRIPT_SOURCE_PATH)) {
-            $this->error = 'Could not find check_upgrade_savepoints.php script at: ' . self::SCRIPT_SOURCE_PATH;
+            $this->error = 'Could not find check_upgrade_savepoints.php script at: ' . self::SCRIPT_SOURCE_PATH . '. Ensure moodlehq/moodle-local_ci is installed.';
             return false;
         }
 
         $destinationScriptPath = $this->pluginRoot . '/' . self::SCRIPT_NAME;
+        if (is_file($destinationScriptPath)) {
+            $this->error = 'Refusing to overwrite existing check_upgrade_savepoints.php in plugin root: ' . $destinationScriptPath;
+            return false;
+        }
 
         try {
             // 1. Copy the script to the plugin root.
