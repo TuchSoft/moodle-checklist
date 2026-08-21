@@ -48,11 +48,14 @@ abstract class AbstractParallelProcess extends AbstractIssuesProcess
             $this->allStdout[] = $process->getOutput();
             $this->allStderr[] = $process->getErrorOutput();
             $this->allExitCode[] = $process->getExitCode();
-            $this->exitCode = array_sum($this->allExitCode) > 0 ? 1 : 0;
         }
 
+        // Treat only unexpected exit codes (not 0 or 1) as a process failure.
+        // Exit code 1 from a check subprocess usually means "issues were found", which is normal output.
+        $failed = array_filter($this->allExitCode, fn(?int $code) => $code !== 0 && $code !== 1);
+        $this->exitCode = !empty($failed) ? 1 : 0;
 
-        return true;
+        return $this->exitCode === 0;
     }
 
     /**

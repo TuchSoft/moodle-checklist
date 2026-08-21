@@ -6,6 +6,7 @@ use Composer\Autoload\ClassLoader;
 use Exception;
 use ReflectionClass;
 
+use Tuchsoft\IssueReporter\Issue;
 use Tuchsoft\IssueReporter\Report;
 use Tuchsoft\MoodleChecklist\Check\AbstractCheck;
 use Tuchsoft\MoodleChecklist\Process\ParallelCheckProcess;
@@ -16,6 +17,22 @@ class Checker
     private Settings $settings;
     private array $checks = [];
     private ClassLoader $autoloader;
+
+    /**
+     * Creates a synthetic report containing a runtime-error issue for a check.
+     *
+     * @param string $check The check class name.
+     * @param string $message The error message.
+     * @return Report
+     */
+    private function createRuntimeErrorReport(string $check, string $message): Report
+    {
+        $report = new Report($check::getName(), $this->settings->plugin->fullpath);
+        $report->start();
+        $report->addIssue(new Issue('runtime-error', Issue::SEVERITY_ERROR, $message, '.'));
+        $report->complete();
+        return $report;
+    }
 
     public function __construct(Settings $settings, private InputOutput $io)
     {
@@ -230,21 +247,28 @@ class Checker
             $process = new ParallelCheckProcess($this->settings->plugin->fullpath, $this->checks, $options);
             $process->execute();
 
-            foreach ($process->getAllStdout() as $i => $stdout) {
-                $this->io->debug("Processing output from process #{$i}.");
-                if (!$stdout) {
-                    $this->io->debug("Process #{$i} returned no stdout, skipping.");
-                    continue;
+            foreach ($this->checks as $i => $check) {
+                $this->io->debug("Processing output from process #{$i} ({$check}).");
+                $stdout = $process->getAllStdout()[$i] ?? null;
+                $stderr = trim($process->getAllStderr()[$i] ?? '');
+
+                try {
+                    if ($stderr !== '') {
+                        throw new Exception("An error occurred in an underlying process: {$stderr}");
+                    }
+                    if (!$stdout) {
+                        $this->io->debug("Process #{$i} returned no stdout, skipping.");
+                        continue;
+                    }
+                    if (!($data = json_decode($stdout, true))) {
+                        throw new Exception("Unable to parse stdout, probably an error occurred: $stdout");
+                    }
+                    $reports[] = Report::fromJson($data);
+                    $this->io->debug("Report from process #{$i} parsed successfully.");
+                } catch (Exception $e) {
+                    $this->io->debug("Process #{$i} failed: " . $e->getMessage());
+                    $reports[] = $this->createRuntimeErrorReport($check, $e->getMessage());
                 }
-                $stderr = trim($process->getAllStderr()[$i]);
-                if ($stderr != '') {
-                    throw new Exception("An error occurred in an underlying process: {$stderr}");
-                }
-                if (!($data = json_decode($stdout, true))) {
-                    throw new Exception("Unable to parse stdout, probably an error occurred: $stdout");
-                }
-                $reports[] = Report::fromJson($data);
-                $this->io->debug("Report from process #{$i} parsed successfully.");
             }
         }  else {
             $this->io->verbose('Executing checks in sequential mode.');
