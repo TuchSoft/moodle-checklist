@@ -10,6 +10,7 @@ use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckStringInFile;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\LintMarkdown;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\LoadAuthors;
 use Tuchsoft\IssueReporter\Issue;
+use Tuchsoft\MoodleChecklist\Process\PrettierFixProcess;
 use Tuchsoft\MoodleChecklist\Settings;
 
 class ReadmeCheck extends AbstractSingleFileCheck
@@ -21,6 +22,11 @@ class ReadmeCheck extends AbstractSingleFileCheck
     use LoadAuthors;
 
     private MarkdownEscape $escape;
+
+    public function canFix(): bool
+    {
+        return (new PrettierFixProcess([]))->isAvailable();
+    }
 
 
     public function __construct(Settings $settings)
@@ -100,6 +106,32 @@ class ReadmeCheck extends AbstractSingleFileCheck
         //TODO: Check all the badge
         //TODO: Check all the images
         //TODO: Check all the link
+    }
+
+    public function fix(bool $apply): void
+    {
+        if (!is_file($this->path)) {
+            return;
+        }
+
+        $process = new PrettierFixProcess([$this->path]);
+        if (!$process->isAvailable()) {
+            $this->io->warning('prettier is not available; skipping Markdown fixer.');
+            return;
+        }
+
+        if (!$apply) {
+            $this->io->text('Would run prettier on README.md.');
+            return;
+        }
+
+        $process->execute();
+        $exit = $process->getExitCode();
+        if ($exit !== 0 && $exit !== 1) {
+            $this->io->warning('README formatting finished with errors: ' . trim($process->getStderr() ?: 'unknown error'));
+        } else {
+            $this->io->success('README.md formatted with prettier.');
+        }
     }
 
 

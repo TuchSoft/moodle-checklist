@@ -6,7 +6,7 @@ namespace Tuchsoft\MoodleChecklist\Check;
 
 use Tuchsoft\MoodleChecklist\Check\Subcheck\FileExist;
 
-class ImagesCheck extends AbstractCheck
+class MarketplaceImagesCheck extends AbstractCheck
 {
 
     use FileExist;
