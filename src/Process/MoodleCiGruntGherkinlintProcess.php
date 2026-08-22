@@ -9,7 +9,6 @@ class MoodleCiGruntGherkinlintProcess extends AbstractMoodleCiGruntProcess
 
     protected const REGEX = '/^(?<line>\d+)\s+(?<message>.*?)\s+(?<code>[a-zA-Z0-9-]+)\s*$/';
 
-
     public function __construct(string $ploginRoot, string $moodleRoot)
     {
         parent::__construct($ploginRoot, $moodleRoot, 'gherkinlint');

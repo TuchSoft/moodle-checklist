@@ -3,7 +3,6 @@
 Note: This context is shared by many agents from different vendors.
 **Never edit or read the `CLAUDE.md` file, is auto-generated and auto-injected in the context! Leave it alone!**
 
-
 ### Inter-Agent Communication (AgentMail)
 
 You communicate with other agents and teams using the local `agent_mail` CLI tool (a simplified cli based RFC-compliant mail client).
@@ -118,5 +117,3 @@ Overview of the index of the human documentation, refer to it if necessary, read
 -----
 **From here down: memory files. These are effectively your memories; it's your responsibility to keep them up to date.**
 -----
-
-
