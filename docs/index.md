@@ -33,6 +33,7 @@ Auto-formats the plugin files. **Dry-run by default**; add `--apply` to write ch
 - `--no-parallel` — run checks sequentially instead of in parallel. In parallel mode, a single failing subprocess no longer aborts the whole run; the failing check is reported as a runtime error and the remaining checks continue.
 - `--moodle-root=<path>` — absolute path to the Moodle project root (the directory containing `config.php` and `admin/cli/upgrade.php`, not the web docroot). When omitted, the root is guessed from the plugin path, with a fallback for Moodle 5.1+ `public/` docroot layouts.
 - `--apply` — global guard for `fix`; without it the command only prints what would be changed.
+- `--refresh-gitignore-cache` — force a network refresh of the gitignore.io template cache before fixing.
 
 ## Checks and formatters
 
@@ -45,8 +46,10 @@ Auto-formats the plugin files. **Dry-run by default**; add `--apply` to write ch
 | `xmllint` | XML | `xmllint --format` (or PHP DOM fallback) |
 | `yamllint` | YAML | `prettier` |
 | `readme` | README.md | `prettier` |
+| `gitignore` | `.gitignore` coverage | rebuilds from cached gitignore.io template |
 | `moodle-plugin-ci.mustache` | Mustache templates | `djlint --reformat` |
 | `moodle-plugin-ci.gherkinlint` | Behat/Gherkin | `reformat-gherkin` |
+| `filestructure` | Required files/directories, MIME type, encoding, forbidden artifacts | Scaffolds missing files/dirs and re-encodes text files to UTF-8 (no deletions) |
 | `marketplaceimages` | `.moodleplugin/` poster + screenshots | — |
 | `image` | Source images: format, MIME, size, dimensions, location, naming, EXIF metadata, compression | `pngquant`, `mozjpeg`, `svgo`, `gifsicle`, `cwebp` |
 

@@ -30,9 +30,21 @@
   - `bin/install-python-deps.php` wired into `composer.json` `post-autoload-dump`.
   - New `src/Process/Image/*` optimizer processes; `DjlintFixProcess`/`GherkinFixProcess` now check `.venv/bin/` first.
   - Fixtures + integration tests for `ImageCheck`, `MarketplaceImagesCheck`, optimizer processes.
+- Implemented `GitIgnoreCheck` fixer.
+  - Cache gitignore.io template during `composer install`/`update`; TTL 30d, stale fallback.
+  - Rebuild `.gitignore` from template + Moodle block + `### Project defined ###` user section.
+  - Marker-based parser (`# Created by ...` / `# End of ...`) keeps re-runs idempotent.
+  - `--refresh-gitignore-cache` flag on `fix` command.
+  - New: `src/GitIgnore/GitIgnoreTemplateCache.php`, `src/GitIgnore/GitIgnoreAssembler.php`, `bin/cache-gitignore-templates.php`, `data/gitignore/`, unit + integration tests.
 - Fixed missing-file handling in `ReadmeCheck` and `GitIgnoreCheck`.
   - `AbstractSingleFileCheck` Template Method; subclasses implement `executeSingleFile()`.
   - `RemarkProcess::getIssues()` coalesces `source`/`ruleId`/`line` defaults.
   - Fixture `tests/fixtures/missing-files-plugin` + parallel-mode integration tests.
+- Implemented partial auto-fixer for `FileStructureCheck`.
+  - `FileStructureCheck` now implements `FixableCheckInterface`.
+  - Scaffolds `.moodleplugin/`, `README.md`, `CHANGELOG.md`, `LICENSE.md`, `CONTRIBUTING.md`, `.gitignore` with TODO placeholders.
+  - Re-encodes known text files to UTF-8 using `iconv`.
+  - Fixture `tests/fixtures/filestructure-fix-plugin/` + `tests/Integration/FileStructureFixCommandTest.php`.
+  - Updated `docs/index.md` and agent memory.
 
 ## Backlog

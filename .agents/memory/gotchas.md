@@ -20,6 +20,12 @@
 - `dealerdirect/phpcodesniffer-composer-installer` must be allowed in `composer.json` `allow-plugins`.
 - If disabled, `vendor/squizlabs/php_codesniffer/CodeSniffer.conf` is never created and `--standard=moodle` fails.
 
+## GitIgnore fixer relies on marker comments
+
+- The fixer identifies its managed sections by `# Created by ...` / `# End of ...` markers, just like gitignore.io.
+- If a user deletes or renames those markers, the next run will treat the whole file as user content and wrap it in a fresh `### Project defined ###` section.
+- Duplicate rules are harmless because git ignores them, but the file will grow if markers are repeatedly removed.
+
 ## Missing single-file check targets
 
 - `ReadmeCheck` and `GitIgnoreCheck` previously crashed when `README.md`/`.gitignore` were absent.

@@ -21,6 +21,20 @@
 - The final summary counts only successful formatters as "ran"; failures and missing tools are reported as "skipped". Checks without a fixer do not appear in the output.
 - Fixer processes report `stderr` and accept exit code `1` as success when the tool fixed (or partially fixed) files.
 
+## FileStructure fixer rules
+
+- `FileStructureCheck::fix()` only creates missing items; it never overwrites or deletes existing files/directories.
+- Required files are scaffolded with TODO comments/placeholders so humans know to fill them in.
+- `.gitignore` is created with only a TODO comment; the `GitIgnoreCheck` fixer is responsible for populating standard patterns.
+- UTF-8 re-encoding uses `mb_convert_encoding()` with `//TRANSLIT//IGNORE` and skips files already detected as UTF-8 or ASCII.
+
+## GitIgnore fixer marker convention
+
+- `.gitignore` is rebuilt from three sections: gitignore.io template, Moodle-specific additions, and a user `### Project defined ###` section.
+- Managed sections use gitignore.io-style markers (`# Created by ...` / `# End of ...`) so the same parser handles both gitignore.io blocks and our Moodle block.
+- No pattern-level deduplication is performed; git ignores duplicate rules natively.
+- Re-running the fixer is idempotent because it replaces blocks by their markers and preserves the `### Project defined ###` body.
+
 ## File scanning exclusions
 
 - `GetAllFile::isPathIgnored()` is the single source of truth for paths that should be skipped by checks and fixers.

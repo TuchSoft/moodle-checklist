@@ -46,6 +46,12 @@ Co-managed with humans. Only open items — move finished work out (agent memory
   - Added `bin/install-python-deps.php` and wired it into Composer's `post-autoload-dump`.
   - Added `src/Process/Image/*` optimizer process classes and updated `DjlintFixProcess`/`GherkinFixProcess` to find `.venv/bin/` first.
   - Added fixtures and integration tests for `ImageCheck`, `MarketplaceImagesCheck`, and image optimizer processes.
+- Implemented auto-fixer for `GitIgnoreCheck`.
+  - Fetches and caches gitignore.io template; cache is refreshed during `composer install`/`composer update`.
+  - Rebuilds `.gitignore` from gitignore.io template + Moodle-specific patterns + user-defined `### Project defined ###` section.
+  - Uses gitignore.io-style markers (`# Created by ...` / `# End of ...`) so the parser can replace managed blocks on re-runs.
+  - Added `--refresh-gitignore-cache` option to the `fix` command.
+  - Added `src/GitIgnore/GitIgnoreTemplateCache.php`, `src/GitIgnore/GitIgnoreAssembler.php`, `bin/cache-gitignore-templates.php`, and unit/integration tests.
 - Fixed missing-file handling in `ReadmeCheck` and `GitIgnoreCheck`.
   - Refactored `AbstractSingleFileCheck` to a Template Method so subclasses can't skip file-existence validation.
   - Hardened `RemarkProcess::getIssues()` against remark fatal messages that lack `source`/`ruleId`.

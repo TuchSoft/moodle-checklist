@@ -16,6 +16,17 @@
 - `src/Process/Image/PngquantProcess.php`, `MozjpegProcess.php`, `SvgoProcess.php`, `CwebpProcess.php`, `GifsicleProcess.php` — image optimizer wrappers.
 - `src/Check/MarketplaceImagesCheck.php` — renamed from `ImagesCheck`; validates `.moodleplugin/` poster + screenshots.
 - `src/Check/ImageCheck.php` — validates all source images (format, MIME, size, dimensions, location, naming, EXIF, compression).
+- `src/Check/FileStructureCheck.php` — validates required files/dirs, MIME types, encoding, forbidden artifacts; now implements fixer that scaffolds missing items and re-encodes text files to UTF-8.
+- `src/Check/GitIgnoreCheck.php` — validates `.gitignore`; implements fixer that rebuilds it from gitignore.io template + Moodle patterns + user section.
+- `tests/fixtures/filestructure-fix-plugin/` — fixture for `FileStructureCheck` fixer tests.
+- `tests/Integration/FileStructureFixCommandTest.php` — integration tests for `FileStructureCheck` fixer.
+- `src/GitIgnore/GitIgnoreTemplateCache.php` — fetches/caches gitignore.io template.
+- `src/GitIgnore/GitIgnoreAssembler.php` — parses and re-assembles `.gitignore` by marker comments.
+- `bin/cache-gitignore-templates.php` — Composer script that populates `data/gitignore/default.template`.
+- `data/gitignore/` — cache directory for gitignore.io template.
+- `tests/Unit/GitIgnore/GitIgnoreAssemblerTest.php` — unit tests for assembler parser.
+- `tests/Unit/GitIgnore/GitIgnoreTemplateCacheTest.php` — unit tests for template cache.
+- `tests/Integration/GitIgnoreFixCommandTest.php` — integration tests for gitignore fix command.
 - `requirements.txt` — Python deps (`djlint`, `reformat-gherkin`).
 - `bin/install-python-deps.php` — creates `.venv/` and installs Python deps.
 - `tests/fixtures/formatting-plugin/` — fixture for `fix` command tests.
