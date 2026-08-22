@@ -419,3 +419,6 @@ $RECYCLE.BIN/
 /xvendor
 #Ignore the AI plans directory
 .complex_plans
+
+# Cached gitignore.io template downloaded by Composer scripts
+data/gitignore/

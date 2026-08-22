@@ -12,7 +12,8 @@
     },
     "autoload-dev": {
         "classmap": [
-            "tests/Integration/"
+            "tests/Integration/",
+            "tests/Unit/"
         ]
     },
     "authors": [
@@ -72,10 +73,17 @@
     },
     "scripts": {
         "install-python-deps": "php bin/install-python-deps.php",
+        "cache-gitignore-templates": "php bin/cache-gitignore-templates.php",
         "post-autoload-dump": [
             "@install-python-deps",
             "npm i",
             "npm i --prefix ./vendor/moodlehq/moodle-local_ci"
+        ],
+        "post-install-cmd": [
+            "@cache-gitignore-templates"
+        ],
+        "post-update-cmd": [
+            "@cache-gitignore-templates"
         ]
     },
     "config": {

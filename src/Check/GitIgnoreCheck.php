@@ -2,8 +2,8 @@
 
 namespace Tuchsoft\MoodleChecklist\Check;
 
-use Tuchsoft\MoodleChecklist\Check\Subcheck\GetAllFile;
-use SplFileInfo;
+use Tuchsoft\MoodleChecklist\GitIgnore\GitIgnoreAssembler;
+use Tuchsoft\MoodleChecklist\GitIgnore\GitIgnoreTemplateCache;
 use Tuchsoft\MoodleChecklist\Settings;
 use Automattic\IgnoreFile;
 
@@ -14,7 +14,7 @@ use Automattic\IgnoreFile;
  * build artifacts are being ignored. It also checks for conditional
  * patterns like `vendor/` and `node_modules/` only if those directories exist.
  */
-class GitIgnoreCheck extends AbstractSingleFileCheck
+class GitIgnoreCheck extends AbstractSingleFileCheck implements FixableCheckInterface
 {
     /**
      * List of paths that MUST be ignored by a .gitignore file.
@@ -47,11 +47,21 @@ class GitIgnoreCheck extends AbstractSingleFileCheck
         'node_modules',// Node.js dependencies
     ];
 
+    public static function getName(): string
+    {
+        return 'gitignore';
+    }
+
     public function __construct(Settings $settings)
     {
         parent::__construct($settings);
         $this->path = "{$this->plugin->fullpath}/.gitignore";
         $this->mimeType = ['text/plain'];
+    }
+
+    public function canFix(): bool
+    {
+        return (new GitIgnoreTemplateCache())->hasCache();
     }
 
     protected function executeSingleFile(): void
@@ -103,5 +113,43 @@ class GitIgnoreCheck extends AbstractSingleFileCheck
                 }
             }
         }
+    }
+
+    public function fix(bool $apply): bool
+    {
+        $cache = new GitIgnoreTemplateCache();
+        $template = $cache->getOrRefresh();
+
+        if ($template === null) {
+            $this->io->warning('Gitignore template cache is missing and could not be fetched from the network.');
+            return false;
+        }
+
+        $existing = is_file($this->path) ? file_get_contents($this->path) : null;
+
+        $moodlePatterns = array_values(array_unique(array_merge(
+            array_map(fn (string $dir): string => rtrim($dir, '/') . '/', self::CONDITIONAL_DIRS),
+            [
+                '*.log',
+                'build/',
+                'coverage/',
+            ]
+        )));
+
+        $assembler = new GitIgnoreAssembler($moodlePatterns);
+        $content = $assembler->assemble($template, $existing);
+
+        if (!$apply) {
+            $this->io->text('Would regenerate .gitignore using the cached gitignore.io template.');
+            return true;
+        }
+
+        if (file_put_contents($this->path, $content) === false) {
+            $this->io->error("Failed to write {$this->path}");
+            return false;
+        }
+
+        $this->io->success('.gitignore regenerated.');
+        return true;
     }
 }

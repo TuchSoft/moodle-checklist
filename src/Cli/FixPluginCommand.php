@@ -16,6 +16,8 @@ class FixPluginCommand extends AbstractCommand
 
     private bool $apply = false;
 
+    private bool $refreshGitignoreCache = false;
+
     protected function configure(): void
     {
         $this
@@ -58,6 +60,12 @@ class FixPluginCommand extends AbstractCommand
                 InputOption::VALUE_OPTIONAL,
                 'Absolute path to the Moodle project root (not the web docroot).',
                 null
+            )
+            ->addOption(
+                'refresh-gitignore-cache',
+                null,
+                InputOption::VALUE_NONE,
+                'Force a network refresh of the gitignore.io template cache before fixing.'
             );
     }
 
@@ -72,6 +80,7 @@ class FixPluginCommand extends AbstractCommand
         }
         $options['plugin'] = realpath($options['plugin']);
         $this->apply = (bool) $options['apply'];
+        $this->refreshGitignoreCache = (bool) $options['refresh-gitignore-cache'];
 
         return $options;
     }
@@ -85,6 +94,16 @@ class FixPluginCommand extends AbstractCommand
         $_SERVER['argv'] = [];
 
         try {
+            if ($this->refreshGitignoreCache) {
+                try {
+                    (new \Tuchsoft\MoodleChecklist\GitIgnore\GitIgnoreTemplateCache())->refresh();
+                    $this->io->success('Gitignore template cache refreshed.');
+                } catch (\RuntimeException $e) {
+                    $this->io->error($e->getMessage());
+                    return Command::FAILURE;
+                }
+            }
+
             $checker = new Checker($this->settings, $this->io);
             $fixables = $this->collectFixableChecks($checker);
 
