@@ -2,81 +2,40 @@
 
 namespace Tuchsoft\MoodleChecklist\Process;
 
+use Symfony\Component\Process\Process;
 use Tuchsoft\IssueReporter\Issue;
 
 class MoodleCISavepointProcess extends AbstractIssuesProcess
 {
-    private const SCRIPT_NAME = 'check_upgrade_savepoints.php';
     private const SCRIPT_SOURCE_PATH = __DIR__.'/../../vendor/moodlehq/moodle-local_ci/check_upgrade_savepoints/check_upgrade_savepoints.php';
-
-    private string $pluginRoot;
-    private ?string $destinationScriptPath = null;
-
 
     public function __construct(string $pluginRoot)
     {
-        $this->pluginRoot = rtrim($pluginRoot, '/');
         // The command will be executed in the plugin's root directory.
-        parent::__construct($this->pluginRoot);
+        parent::__construct(rtrim($pluginRoot, '/'));
     }
-
 
     protected function getCommand(): array
     {
-        if ($this->destinationScriptPath === null) {
-            throw new \RuntimeException('Savepoint script destination path has not been set.');
-        }
-
-        return [
-            'php',
-            $this->destinationScriptPath,
-        ];
+        return ['php'];
     }
 
+    protected function getProcess(array $command, ?float $timeout): Process
+    {
+        $process = parent::getProcess($command, $timeout);
+        $process->setInput(file_get_contents(self::SCRIPT_SOURCE_PATH));
+
+        return $process;
+    }
 
     public function execute(?float $timeout = 180.0): bool
     {
-        // This tool is expected to be run from the Moodle project root.
         if (!file_exists(self::SCRIPT_SOURCE_PATH)) {
             $this->error = 'Could not find check_upgrade_savepoints.php script at: ' . self::SCRIPT_SOURCE_PATH . '. Ensure moodlehq/moodle-local_ci is installed.';
             return false;
         }
 
-        // Use a unique temporary filename inside the plugin root so we never
-        // collide with a file the plugin itself may ship (some plugins include
-        // check_upgrade_savepoints.php). dirname(__FILE__) in the script resolves
-        // to the plugin directory, so checks still target the correct files.
-        $destinationScriptPath = tempnam($this->pluginRoot, '.mcp-savepoint-') . '.php';
-        if ($destinationScriptPath === false) {
-            $this->error = "Failed to create temporary savepoint script in plugin root: {$this->pluginRoot}";
-            return false;
-        }
-
-        try {
-            // 1. Copy the script to the plugin root.
-            if (!copy(self::SCRIPT_SOURCE_PATH, $destinationScriptPath)) {
-                $this->error = "Failed to copy check_upgrade_savepoints.php to plugin root: {$this->pluginRoot}";
-                return false;
-            }
-
-            // Override the command to execute the temporary copy.
-            $this->destinationScriptPath = $destinationScriptPath;
-
-            // 2. Execute the script using the parent's method.
-            // The CWD is set to pluginRoot via the constructor.
-            if (!parent::execute($timeout)) {
-                // Error is already set by the parent class.
-                return false;
-            }
-
-        } finally {
-            // 4. Delete the copied script, regardless of success or failure.
-            if (file_exists($destinationScriptPath)) {
-                unlink($destinationScriptPath);
-            }
-        }
-
-        return true;
+        return parent::execute($timeout);
     }
 
     /**

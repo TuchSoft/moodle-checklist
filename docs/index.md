@@ -20,7 +20,7 @@ Validates the plugin and reports issues.
 ./bin/console fix <plugin-path> [options]
 ```
 
-Auto-formats the plugin files. **Dry-run by default**; add `--apply` to write changes. After applying, re-run `check` to verify any remaining issues. The final summary reports how many formatters ran, failed, and were skipped.
+Auto-formats the plugin files. **Dry-run by default**; add `--apply` to write changes. After applying, re-run `check` to verify any remaining issues. The final summary reports how many formatters ran, failed, and were skipped. Checks that do not provide an auto-fixer are silently omitted from `fix` output.
 
 ### Common options
 
@@ -50,7 +50,7 @@ Auto-formats the plugin files. **Dry-run by default**; add `--apply` to write ch
 | `marketplaceimages` | `.moodleplugin/` poster + screenshots | — |
 | `image` | Source images: format, MIME, size, dimensions, location, naming, EXIF metadata, compression | `pngquant`, `mozjpeg`, `svgo`, `gifsicle`, `cwebp` |
 
-Formatters that are not installed in the environment are reported as skipped. File scanning and fixers respect `.gitignore` and a hardcoded safety list (`node_modules`, `.git`, `vendor`, `.venv`, `.idea`, `.moodleplugin`, `.complex_plans`, `.agents`, `.phpunit.cache`) so dependency directories and temporary files such as `check_upgrade_savepoints.php` are ignored.
+Formatters that are not installed in the environment are reported as skipped. Checks without a formatter are not listed at all. File scanning and fixers respect `.gitignore` and a hardcoded safety list (`node_modules`, `.git`, `vendor`, `.venv`, `.idea`, `.moodleplugin`, `.complex_plans`, `.agents`, `.phpunit.cache`) so dependency directories and temporary files are ignored.
 
 ## Dependencies
 

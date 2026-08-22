@@ -43,10 +43,7 @@ trait GetAllFile
      */
     private static function getAlwaysExcludedFiles(): array
     {
-        return [
-            'check_upgrade_savepoints.php',
-            '.mcp-savepoint-*.php',
-        ];
+        return [];
     }
 
     /** Cache of IgnoreFile instances keyed by base directory. */

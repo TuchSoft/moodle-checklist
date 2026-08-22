@@ -6,7 +6,7 @@ use Tuchsoft\MoodleChecklist\Check\Subcheck\GetAllFile;
 use Tuchsoft\MoodleChecklist\Process\MoodleCiEslintFixProcess;
 use Tuchsoft\MoodleChecklist\Process\MoodleCiEslintProcess;
 
-class JsLintCheck extends AbstractMoodleCiCheck
+class JsLintCheck extends AbstractMoodleCiCheck implements FixableCheckInterface
 {
     public function canFix(): bool
     {

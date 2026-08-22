@@ -152,6 +152,7 @@ class FixPluginCommand extends AbstractCommand
             if (!is_subclass_of($className, FixableCheckInterface::class)) {
                 continue;
             }
+
             $instance = new $className($this->settings);
             $instance->setIo($this->io);
             if (!$instance->isActive()) {

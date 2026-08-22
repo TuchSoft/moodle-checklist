@@ -8,7 +8,7 @@ use Tuchsoft\MoodleChecklist\Check\Subcheck\GetAllFile;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\LintConfig;
 use Tuchsoft\MoodleChecklist\Process\PrettierFixProcess;
 
-class JsonLintCheck extends AbstractCheck
+class JsonLintCheck extends AbstractCheck implements FixableCheckInterface
 {
 
     use GetAllFile;

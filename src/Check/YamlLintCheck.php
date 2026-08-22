@@ -8,7 +8,7 @@ use Tuchsoft\MoodleChecklist\Check\Subcheck\GetAllFile;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\LintConfig;
 use Tuchsoft\MoodleChecklist\Process\PrettierFixProcess;
 
-class YamlLintCheck extends AbstractCheck
+class YamlLintCheck extends AbstractCheck implements FixableCheckInterface
 {
 
     use GetAllFile;

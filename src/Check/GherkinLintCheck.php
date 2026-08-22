@@ -10,7 +10,7 @@ use Tuchsoft\MoodleChecklist\Process\GherkinFixProcess;
 use Tuchsoft\MoodleChecklist\Process\MoodleCiGruntGherkinlintProcess;
 
 
-class GherkinLintCheck extends AbstractMoodleCiCheck
+class GherkinLintCheck extends AbstractCheck implements FixableCheckInterface
 {
     use GetAllFile;
 

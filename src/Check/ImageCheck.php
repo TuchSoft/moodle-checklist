@@ -12,7 +12,7 @@ use Tuchsoft\MoodleChecklist\Process\Image\MozjpegProcess;
 use Tuchsoft\MoodleChecklist\Process\Image\PngquantProcess;
 use Tuchsoft\MoodleChecklist\Process\Image\SvgoProcess;
 
-class ImageCheck extends AbstractCheck
+class ImageCheck extends AbstractCheck implements FixableCheckInterface
 {
     use GetAllFile;
     use CheckFileMimeType;

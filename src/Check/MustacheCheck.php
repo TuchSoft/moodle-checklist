@@ -10,7 +10,7 @@ use Tuchsoft\MoodleChecklist\Process\DjlintFixProcess;
 use Tuchsoft\MoodleChecklist\Process\IssuesMustacheProcess;
 use Tuchsoft\MoodleChecklist\Process\MoodleCISavepointProcess;
 
-class MustacheCheck extends AbstractMoodleCiCheck
+class MustacheCheck extends AbstractCheck implements FixableCheckInterface
 {
 
     use GetAllFile;

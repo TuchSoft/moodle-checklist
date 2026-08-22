@@ -9,7 +9,7 @@ use Tuchsoft\MoodleChecklist\Utils\InputOutput;
 
 // Renamed from CheckReport
 
-abstract class AbstractCheck implements FixableCheckInterface
+abstract class AbstractCheck
 {
 
     use BaseCheckTrait;
@@ -53,23 +53,5 @@ abstract class AbstractCheck implements FixableCheckInterface
         $code = $code ? ($this->getName().'.'.$code) : $this->getName();
         return $this->isIssueActive($code);
     }
-
-    /**
-     * Checks extending this class are not required to have a formatter.
-     */
-    public function canFix(): bool
-    {
-        return false;
-    }
-
-    /**
-     * No-op default. Fixable checks must override this.
-     */
-    public function fix(bool $apply): bool
-    {
-        // No-op by default: nothing to fix, so report success.
-        return true;
-    }
-
 
 }

@@ -13,7 +13,7 @@ use Tuchsoft\IssueReporter\Issue;
 use Tuchsoft\MoodleChecklist\Process\PrettierFixProcess;
 use Tuchsoft\MoodleChecklist\Settings;
 
-class ReadmeCheck extends AbstractSingleFileCheck
+class ReadmeCheck extends AbstractSingleFileCheck implements FixableCheckInterface
 {
 
     use CheckStringInFile;

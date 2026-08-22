@@ -5,7 +5,7 @@ namespace Tuchsoft\MoodleChecklist\Check;
 use Tuchsoft\MoodleChecklist\Process\MoodleCiPhpcbfProcess;
 use Tuchsoft\MoodleChecklist\Process\MoodleCiPhpcsProcess;
 
-class PhpCsCheck extends AbstractMoodleCiCheck
+class PhpCsCheck extends AbstractMoodleCiCheck implements FixableCheckInterface
 {
     public function canFix(): bool
     {

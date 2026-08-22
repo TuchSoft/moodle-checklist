@@ -10,7 +10,7 @@ use Tuchsoft\MoodleChecklist\Process\MoodleCiGruntStylelintProcess;
 use Tuchsoft\MoodleChecklist\Process\MoodleCiStylelintFixProcess;
 
 
-class StyleLintCheck extends AbstractMoodleCiCheck
+class StyleLintCheck extends AbstractMoodleCiCheck implements FixableCheckInterface
 {
     public function canFix(): bool
     {
