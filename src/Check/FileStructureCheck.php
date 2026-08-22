@@ -10,8 +10,9 @@ use Tuchsoft\MoodleChecklist\Check\Subcheck\CheckFileSize;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\FileExist;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\GetAllFile;
 use Tuchsoft\IssueReporter\Issue;
+use Tuchsoft\MoodleChecklist\Check\FixableCheckInterface;
 
-class FileStructureCheck extends AbstractCheck
+class FileStructureCheck extends AbstractCheck implements FixableCheckInterface
 {
     use FileExist;
     use CheckFileSize;
@@ -19,6 +20,143 @@ class FileStructureCheck extends AbstractCheck
     use CheckFileMimeType;
     use GetAllFile;
 
+    private const FILE_TEMPLATES = [
+        'README.md'       => "# {component}\n\n<!-- TODO: Replace this placeholder with a real plugin description. -->\n",
+        'CHANGELOG.md'    => "# Changelog\n\n<!-- TODO: Replace this placeholder with actual changelog entries. -->\n\n## [Unreleased]\n\n- Initial release.\n",
+        'LICENSE.md'      => "<!-- TODO: Replace this placeholder with the actual license text. -->\n",
+        'CONTRIBUTING.md' => "# Contributing\n\n<!-- TODO: Replace this placeholder with actual contribution guidelines. -->\n",
+        '.gitignore'      => "# TODO: Add project-specific ignore patterns below; run the gitignore fixer to populate standard patterns.\n",
+    ];
+
+    private const ENCODED_FILES = [
+        'README.md',
+        'CHANGELOG.md',
+        'CONTRIBUTING.md',
+        'LICENSE.md',
+        '.gitignore',
+    ];
+
+    public function canFix(): bool
+    {
+        return true;
+    }
+
+    public function fix(bool $apply): bool
+    {
+        $pluginRoot = $this->plugin->fullpath;
+        $success = true;
+
+        if ($this->isActive('required-dir-moodleplugin')) {
+            $success = $this->ensureDirectory($pluginRoot . '/.moodleplugin', $apply) && $success;
+        }
+
+        $requiredFiles = [
+            'required-file-readme'       => 'README.md',
+            'required-file-changelog'    => 'CHANGELOG.md',
+            'required-file-license'      => 'LICENSE.md',
+            'required-file-contributing' => 'CONTRIBUTING.md',
+            'required-file-gitignore'    => '.gitignore',
+        ];
+
+        foreach ($requiredFiles as $code => $relativePath) {
+            if (!$this->isActive($code)) {
+                continue;
+            }
+
+            $template = self::FILE_TEMPLATES[$relativePath] ?? '';
+            $template = str_replace('{component}', $this->plugin->component, $template);
+            $success = $this->ensureFile($pluginRoot . '/' . $relativePath, $template, $apply) && $success;
+        }
+
+        if ($this->isActive('file-encoding')) {
+            foreach (self::ENCODED_FILES as $relativePath) {
+                $filePath = $pluginRoot . '/' . $relativePath;
+                if (is_file($filePath)) {
+                    $success = $this->reencodeFileToUtf8($filePath, $apply) && $success;
+                }
+            }
+        }
+
+        return $success;
+    }
+
+    private function ensureDirectory(string $path, bool $apply): bool
+    {
+        if (is_dir($path)) {
+            return true;
+        }
+
+        if (!$apply) {
+            $this->io->text("Would create directory {$path}");
+            return true;
+        }
+
+        if (!mkdir($path, 0755, true) && !is_dir($path)) {
+            $this->io->error("Failed to create directory {$path}");
+            return false;
+        }
+
+        $this->io->text("Created directory {$path}");
+        return true;
+    }
+
+    private function ensureFile(string $path, string $content, bool $apply): bool
+    {
+        if (is_file($path)) {
+            return true;
+        }
+
+        if (!$apply) {
+            $this->io->text("Would create file {$path}");
+            return true;
+        }
+
+        if (file_put_contents($path, $content) === false) {
+            $this->io->error("Failed to create file {$path}");
+            return false;
+        }
+
+        $this->io->text("Created file {$path}");
+        return true;
+    }
+
+    private function reencodeFileToUtf8(string $path, bool $apply): bool
+    {
+        if (!function_exists('mb_detect_encoding') || !function_exists('iconv')) {
+            $this->io->warning('PHP mbstring/iconv extension is missing; cannot re-encode files to UTF-8.');
+            return false;
+        }
+
+        $content = file_get_contents($path);
+        if ($content === false) {
+            $this->io->error("Failed to read file {$path}");
+            return false;
+        }
+
+        $detected = mb_detect_encoding($content, 'UTF-8, ISO-8859-1, ASCII', true);
+        if ($detected === false || in_array(strtoupper($detected), ['UTF-8', 'ASCII'], true)) {
+            return true;
+        }
+
+        if (!$apply) {
+            $this->io->text("Would re-encode {$path} from {$detected} to UTF-8");
+            return true;
+        }
+
+        $converted = @iconv($detected, 'UTF-8//TRANSLIT//IGNORE', $content);
+        if ($converted === false) {
+            $this->io->error("Failed to convert {$path} from {$detected} to UTF-8");
+            return false;
+        }
+
+        if (file_put_contents($path, $converted) === false) {
+            $this->io->error("Failed to write file {$path}");
+            return false;
+        }
+
+        $this->io->text("Re-encoded {$path} from {$detected} to UTF-8");
+        return true;
+    }
 
 
     /**
