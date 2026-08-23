@@ -20,7 +20,7 @@ class MoodleCiEslintProcess extends AbstractProcess
         parent::__construct();
     }
 
-    public function execute(?float $timeout = 120.0): bool
+    public function execute(?float $timeout = 300.0): bool
     {
         if (empty($this->files)) {
             $this->issues = [];

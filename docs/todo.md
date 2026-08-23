@@ -56,3 +56,6 @@ Co-managed with humans. Only open items — move finished work out (agent memory
   - Refactored `AbstractSingleFileCheck` to a Template Method so subclasses can't skip file-existence validation.
   - Hardened `RemarkProcess::getIssues()` against remark fatal messages that lack `source`/`ruleId`.
   - Added `tests/fixtures/missing-files-plugin` and parallel-mode integration tests for missing `README.md` and `.gitignore`.
+- Raised all process timeouts to 300 seconds and moved `JsLintCheck::rebuildAmd()` to a dedicated `MoodleCiGruntAmdProcess`.
+  - Previous timeout fix only updated base classes; the hardcoded 120-second timeout in `JsLintCheck::rebuildAmd()` caused `npx grunt amd` to time out during `fix --apply` on larger plugins.
+  - `AbstractProcess`, `AbstractIssuesProcess`, `MoodleCiEslintProcess`, `MoodleCiPhpcsProcess`, `MoodleCISavepointProcess`, and `MoodleCiGruntAmdProcess` now default to 300 seconds.

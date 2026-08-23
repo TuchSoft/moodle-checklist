@@ -28,7 +28,7 @@ class MoodleCISavepointProcess extends AbstractIssuesProcess
         return $process;
     }
 
-    public function execute(?float $timeout = 180.0): bool
+    public function execute(?float $timeout = 300.0): bool
     {
         if (!file_exists(self::SCRIPT_SOURCE_PATH)) {
             $this->error = 'Could not find check_upgrade_savepoints.php script at: ' . self::SCRIPT_SOURCE_PATH . '. Ensure moodlehq/moodle-local_ci is installed.';

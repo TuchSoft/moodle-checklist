@@ -19,7 +19,7 @@ class MoodleCiPhpcsProcess extends AbstractProcess
     /**
      * Accept exit code 1 as a successful parseable run (it means issues were found).
      */
-    public function execute(?float $timeout = 120.0): bool
+    public function execute(?float $timeout = 300.0): bool
     {
         $this->reportFile = tempnam(sys_get_temp_dir(), 'mcp-phpcs-') . '.json';
         $ok = parent::execute($timeout);

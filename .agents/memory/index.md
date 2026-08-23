@@ -2,10 +2,12 @@
 - `bin/console fix <plugin-path>` is dry-run by default; `--apply` writes files.
 - `--phase=none|pre-build|post-build` switches validation profiles.
 - `--moodle-root=<path>` overrides guessed Moodle root for Moodle 5.1+ `public/` docroot.
-- `--refresh-gitignore-cache` forces refresh of gitignore.io template cache for the fix command.
+- `--refresh-gitignore-cache` forces refresh of gitignore.io template cache for the `fix` command.
 - Checks: `marketplaceimages` (poster/screenshots), `image` (source image quality), `gitignore` (with auto-fixer), `filestructure` (required files/dirs, encoding, forbidden artifacts; partial auto-fixer).
 - Runtime deps: `composer.json` (PHP), `package.json` (Node), `requirements.txt` (Python via `.venv/`).
 - `tuchsoft/issue-reporter` is a VCS dependency (`https://github.com/TuchSoft/issue-reporter.git`).
 - Composer config: `minimum-stability: dev` + `prefer-stable: true`; `dealerdirect/phpcodesniffer-composer-installer` allowed.
 - Native image optimizer npm binaries need build tooling on non-x86_64 platforms.
+- All `src/Process/*` classes default to a 300-second timeout; heavy lint/build tasks can complete on large plugins.
+- `src/Process/MoodleCiGruntAmdProcess.php` runs the `grunt amd` rebuild after `eslint --fix`.
 - Docs live in `./docs`; this file mirrors `docs/index.md`.

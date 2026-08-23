@@ -24,10 +24,10 @@ abstract class AbstractIssuesProcess extends AbstractProcess
      * of this parsing should populate the `$this->issues` property.
      *
      * @param float|null $timeout The maximum time (in seconds) the process is allowed to run.
-     * Set to `null` for no timeout. Defaults to 180.0 seconds.
+     * Set to `null` for no timeout. Defaults to 300.0 seconds.
      * @return bool True if both the command execution and output parsing were successful, false otherwise.
      */
-    public function execute(?float $timeout = 180.0): bool
+    public function execute(?float $timeout = 300.0): bool
     {
         if (!parent::execute($timeout)) {
             return false;

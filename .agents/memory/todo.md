@@ -46,5 +46,9 @@
   - Re-encodes known text files to UTF-8 using `iconv`.
   - Fixture `tests/fixtures/filestructure-fix-plugin/` + `tests/Integration/FileStructureFixCommandTest.php`.
   - Updated `docs/index.md` and agent memory.
+- Raised all process timeouts to 300 seconds; moved `JsLintCheck::rebuildAmd()` to `MoodleCiGruntAmdProcess`.
+  - Previous timeout fix missed a hardcoded 120 s call in `JsLintCheck::rebuildAmd()`, causing `grunt amd` to time out during `fix --apply` on large plugins.
+  - `AbstractProcess`, `AbstractIssuesProcess`, `MoodleCiEslintProcess`, `MoodleCiPhpcsProcess`, `MoodleCISavepointProcess`, and `MoodleCiGruntAmdProcess` now default to 300 s.
+  - Updated `docs/index.md` and agent memory.
 
 ## Backlog
