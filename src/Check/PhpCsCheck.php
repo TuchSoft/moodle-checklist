@@ -13,6 +13,16 @@ class PhpCsCheck extends AbstractMoodleCiCheck implements FixableCheckInterface
         return $phpcbf !== false;
     }
 
+    public function getFixerGroup(): string
+    {
+        return 'php';
+    }
+
+    public function getFixerDependencies(): array
+    {
+        return ['metadata'];
+    }
+
     protected function execute(): void
     {
         $process = new MoodleCiPhpcsProcess($this->plugin->fullpath, $this->plugin->moodleroot);

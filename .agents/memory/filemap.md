@@ -1,12 +1,17 @@
 ## Fix / formatter layer
 
-- `src/Check/FixableCheckInterface.php` — interface for checks that can auto-format.
-- `src/Cli/FixPluginCommand.php` — `fix` command, dry-run by default, `--apply` writes.
+- `src/Check/FixableCheckInterface.php` — interface for checks that can auto-format; declares group/dependencies for parallel scheduling.
+- `src/Cli/FixPluginCommand.php` — `fix` command, dry-run by default, `--apply` writes; schedules fixer groups in dependency waves.
+- `src/Cli/FixerGroupScheduler.php` — partitions fixers into concurrency groups and orders them into waves.
+- `src/Process/ParallelFixProcess.php` — runs one wave of fixer groups as parallel subprocesses.
+- `tests/Unit/Cli/FixerGroupSchedulerTest.php` — unit tests for the scheduler.
+- `tests/Integration/FixParallelCommandTest.php` — integration tests for parallel `fix`.
 - `src/Check/PhpCsCheck.php` — PHPCS check + `phpcbf` fixer.
 - `src/Check/JsLintCheck.php` — ESLint check + `eslint --fix` + `grunt amd` fixer.
 - `src/Process/MoodleCiPhpcsProcess.php` — runs `phpcs --report-json`.
 - `src/Process/MoodleCiPhpcbfProcess.php` — runs `phpcbf`.
 - `src/Process/MoodleCiEslintProcess.php` / `MoodleCiEslintFixProcess.php` — ESLint check/fix.
+- `src/Process/MoodleCiGruntAmdProcess.php` — `grunt amd` rebuild after `eslint --fix`.
 - `src/Process/MoodleCiStylelintFixProcess.php` — `stylelint --fix`.
 - `src/Process/PrettierFixProcess.php` — `prettier` for JSON/YAML/Markdown.
 - `src/Process/XmllintFixProcess.php` — `xmllint --format`.

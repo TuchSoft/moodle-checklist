@@ -19,6 +19,16 @@ class GherkinLintCheck extends AbstractCheck implements FixableCheckInterface
         return (new GherkinFixProcess([]))->isAvailable();
     }
 
+    public function getFixerGroup(): string
+    {
+        return 'gherkin';
+    }
+
+    public function getFixerDependencies(): array
+    {
+        return ['metadata'];
+    }
+
     protected function execute(): void
     {
 

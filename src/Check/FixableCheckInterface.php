@@ -24,4 +24,19 @@ interface FixableCheckInterface
      * @return bool True if the formatter ran successfully, false if it failed.
      */
     public function fix(bool $apply): bool;
+
+    /**
+     * Concurrency group this fixer belongs to.
+     *
+     * Fixers in the same group run sequentially. Groups with no unresolved
+     * dependencies run in parallel.
+     */
+    public function getFixerGroup(): string;
+
+    /**
+     * Concurrency groups that must finish before this group can start.
+     *
+     * @return string[]
+     */
+    public function getFixerDependencies(): array;
 }

@@ -41,6 +41,16 @@ class FileStructureCheck extends AbstractCheck implements FixableCheckInterface
         return true;
     }
 
+    public function getFixerGroup(): string
+    {
+        return 'bootstrap';
+    }
+
+    public function getFixerDependencies(): array
+    {
+        return [];
+    }
+
     public function fix(bool $apply): bool
     {
         $pluginRoot = $this->plugin->fullpath;

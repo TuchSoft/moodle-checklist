@@ -5,12 +5,23 @@ namespace Tuchsoft\MoodleChecklist\Check;
 use Tuchsoft\MoodleChecklist\Check\Subcheck\GetAllFile;
 use Tuchsoft\MoodleChecklist\Process\MoodleCiEslintFixProcess;
 use Tuchsoft\MoodleChecklist\Process\MoodleCiEslintProcess;
+use Tuchsoft\MoodleChecklist\Process\MoodleCiGruntAmdProcess;
 
 class JsLintCheck extends AbstractMoodleCiCheck implements FixableCheckInterface
 {
     public function canFix(): bool
     {
         return (new MoodleCiEslintFixProcess([], $this->plugin->moodleroot, $this->findConfig()))->isAvailable();
+    }
+
+    public function getFixerGroup(): string
+    {
+        return 'js';
+    }
+
+    public function getFixerDependencies(): array
+    {
+        return ['metadata'];
     }
 
     protected function execute(): void
@@ -110,16 +121,10 @@ class JsLintCheck extends AbstractMoodleCiCheck implements FixableCheckInterface
             $this->io->warning('Cannot rebuild AMD modules: Moodle Gruntfile.js not found.');
             return;
         }
-        $process = new \Symfony\Component\Process\Process(
-            ['npx', 'grunt', 'amd', '--force', '--no-color'],
-            $this->plugin->moodleroot,
-            null,
-            null,
-            120
-        );
-        $process->run();
+        $process = new MoodleCiGruntAmdProcess($this->plugin->moodleroot);
+        $process->execute();
         if (!$process->isSuccessful()) {
-            $this->io->warning('AMD rebuild (`grunt amd`) failed: ' . trim($process->getErrorOutput() ?: 'unknown error'));
+            $this->io->warning('AMD rebuild (`grunt amd`) failed: ' . trim($process->getError() ?: $process->getStderr() ?: 'unknown error'));
         } else {
             $this->io->success('AMD modules rebuilt.');
         }

@@ -15,11 +15,28 @@
 - `AbstractCheck` does not implement `FixableCheckInterface`; fixable checks declare it explicitly.
 - Checks that implement the interface provide `canFix()` and `fix(bool $apply): bool`.
 - `fix()` returns `true` on success, `false` on internal/runtime failure.
+- Fixers also implement `getFixerGroup(): string` and `getFixerDependencies(): array` so `FixPluginCommand` can schedule them safely.
 - `Checker` injects the `InputOutput` instance into checks via `setIo()` before running.
 - `FixPluginCommand` discovers active checks and keeps only those that implement `FixableCheckInterface`.
 - `FixPluginCommand` is dry-run by default; `--apply` is required to write files.
 - The final summary counts only successful formatters as "ran"; failures and missing tools are reported as "skipped". Checks without a fixer do not appear in the output.
 - Fixer processes report `stderr` and accept exit code `1` as success when the tool fixed (or partially fixed) files.
+
+## Fixer concurrency groups
+
+- Fixers are partitioned into concurrency groups (`bootstrap`, `metadata`, `php`, `js`, `css`, `mustache`, `gherkin`, `data`, `image`).
+- Checks in the same group run sequentially; independent groups run in parallel waves based on declared dependencies.
+- `bootstrap` (`FileStructureCheck`) runs first because it scaffolds files other fixers may read.
+- `metadata` (`GitIgnoreCheck`, `ReadmeCheck`) runs next because it rewrites `.gitignore` and `README.md`.
+- All other groups depend on `metadata` so they never race on `.gitignore` reads.
+- Custom fixers must return a group and dependencies; pick an existing group or declare a new one with the correct dependencies.
+
+## Fixer parallel execution
+
+- `FixPluginCommand` spawns one subprocess per group for each wave using `ParallelFixProcess`.
+- Each subprocess runs `bin/console fix --fixer-group=<group> --no-parallel` and prints a `MOODLE_CHECKLIST_FIXER_SUMMARY` marker.
+- Parent parses the marker, strips it from visible output, and aggregates ran/failed/skipped counts.
+- `--jobs` caps groups per wave; default is 4.
 
 ## FileStructure fixer rules
 
@@ -55,3 +72,9 @@
 - `Settings` builds an ordered list of definition files: `issue_definition.json` first, then `phases/{phase}.json` when phase != `none`.
 - `Definition` accepts that list and merges with `array_replace_recursive()` so later files override earlier ones.
 - `--include-check` / `--exclude-check` are passed as the `override` argument to `Definition`, so they always win over phase defaults.
+
+## Process timeout policy
+
+- All `src/Process/*` classes default to a 300-second timeout (`AbstractProcess` / `AbstractIssuesProcess`) so heavy lint/build tasks can finish on large plugins.
+- Do not hardcode shorter timeouts inline (e.g. `new Process(..., 120)`). If a process needs a different default, override `execute()` and document why.
+- Callers can still pass `null` for no timeout or a custom value per run.

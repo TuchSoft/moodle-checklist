@@ -17,6 +17,16 @@ class StyleLintCheck extends AbstractMoodleCiCheck implements FixableCheckInterf
         return (new MoodleCiStylelintFixProcess([], $this->plugin->moodleroot, $this->findConfig()))->isAvailable();
     }
 
+    public function getFixerGroup(): string
+    {
+        return 'css';
+    }
+
+    public function getFixerDependencies(): array
+    {
+        return ['metadata'];
+    }
+
     protected function execute(): void
     {
 

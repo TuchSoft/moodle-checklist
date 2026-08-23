@@ -20,6 +20,16 @@ class MustacheCheck extends AbstractCheck implements FixableCheckInterface
         return (new DjlintFixProcess([]))->isAvailable();
     }
 
+    public function getFixerGroup(): string
+    {
+        return 'mustache';
+    }
+
+    public function getFixerDependencies(): array
+    {
+        return ['metadata'];
+    }
+
     protected function execute(): void
     {
 

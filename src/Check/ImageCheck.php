@@ -40,6 +40,16 @@ class ImageCheck extends AbstractCheck implements FixableCheckInterface
             || (new CwebpProcess(''))->isAvailable();
     }
 
+    public function getFixerGroup(): string
+    {
+        return 'image';
+    }
+
+    public function getFixerDependencies(): array
+    {
+        return ['metadata'];
+    }
+
     protected function execute(): void
     {
         $files = $this->getImageFiles();

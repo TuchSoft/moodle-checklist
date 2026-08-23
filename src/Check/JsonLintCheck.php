@@ -19,6 +19,16 @@ class JsonLintCheck extends AbstractCheck implements FixableCheckInterface
         return true;
     }
 
+    public function getFixerGroup(): string
+    {
+        return 'data';
+    }
+
+    public function getFixerDependencies(): array
+    {
+        return ['metadata'];
+    }
+
     protected function execute(): void
     {
         $files = $this->getAllFile(ext: ['json']);

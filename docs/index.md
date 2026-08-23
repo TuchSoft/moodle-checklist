@@ -22,6 +22,8 @@ Validates the plugin and reports issues.
 
 Auto-formats the plugin files. **Dry-run by default**; add `--apply` to write changes. After applying, re-run `check` to verify any remaining issues. The final summary reports how many formatters ran, failed, and were skipped. Checks that do not provide an auto-fixer are silently omitted from `fix` output.
 
+By default `fix` runs independent fixer groups in parallel waves (`bootstrap` → `metadata` → domain groups). Use `--no-parallel` to run all fixers sequentially, and `--jobs=<n>` to cap the number of concurrent groups.
+
 ### Common options
 
 - `--phase=<phase>` — choose a validation profile:
@@ -30,7 +32,8 @@ Auto-formats the plugin files. **Dry-run by default**; add `--apply` to write ch
   - `post-build`: validate a built distribution artifact. Disables source-only checks such as `.moodleplugin/`, `.git/`, README/CHANGELOG/LICENSE/CONTRIBUTING, `.gitignore`, screenshots, and repository-history checks.
 - `--include-check=<check>` / `--exclude-check=<check>` — include or exclude individual checks. These always take precedence over `--phase`.
 - `--format=<format>` — output format for `check` (`info`, `json`, `checkstyle`, etc.).
-- `--no-parallel` — run checks sequentially instead of in parallel. In parallel mode, a single failing subprocess no longer aborts the whole run; the failing check is reported as a runtime error and the remaining checks continue.
+- `--no-parallel` — run checks or fixer groups sequentially instead of in parallel. In `check` parallel mode, a single failing subprocess no longer aborts the whole run; the failing check is reported as a runtime error and the remaining checks continue. In `fix` parallel mode, fixers are grouped by file domain and executed in dependency waves; use `--no-parallel` to force sequential execution.
+- `--jobs=<n>` — cap the number of concurrent groups for `fix` (default 4).
 - `--moodle-root=<path>` — absolute path to the Moodle project root (the directory containing `config.php` and `admin/cli/upgrade.php`, not the web docroot). When omitted, the root is guessed from the plugin path, with a fallback for Moodle 5.1+ `public/` docroot layouts.
 - `--apply` — global guard for `fix`; without it the command only prints what would be changed.
 - `--refresh-gitignore-cache` — force a network refresh of the gitignore.io template cache before fixing.
@@ -73,6 +76,10 @@ Composer configuration:
 
 - `minimum-stability` is set to `dev` because some required packages (e.g. `symfony/serializer`, `schlessera/markdown-escape`, `automattic/ignorefile`, `tuchsoft/issue-reporter`) only exist as dev branches.
 - `prefer-stable` is set to `true` so that every package that *can* be resolved to a stable release is pinned to a stable release. This prevents unrelated transitive dependencies from drifting onto dev branches and breaking the lock file.
+
+## Process timeouts
+
+All `src/Process/*` classes default to a 300-second timeout so heavy lint/build tasks (PHPCS, ESLint, `grunt amd`, savepoints, docblock checks) can complete on large plugins. Individual process classes override `AbstractProcess::execute()` only when they need a different default; callers can still pass `null` for no timeout or a custom value per run. The AMD rebuild after `eslint --fix` runs through `MoodleCiGruntAmdProcess`, which also uses the 300-second default instead of the previous hardcoded 120 seconds.
 
 ## Docs
 

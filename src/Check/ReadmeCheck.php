@@ -28,6 +28,16 @@ class ReadmeCheck extends AbstractSingleFileCheck implements FixableCheckInterfa
         return (new PrettierFixProcess([]))->isAvailable();
     }
 
+    public function getFixerGroup(): string
+    {
+        return 'metadata';
+    }
+
+    public function getFixerDependencies(): array
+    {
+        return ['bootstrap'];
+    }
+
 
     public function __construct(Settings $settings)
     {

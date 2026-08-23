@@ -64,6 +64,16 @@ class GitIgnoreCheck extends AbstractSingleFileCheck implements FixableCheckInte
         return (new GitIgnoreTemplateCache())->hasCache();
     }
 
+    public function getFixerGroup(): string
+    {
+        return 'metadata';
+    }
+
+    public function getFixerDependencies(): array
+    {
+        return ['bootstrap'];
+    }
+
     protected function executeSingleFile(): void
     {
         $baseDir = dirname($this->path);
