@@ -11,7 +11,7 @@
   "dependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
-    "cwebp-bin": h"^8.0.0",
+    "cwebp-bin": "^8.0.0",
     "gifsicle": "^7.0.1",
     "mozjpeg": "^8.0.0",
     "pngquant-bin": "^9.0.0",
