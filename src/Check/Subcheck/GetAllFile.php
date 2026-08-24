@@ -7,7 +7,7 @@ use Exception;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use SplFileInfo;
+use Tuchsoft\MoodleChecklist\Utils\ThirdPartyLibsParser;
 
 trait GetAllFile
 {
@@ -147,6 +147,11 @@ trait GetAllFile
         $gitignore = $baseDirectory . '/.gitignore';
         if (is_file($gitignore) && is_readable($gitignore)) {
             $ignoreFile->add(file_get_contents($gitignore));
+        }
+
+        $thirdPartyLibs = ThirdPartyLibsParser::parse($baseDirectory);
+        foreach ($thirdPartyLibs as $location) {
+            $ignoreFile->add(rtrim($location, '/\\') . '/');
         }
 
         self::$ignoreFileCache[$baseDirectory] = $ignoreFile;

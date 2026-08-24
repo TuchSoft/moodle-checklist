@@ -56,7 +56,7 @@ By default `fix` runs independent fixer groups in parallel waves (`bootstrap` â†
 | `marketplaceimages` | `.moodleplugin/` poster + screenshots | â€” |
 | `image` | Source images: format, MIME, size, dimensions, location, naming, EXIF metadata, compression | `pngquant`, `mozjpeg`, `svgo`, `gifsicle`, `cwebp` |
 
-Formatters that are not installed in the environment are reported as skipped. Checks without a formatter are not listed at all. File scanning and fixers respect `.gitignore` and a hardcoded safety list (`node_modules`, `.git`, `vendor`, `.venv`, `.idea`, `.moodleplugin`, `.complex_plans`, `.agents`, `.phpunit.cache`) so dependency directories and temporary files are ignored.
+Formatters that are not installed in the environment are reported as skipped. Checks without a formatter are not listed at all. File scanning and fixers respect `.gitignore`, a hardcoded safety list (`node_modules`, `.git`, `vendor`, `.venv`, `.idea`, `.moodleplugin`, `.complex_plans`, `.agents`, `.phpunit.cache`), and any paths declared in `thirdpartylibs.xml` so dependency directories, temporary files, and vendored libraries are ignored.
 
 ## Dependencies
 

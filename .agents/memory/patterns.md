@@ -55,8 +55,9 @@
 ## File scanning exclusions
 
 - `GetAllFile::isPathIgnored()` is the single source of truth for paths that should be skipped by checks and fixers.
-- It uses `automattic/ignorefile` to combine a hardcoded safety list with the plugin's `.gitignore`.
+- It uses `automattic/ignorefile` to combine a hardcoded safety list with the plugin's `.gitignore` and any paths declared in `thirdpartylibs.xml`.
 - Hardcoded dirs: `node_modules`, `.git`, `vendor`, `.venv`, `.idea`, `.moodleplugin`, `.complex_plans`, `.agents`, `.phpunit.cache`.
+- `thirdpartylibs.xml` locations are parsed by `ThirdPartyLibsParser` and added as directory patterns (e.g. `amd/src/select2/`).
 - No hardcoded temporary-file exclusions: checks that need to run a vendor script do so via stdin/CWD instead of copying files into the plugin root.
 
 ## Dependency management rule

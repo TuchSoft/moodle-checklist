@@ -12,6 +12,8 @@ class CheckCommandTest extends TestCase
     private string $dirtyPlugin;
     private string $missingFilesPlugin;
 
+    private string $thirdPartyLibsPlugin;
+
     /**
      * Checks that require a full Moodle installation or external services.
      * They are excluded so the fixture-based integration test stays self-contained.
@@ -21,7 +23,7 @@ class CheckCommandTest extends TestCase
         '--exclude-check=marketplaceimages',
         '--exclude-check=repository',
         '--exclude-check=moodle-plugin-ci.docblock',
-        '--exclude-check=moodle-plugin-ci.gherkinlint',
+        '--exclude-check=gherkinlint',
         '--exclude-check=moodle-plugin-ci.jslint',
         '--exclude-check=moodle-plugin-ci.mustache',
         '--exclude-check=moodle-plugin-ci.phpcs',
@@ -37,6 +39,7 @@ class CheckCommandTest extends TestCase
         $this->cleanPlugin = realpath("{$root}/tests/fixtures/clean-plugin/local/clean") ?: "{$root}/tests/fixtures/clean-plugin/local/clean";
         $this->dirtyPlugin = realpath("{$root}/tests/fixtures/dirty-plugin/local/dirty") ?: "{$root}/tests/fixtures/dirty-plugin/local/dirty";
         $this->missingFilesPlugin = realpath("{$root}/tests/fixtures/missing-files-plugin/local/missingfiles") ?: "{$root}/tests/fixtures/missing-files-plugin/local/missingfiles";
+        $this->thirdPartyLibsPlugin = realpath("{$root}/tests/fixtures/thirdpartylibs-plugin/local/thirdpartylibs") ?: "{$root}/tests/fixtures/thirdpartylibs-plugin/local/thirdpartylibs";
     }
 
     /**
@@ -160,5 +163,18 @@ class CheckCommandTest extends TestCase
         $output = $process->getOutput() . $process->getErrorOutput();
         $this->assertNoPhpWarnings($process, 'GitIgnoreCheck on missing .gitignore');
         $this->assertStringContainsString('gitignore.file-not-found', $output, "GitIgnoreCheck should report missing .gitignore. Output:\n{$output}");
+    }
+
+    public function testThirdPartyLibsPathIsIgnored(): void
+    {
+        $process = $this->runCheck($this->thirdPartyLibsPlugin, [
+            '--exclude-check=readme',
+            '--exclude-check=gitignore',
+        ]);
+
+        $output = $process->getOutput() . $process->getErrorOutput();
+        $this->assertSame(0, $process->getExitCode(), "Third-party libs plugin should pass. Output:\n{$output}");
+        $this->assertStringNotContainsString('select2.js', $output, "Vendored file should be excluded from checks. Output:\n{$output}");
+        $this->assertStringContainsString('All checks passed!', $output);
     }
 }
