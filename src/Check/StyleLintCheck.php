@@ -61,7 +61,7 @@ class StyleLintCheck extends AbstractMoodleCiCheck implements FixableCheckInterf
         $process = new MoodleCiStylelintFixProcess($files, $this->plugin->moodleroot, $this->findConfig());
         $process->execute();
         $exit = $process->getExitCode();
-        if ($exit !== 0 && $exit !== 1) {
+        if ($exit !== 0 && $exit !== 1 && $exit !== 2) {
             $this->io->warning('stylelint --fix finished with errors: ' . trim($process->getStderr() ?: 'unknown error'));
             return false;
         }
