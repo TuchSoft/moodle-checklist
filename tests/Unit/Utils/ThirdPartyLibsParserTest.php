@@ -68,6 +68,60 @@ XML;
         $this->assertSame([], $result);
     }
 
+    public function testFullChildElementFormat(): void
+    {
+        $xml = <<<'XML'
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>amd/src/select2/select2.full.js</location>
+    <name>Select2</name>
+    <version>4.1.0-rc.0</version>
+    <license>MIT</license>
+  </library>
+  <library>
+    <location>scss/vendor/_select2.scss</location>
+    <name>Select2 SCSS</name>
+    <version>4.1.0-rc.0</version>
+    <license>MIT</license>
+  </library>
+  <library>
+    <location>amd/src/datatables/dataTables.js</location>
+    <name>DataTables</name>
+    <version>2.2.3</version>
+    <license>MIT</license>
+  </library>
+</libraries>
+XML;
+        file_put_contents($this->tmpDir . '/thirdpartylibs.xml', $xml);
+
+        $result = ThirdPartyLibsParser::parse($this->tmpDir);
+        $this->assertSame([
+            'amd/src/select2/select2.full.js',
+            'scss/vendor/_select2.scss',
+            'amd/src/datatables/dataTables.js',
+        ], $result);
+    }
+
+    public function testMixedAttributeAndChildElementFormats(): void
+    {
+        $xml = <<<'XML'
+<?xml version="1.0"?>
+<libraries>
+    <library location="amd/src/select2" />
+    <library>
+        <location>amd/src/datatables/dataTables.js</location>
+        <name>DataTables</name>
+    </library>
+    <library location="lib/htmlpurifier" />
+</libraries>
+XML;
+        file_put_contents($this->tmpDir . '/thirdpartylibs.xml', $xml);
+
+        $result = ThirdPartyLibsParser::parse($this->tmpDir);
+        $this->assertSame(['amd/src/select2', 'amd/src/datatables/dataTables.js', 'lib/htmlpurifier'], $result);
+    }
+
     public function testIgnoresLibraryWithoutLocationAttribute(): void
     {
         $xml = <<<'XML'

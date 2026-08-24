@@ -8,11 +8,20 @@ use SimpleXMLElement;
  * Parses a plugin's thirdpartylibs.xml to discover vendored library paths.
  *
  * Moodle plugins declare third-party libraries in a file named thirdpartylibs.xml
- * at the plugin root. The format is:
+ * at the plugin root. Two formats are supported:
  *
+ * Shorthand attribute form:
  * <libraries>
  *   <library location="amd/src/select2" />
- *   <library location="lib/htmlpurifier" />
+ * </libraries>
+ *
+ * Full child-element form:
+ * <libraries>
+ *   <library>
+ *     <location>amd/src/select2/select2.full.js</location>
+ *     <name>Select2</name>
+ *     ...
+ *   </library>
  * </libraries>
  *
  * This parser returns the relative paths so that scanners and fixers can skip them.
@@ -52,6 +61,9 @@ class ThirdPartyLibsParser
         $locations = [];
         foreach ($doc->library as $library) {
             $location = (string) (isset($library['location']) ? $library['location'] : '');
+            if ($location === '') {
+                $location = (string) ($library->location ?? '');
+            }
             if ($location === '') {
                 continue;
             }
